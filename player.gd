@@ -1,10 +1,11 @@
 extends CharacterBody3D
 
 @onready var cam = $"../Camera3D"
+@onready var build = %Build
 @onready var interact_cast = $ShapeCast3D
 
 func _physics_process(delta: float) -> void:
-	if cam.build_mode: return
+	if build.build_mode: return
 	
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
 	
@@ -21,6 +22,9 @@ func _physics_process(delta: float) -> void:
 	self.velocity.x = move_dir.x * 6.0
 	self.velocity.z = move_dir.z * 6.0
 	self.velocity.y -= 14.0 * delta
+	
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		self.velocity.y += 6.0
 	
 	if move_dir:
 		self.rotation.y = lerp_angle(self.rotation.y, Vector2(move_dir.z, move_dir.x).angle(), 0.4)

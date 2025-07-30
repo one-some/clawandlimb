@@ -2,12 +2,12 @@ extends Camera3D
 
 @onready var player = $"../Player"
 @onready var threed_cursor = $"../3DCursor"
+@onready var build = %Build
 
 var target_pole = Vector3(0.0, 2.0, 0.0)
 var angle_around_point = 0.0
 var distance_from_pole = 5.0
 var angle_up_down = PI / 4.0
-var build_mode = false
 
 func update_camera():
 	var height = distance_from_pole * sin(angle_up_down)
@@ -40,32 +40,26 @@ func do_freecam_process(delta: float):
 
 	var ray_end = ray_origin + ray_direction * 1000
 	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+	query.collision_mask = 1 << 4
 
 	var result = space_state.intersect_ray(query)
 	if result and result["collider"].name == "GridMap":
-		threed_cursor.visible = true
 		var pos = result["position"]
 		pos.x = round(pos.x)
 		pos.z = round(pos.z)
 		threed_cursor.global_position = pos
-	else:
-		threed_cursor.visible = false
 
 func do_player_cam_process(delta: float):
 	target_pole = target_pole.lerp(player.global_position, 0.4)
 
 func _physics_process(delta: float) -> void:
-	if build_mode:
+	if build.build_mode:
 		do_freecam_process(delta)
 	else:
 		do_player_cam_process(delta)
 	update_camera()
 
-func _input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("toggle_build"):
-		build_mode = not build_mode
-		return
-	
+func _input(event: InputEvent) -> void:	
 	if event is InputEventMouseMotion:
 		if not Input.is_action_pressed("rotate"): return
 		angle_around_point += event.relative.x / 200.0

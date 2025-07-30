@@ -8,3 +8,4 @@ func _ready() -> void:
 		tree.position.x = randi_range(0, 100)
 		tree.position.z = randi_range(0, 100)
 		self.add_child(tree)
+	%World.bake_level_navigation()

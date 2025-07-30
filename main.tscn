@@ -1,9 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=17 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://dmjjygs0kqee" path="res://grid_map.gd" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
+[ext_resource type="Script" uid="uid://cwuwe30qn7rkj" path="res://world.gd" id="4_272bh"]
 [ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
 [ext_resource type="Script" uid="uid://dud76iv7grm4b" path="res://resources.gd" id="6_7mycd"]
 
@@ -30,6 +31,8 @@ points = PackedVector3Array(0.267016, 0.766948, -0.1164, -0.291458, -0.761872, -
 [sub_resource type="BoxShape3D" id="BoxShape3D_7mycd"]
 size = Vector3(2.235, 1, 1)
 
+[sub_resource type="NavigationMesh" id="NavigationMesh_272bh"]
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mycd"]
 transparency = 1
 shading_mode = 0
@@ -46,13 +49,6 @@ unique_name_in_owner = true
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 5, 5, 5)
 fov = 70.0
 script = ExtResource("1_0xm2m")
-
-[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
-
-[node name="Build" type="Node3D" parent="."]
-script = ExtResource("1_ig7tw")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Build"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_lquwl")
@@ -82,16 +78,21 @@ texture = ExtResource("5_lquwl")
 shape = SubResource("BoxShape3D_7mycd")
 target_position = Vector3(0, 0, 1)
 
-[node name="World" type="Node3D" parent="."]
+[node name="World" type="NavigationRegion3D" parent="."]
+unique_name_in_owner = true
+navigation_mesh = SubResource("NavigationMesh_272bh")
+script = ExtResource("4_272bh")
 
 [node name="GridMap" type="GridMap" parent="World"]
 cell_size = Vector3(1, 1, 1)
+collision_layer = 17
 script = ExtResource("3_h2yge")
 
 [node name="Resources" type="Node3D" parent="World"]
 script = ExtResource("6_7mycd")
 
 [node name="Build" type="Node3D" parent="World"]
+unique_name_in_owner = true
 script = ExtResource("1_ig7tw")
 
 [node name="3DCursor" type="MeshInstance3D" parent="."]
