@@ -1,7 +1,8 @@
-[gd_scene load_steps=17 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=18 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://bqha05wdb4hvk" path="res://zombie.tscn" id="2_5vw27"]
 [ext_resource type="Script" uid="uid://dmjjygs0kqee" path="res://grid_map.gd" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
 [ext_resource type="Script" uid="uid://cwuwe30qn7rkj" path="res://world.gd" id="4_272bh"]
@@ -56,6 +57,10 @@ environment = SubResource("Environment_lquwl")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.515532, 0.85687, 0, -0.85687, 0.515532, 0, 0, 0)
 shadow_enabled = true
+
+[node name="Zombie" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2_5vw27")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.6725, 4.55743, 15.0373)
+target = NodePath("../Player")
 
 [node name="Player" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.07693, 4.53789, 6.3614)

@@ -18,6 +18,27 @@ func set_build_mode(mode: bool):
 		active_wall["body"].queue_free()
 		active_wall = null
 
+func commit_wall() -> void:
+	# Committing the wall
+	var obstacle = NavigationObstacle3D.new()
+	obstacle.height = 20
+	var half_size = active_wall["shape"].shape.size / 2.0
+	
+	obstacle.vertices = PackedVector3Array([
+		Vector3(half_size.x, 0.0, half_size.z),
+		Vector3(-half_size.x, 0.0, half_size.z),
+		Vector3(-half_size.x, 0.0, -half_size.z),
+		Vector3(half_size.x, 0.0, -half_size.z)
+	])
+
+	obstacle.position.y -= WALL_HEIGHT / 2.0
+	obstacle.avoidance_enabled = true
+	
+	active_wall["body"].add_child(obstacle)
+	active_wall["mesh"].mesh.material.albedo_color = Color.WHITE
+	active_wall["mesh"].mesh.material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+	active_wall = null
+
 func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("toggle_build"):
 		set_build_mode(not build_mode)
@@ -42,6 +63,8 @@ func _input(event: InputEvent) -> void:
 		active_wall["shape"].shape = BoxShape3D.new()
 		
 		var mat = StandardMaterial3D.new()
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.albedo_color = Color(Color.WHITE, 0.5)
 		mat.albedo_texture = plank
 		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 		mat.texture_repeat = true
@@ -52,8 +75,7 @@ func _input(event: InputEvent) -> void:
 	var new_pos = threed_cursor.position
 	if Input.is_action_just_pressed("click"):
 		if start_pos:
-			%World.bake_level_navigation()
-			active_wall = null
+			commit_wall()
 		start_pos = new_pos
 		return
 	

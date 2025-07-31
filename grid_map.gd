@@ -45,4 +45,4 @@ func _ready() -> void:
 	for x in range(100):
 		for z in range(100):
 			self.set_cell_item(Vector3(x, 0, z), (x + z) % 2)
-	%World.bake_level_navigation()
+	%World.call_deferred("bake_level_navigation")
