@@ -1,7 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=19 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
 [ext_resource type="PackedScene" uid="uid://bqha05wdb4hvk" path="res://zombie.tscn" id="2_5vw27"]
 [ext_resource type="Script" uid="uid://dmjjygs0kqee" path="res://grid_map.gd" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
@@ -9,19 +10,24 @@
 [ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
 [ext_resource type="Script" uid="uid://dud76iv7grm4b" path="res://resources.gd" id="6_7mycd"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_h2yge"]
-sky_top_color = Color(0, 0.418182, 1, 1)
-sky_horizon_color = Color(0.429688, 0.650829, 1, 1)
-sky_curve = 0.665742
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_5vw27"]
+rayleigh_coefficient = 1.0
+rayleigh_color = Color(0.419271, 0.622526, 1, 1)
+mie_color = Color(0.888021, 0.797036, 0.52495, 1)
+energy_multiplier = 2.0
 
 [sub_resource type="Sky" id="Sky_1bvp3"]
-sky_material = SubResource("ProceduralSkyMaterial_h2yge")
+sky_material = SubResource("PhysicalSkyMaterial_5vw27")
 
 [sub_resource type="Environment" id="Environment_lquwl"]
 background_mode = 2
 sky = SubResource("Sky_1bvp3")
 ambient_light_color = Color(0.633757, 0.633757, 0.633757, 1)
 ambient_light_sky_contribution = 0.3
+reflected_light_source = 2
+ssao_intensity = 16.0
+volumetric_fog_density = 0.0001
+adjustment_enabled = true
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_1bvp3"]
 radius = 0.3
@@ -33,6 +39,7 @@ points = PackedVector3Array(0.267016, 0.766948, -0.1164, -0.291458, -0.761872, -
 size = Vector3(2.235, 1, 1)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_272bh"]
+sample_partition_type = 1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mycd"]
 transparency = 1
@@ -44,6 +51,7 @@ radius = 0.2
 height = 0.4
 
 [node name="Main" type="Node3D"]
+script = ExtResource("1_kek77")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
@@ -55,11 +63,12 @@ script = ExtResource("1_0xm2m")
 environment = SubResource("Environment_lquwl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.515532, 0.85687, 0, -0.85687, 0.515532, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -0.412755, 0.910842, 0, -0.910842, -0.412755, 0, 0, 0)
 shadow_enabled = true
 
-[node name="Zombie" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2_5vw27")]
+[node name="Zombie" parent="." node_paths=PackedStringArray("nav_region", "target") instance=ExtResource("2_5vw27")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.6725, 4.55743, 15.0373)
+nav_region = NodePath("../World")
 target = NodePath("../Player")
 
 [node name="Player" type="CharacterBody3D" parent="."]

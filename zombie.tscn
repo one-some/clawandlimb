@@ -26,11 +26,10 @@ mesh = SubResource("CapsuleMesh_roy8y")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("ConvexPolygonShape3D_roy8y")
 
-[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-avoidance_enabled = true
-radius = 1.0
-
-[node name="NavReEvalTimer" type="Timer" parent="."]
+[node name="PathRedo" type="Timer" parent="."]
 autostart = true
 
-[connection signal="timeout" from="NavReEvalTimer" to="." method="_on_nav_re_eval_timer_timeout"]
+[node name="RayCast3D" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.353021, 0)
+
+[connection signal="timeout" from="PathRedo" to="." method="_on_path_redo_timeout"]
