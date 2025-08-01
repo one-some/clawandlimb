@@ -2,21 +2,23 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ii3u6nl6vbqq"
-path.s3tc="res://.godot/imported/leaves.png-cd87dc775b2a96c2a535bfbac16097c8.s3tc.ctex"
+uid="uid://b3hj6y4q7ut7u"
+path="res://.godot/imported/Axe_0.png-a86139e1b5a42fcc40bef7c787874542.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
+}
+generator_parameters={
+"md5": "4757e8b28ee3e70350edf1256e6b80a6"
 }
 
 [deps]
 
-source_file="res://tex/tiles/leaves.png"
-dest_files=["res://.godot/imported/leaves.png-cd87dc775b2a96c2a535bfbac16097c8.s3tc.ctex"]
+source_file="res://mdl/Axe_0.png"
+dest_files=["res://.godot/imported/Axe_0.png-a86139e1b5a42fcc40bef7c787874542.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1

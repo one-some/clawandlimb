@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=25 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
@@ -8,7 +8,9 @@
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
 [ext_resource type="Script" uid="uid://cwuwe30qn7rkj" path="res://world.gd" id="4_272bh"]
 [ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
+[ext_resource type="PackedScene" uid="uid://bjkfgco15fjsp" path="res://mdl/Axe.gltf" id="6_4c57u"]
 [ext_resource type="Script" uid="uid://dud76iv7grm4b" path="res://resources.gd" id="6_7mycd"]
+[ext_resource type="Script" uid="uid://b55h5ok8v2s5s" path="res://hand.gd" id="6_efxa6"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_5vw27"]
 rayleigh_coefficient = 1.0
@@ -38,8 +40,60 @@ points = PackedVector3Array(0.267016, 0.766948, -0.1164, -0.291458, -0.761872, -
 [sub_resource type="BoxShape3D" id="BoxShape3D_7mycd"]
 size = Vector3(2.235, 1, 1)
 
+[sub_resource type="Animation" id="Animation_4c57u"]
+resource_name = "AxeChop"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hand/Axe:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.233333, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-0.211261, -0.525508, 0.207511), Vector3(-0.219205, -0.430524, 0.309511), Vector3(0.0925025, 1.90764, 1.28631)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Hand")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.9),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_at_mid_swing"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_efxa6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hand/Axe:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_efxa6"]
+_data = {
+&"AxeChop": SubResource("Animation_4c57u"),
+&"RESET": SubResource("Animation_efxa6")
+}
+
 [sub_resource type="NavigationMesh" id="NavigationMesh_272bh"]
 sample_partition_type = 1
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_kek77"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mycd"]
 transparency = 1
@@ -86,11 +140,24 @@ shape = SubResource("ConvexPolygonShape3D_7mycd")
 pixel_size = 0.003
 billboard = 2
 shaded = true
+texture_filter = 0
 texture = ExtResource("5_lquwl")
 
 [node name="ShapeCast3D" type="ShapeCast3D" parent="Player"]
 shape = SubResource("BoxShape3D_7mycd")
 target_position = Vector3(0, 0, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player"]
+libraries = {
+&"": SubResource("AnimationLibrary_efxa6")
+}
+
+[node name="Hand" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.300949, 0, 0.0446992)
+script = ExtResource("6_efxa6")
+
+[node name="Axe" parent="Player/Hand" instance=ExtResource("6_4c57u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="World" type="NavigationRegion3D" parent="."]
 unique_name_in_owner = true
@@ -101,6 +168,7 @@ script = ExtResource("4_272bh")
 cell_size = Vector3(1, 1, 1)
 collision_layer = 17
 script = ExtResource("3_h2yge")
+noise = SubResource("FastNoiseLite_kek77")
 
 [node name="Resources" type="Node3D" parent="World"]
 script = ExtResource("6_7mycd")

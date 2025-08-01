@@ -2,7 +2,6 @@ extends CharacterBody3D
 
 @onready var cam = $"../Camera3D"
 @onready var build = %Build
-@onready var interact_cast = $ShapeCast3D
 
 func _physics_process(delta: float) -> void:
 	if build.build_mode: return
@@ -30,12 +29,3 @@ func _physics_process(delta: float) -> void:
 		self.rotation.y = lerp_angle(self.rotation.y, Vector2(move_dir.z, move_dir.x).angle(), 0.4)
 	
 	self.move_and_slide()
-
-func _input(event: InputEvent) -> void:
-	if not Input.is_action_just_pressed("click"): return
-	
-	for i in range(interact_cast.get_collision_count()):
-		var collider = interact_cast.get_collider(i)
-		if "take_damage" not in collider: continue
-		collider.take_damage()
-		break

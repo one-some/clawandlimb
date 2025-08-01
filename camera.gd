@@ -8,8 +8,16 @@ var target_pole = Vector3(0.0, 2.0, 0.0)
 var angle_around_point = 0.0
 var distance_from_pole = 5.0
 var angle_up_down = PI / 4.0
+var camera_shake_strength = 0.0
 
-func update_camera():
+func _ready() -> void:
+	update_camera()
+	Signals.camera_shake.connect(_on_camera_shake)
+
+func _on_camera_shake(strength: float, origin: Vector3) -> void:
+	camera_shake_strength = strength / max(1.0, 2.0 * log(player.global_position.distance_to(origin) + 1))
+
+func update_camera() -> void:
 	var height = distance_from_pole * sin(angle_up_down)
 	var personal_space = distance_from_pole * cos(angle_up_down)
 	
@@ -17,6 +25,25 @@ func update_camera():
 	self.position.y = height
 	self.position.z = target_pole.z + (personal_space * sin(angle_around_point))
 	self.look_at(target_pole)
+
+func _physics_process(delta: float) -> void:
+	if build.build_mode:
+		do_freecam_process(delta)
+	else:
+		do_player_cam_process(delta)
+	
+	#camera_shake_strength = max(0.0, camera_shake_strength - 0.1)
+	camera_shake_strength = lerpf(camera_shake_strength, 0, 0.1)
+	
+	if camera_shake_strength:
+		self.h_offset += randf() * camera_shake_strength * (1 if self.h_offset < 0 else -1)
+		self.v_offset += randf() * camera_shake_strength * (1 if self.v_offset < 0 else -1)
+	else:
+		self.h_offset = 0.0
+		self.v_offset = 0.0
+			
+	
+	update_camera()
 
 func do_freecam_process(delta: float):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
@@ -52,13 +79,6 @@ func do_freecam_process(delta: float):
 func do_player_cam_process(delta: float):
 	target_pole = target_pole.lerp(player.global_position, 0.4)
 
-func _physics_process(delta: float) -> void:
-	if build.build_mode:
-		do_freecam_process(delta)
-	else:
-		do_player_cam_process(delta)
-	update_camera()
-
 func _input(event: InputEvent) -> void:	
 	if event is InputEventMouseMotion:
 		if not Input.is_action_pressed("rotate"): return
@@ -76,9 +96,6 @@ func _input(event: InputEvent) -> void:
 		distance_from_pole = clampf(distance_from_pole, 2.0, 20.0)
 	else:
 		return
-	update_camera()
-
-func _ready() -> void:
 	update_camera()
 
 func get_mouse_at_y(y: float) -> Variant:

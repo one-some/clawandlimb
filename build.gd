@@ -7,7 +7,7 @@ const plank = preload("res://tex/tiles/plank.png")
 const WALL_HEIGHT = 3.0
 
 var build_mode = false
-var active_wall = {}
+var active_wall = null
 var start_pos = null
 
 func set_build_mode(mode: bool):
@@ -16,6 +16,7 @@ func set_build_mode(mode: bool):
 	
 	if not mode and active_wall:
 		active_wall["body"].queue_free()
+		start_pos = null
 		active_wall = null
 
 func commit_wall() -> void:
@@ -73,6 +74,14 @@ func _input(event: InputEvent) -> void:
 		self.add_child(active_wall["body"])
 		
 	var new_pos = threed_cursor.position
+	
+	if start_pos:
+		var delta = start_pos - new_pos 
+		if abs(delta.x) > abs(delta.z):
+			new_pos.z = start_pos.z
+		else:
+			new_pos.x = start_pos.x
+	
 	if Input.is_action_just_pressed("click"):
 		if start_pos:
 			commit_wall()
@@ -88,6 +97,5 @@ func _input(event: InputEvent) -> void:
 	
 	active_wall["shape"].shape.size = mesh.mesh.size
 	active_wall["body"].position = (new_pos + start_pos) / 2
-	if active_wall["body"].global_position != new_pos:
-		active_wall["body"].look_at(new_pos)
+	active_wall["body"].look_at(new_pos)
 	active_wall["body"].position.y = WALL_HEIGHT / 2.0
