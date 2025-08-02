@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=3 format=3 uid="uid://bj4bibmitv8ra"]
+
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
+[ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
+
+[resource]
+script = ExtResource("2_216it")
+items = Dictionary[String, ExtResource("1_86lrn")]({})
+metadata/_custom_type_script = "uid://bstmf2q2vsph2"

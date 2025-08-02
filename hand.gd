@@ -27,5 +27,6 @@ func _at_mid_swing():
 		break
 
 func _input(event: InputEvent) -> void:
+	if State.active_ui: return
 	if not Input.is_action_just_pressed("click"): return
 	swing()

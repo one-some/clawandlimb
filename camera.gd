@@ -27,6 +27,8 @@ func update_camera() -> void:
 	self.look_at(target_pole)
 
 func _physics_process(delta: float) -> void:
+	if State.active_ui: return
+	
 	if build.build_mode:
 		do_freecam_process(delta)
 	else:
@@ -79,7 +81,9 @@ func do_freecam_process(delta: float):
 func do_player_cam_process(delta: float):
 	target_pole = target_pole.lerp(player.global_position, 0.4)
 
-func _input(event: InputEvent) -> void:	
+func _input(event: InputEvent) -> void:
+	if State.active_ui: return
+	
 	if event is InputEventMouseMotion:
 		if not Input.is_action_pressed("rotate"): return
 		angle_around_point += event.relative.x / 200.0

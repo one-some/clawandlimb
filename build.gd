@@ -41,6 +41,8 @@ func commit_wall() -> void:
 	active_wall = null
 
 func _input(event: InputEvent) -> void:
+	if State.active_ui: return
+	
 	if Input.is_action_just_pressed("toggle_build"):
 		set_build_mode(not build_mode)
 		return

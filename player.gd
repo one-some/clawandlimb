@@ -4,6 +4,7 @@ extends CharacterBody3D
 @onready var build = %Build
 
 func _physics_process(delta: float) -> void:
+	if State.active_ui: return
 	if build.build_mode: return
 	
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")

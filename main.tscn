@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=26 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://bjkfgco15fjsp" path="res://mdl/Axe.gltf" id="6_4c57u"]
 [ext_resource type="Script" uid="uid://dud76iv7grm4b" path="res://resources.gd" id="6_7mycd"]
 [ext_resource type="Script" uid="uid://b55h5ok8v2s5s" path="res://hand.gd" id="6_efxa6"]
+[ext_resource type="PackedScene" uid="uid://0fc3n5w2os8h" path="res://ui.tscn" id="12_dg77c"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_5vw27"]
 rayleigh_coefficient = 1.0
@@ -157,7 +158,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.300949, 0, 0.0446992)
 script = ExtResource("6_efxa6")
 
 [node name="Axe" parent="Player/Hand" instance=ExtResource("6_4c57u")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="World" type="NavigationRegion3D" parent="."]
 unique_name_in_owner = true
@@ -181,3 +181,7 @@ script = ExtResource("1_ig7tw")
 unique_name_in_owner = true
 material_override = SubResource("StandardMaterial3D_7mycd")
 mesh = SubResource("SphereMesh_272bh")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" parent="CanvasLayer" instance=ExtResource("12_dg77c")]

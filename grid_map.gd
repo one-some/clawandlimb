@@ -26,10 +26,11 @@ func generate_mesh_library() -> void:
 		mesh.material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 		
 		var image = mesh.material.albedo_texture.get_image()
-		to_grayscale(image)
-		image.bump_map_to_normal_map(4.0)
-		mesh.material.normal_enabled = true
-		mesh.material.normal_texture = ImageTexture.create_from_image(image)
+		if not image.is_compressed():
+			to_grayscale(image)
+			image.bump_map_to_normal_map(4.0)
+			mesh.material.normal_enabled = true
+			mesh.material.normal_texture = ImageTexture.create_from_image(image)
 		
 		self.mesh_library.create_item(i)
 		self.mesh_library.set_item_mesh(i, mesh)
