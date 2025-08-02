@@ -4,15 +4,15 @@ const slot_scene = preload("res://inventory_slot.tscn")
 
 
 func _ready() -> void:
+	await get_tree().current_scene.ready
+	
 	for i in range(Inventory.SLOT_COUNT):
 		var slot = slot_scene.instantiate()
-		#await slot.ready
+		self.add_child(slot)
 		
 		slot.slot_number = i
 		slot.update()
 		slot.visible = i >= Inventory.HOTBAR_OFFSET
-		if i >= Inventory.HOTBAR_OFFSET: slot.get_children()[0].queue_free()
-		self.add_child(slot)
 
 func _input(event: InputEvent) -> void:
 	if not Input.is_action_just_pressed("inventory"): return

@@ -1,9 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=17 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
 [ext_resource type="FontFile" uid="uid://dq2o1ux1rufks" path="res://Cavalhatriz.ttf" id="2_27fn8"]
 [ext_resource type="Script" uid="uid://vthan8fooxnk" path="res://inventory_ui.gd" id="3_27fn8"]
+[ext_resource type="Script" uid="uid://blnanm6qmbjfj" path="res://item_tooltip.gd" id="5_ibotj"]
+[ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="6_y4yjw"]
+[ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="7_waa4j"]
+[ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
+[ext_resource type="Script" uid="uid://dxhdvcip00ldd" path="res://item_cursor_follow.gd" id="9_ok7cu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xb563"]
 bg_color = Color(0.171875, 0.171875, 0.171875, 1)
@@ -26,6 +31,28 @@ anti_aliasing = false
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nltto"]
 bg_color = Color(0, 0, 0, 0.776471)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y4yjw"]
+bg_color = Color(0, 0, 0, 0.772549)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.722656, 0.722656, 0.722656, 1)
+anti_aliasing = false
+
+[sub_resource type="LabelSettings" id="LabelSettings_ibotj"]
+font = ExtResource("6_y4yjw")
+font_size = 40
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_ok7cu"]
+font = ExtResource("7_waa4j")
+font_size = 30
+font_color = Color(1, 1, 1, 0.364706)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ok7cu"]
+
 [node name="UI" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -39,7 +66,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = -103.0
+offset_top = 584.0
+offset_right = -1152.0
+offset_bottom = -64.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_m6e0p")
@@ -49,9 +78,9 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -54.0
-offset_right = 328.0
+offset_left = 8.0
+offset_top = -56.0
+offset_right = 320.0
 offset_bottom = -16.0
 grow_vertical = 0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -87,3 +116,40 @@ grow_vertical = 0
 pivot_offset = Vector2(0, 64)
 columns = 9
 script = ExtResource("3_27fn8")
+
+[node name="ItemTooltip" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_right = 287.0
+offset_bottom = 70.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_y4yjw")
+script = ExtResource("5_ibotj")
+
+[node name="MarginContainer" type="MarginContainer" parent="ItemTooltip"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ItemTooltip/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Name" type="Label" parent="ItemTooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Dirt Block"
+label_settings = SubResource("LabelSettings_ibotj")
+
+[node name="Description" type="Label" parent="ItemTooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "It's just a dirt block."
+label_settings = SubResource("LabelSettings_ok7cu")
+
+[node name="ItemCursorFollow" parent="." instance=ExtResource("8_waa4j")]
+layout_mode = 0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_ok7cu")
+script = ExtResource("9_ok7cu")
+
+[editable path="ItemCursorFollow"]

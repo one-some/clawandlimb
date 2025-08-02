@@ -13,6 +13,7 @@ config_version=5
 config/name="ClawAndLimb"
 run/main_scene="uid://bysjxpr0tkfu1"
 config/features=PackedStringArray("4.4", "Forward Plus")
+run/max_fps=60
 config/icon="res://icon.svg"
 
 [autoload]
@@ -21,6 +22,10 @@ Signals="*res://signals.gd"
 State="*res://state.gd"
 ItemRegistry="*res://items/item_registry.gd"
 Inventory="*res://inventory.gd"
+
+[display]
+
+window/vsync/vsync_mode=3
 
 [global_group]
 
