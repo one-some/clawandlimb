@@ -3,6 +3,9 @@ extends Node3D
 @onready var sun = $DirectionalLight3D
 var time_seconds = 12 * 60 * 60
 
+func _ready() -> void:
+	get_tree().set_auto_accept_quit(false)
+
 func _process(delta: float) -> void:
 	time_seconds += 2.0
 	
@@ -14,3 +17,9 @@ func _process(delta: float) -> void:
 	for guy in get_tree().get_nodes_in_group("Enemy"):
 		guy.process_mode = PROCESS_MODE_INHERIT if bad_guys_work else PROCESS_MODE_DISABLED
 		guy.visible = bad_guys_work
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		Save.save()
+		print("Done saving!")
+		get_tree().quit()

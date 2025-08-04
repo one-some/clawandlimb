@@ -22,6 +22,7 @@ Signals="*res://signals.gd"
 State="*res://state.gd"
 ItemRegistry="*res://items/item_registry.gd"
 Inventory="*res://inventory.gd"
+Save="*res://save.gd"
 
 [display]
 

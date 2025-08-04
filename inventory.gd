@@ -5,9 +5,28 @@ const HOTBAR_OFFSET = 9 * 3
 var inventory: Array[ItemInstance] = []
 var cursor_item: ItemInstance = null
 
+func set_slot(slot: int, item_instance: ItemInstance) -> void:
+	inventory[slot] = item_instance
+	Signals.update_inventory_slot.emit(slot)
+
+func to_json() -> Variant:
+	return inventory.map(func(x): return x.to_json() if x else null)
+
+func from_json(data):
+	for i in range(data.size()):
+		var item = data[i]
+		print(item)
+		if not item: continue
+		set_slot(i, ItemInstance.from_json(item))
+	
+	print("Loaded from json", inventory)
+
 func _ready() -> void:
 	inventory.resize(9 * 4)
 	inventory.fill(null)
+	print("Resized and filled")
+	
+	Save.register_handler("inventory", to_json, from_json)
 	
 	Signals.try_pickup_item.connect(add)
 	
@@ -15,7 +34,8 @@ func _ready() -> void:
 		ItemRegistry.get_item_data("dirt"),
 		28,
 	)
-	add(inst)
+	#add(inst)
+	print("Added")
 
 func prioritized_indices() -> Array:
 	# Is it hack....? Maybe..
@@ -47,8 +67,7 @@ func add(item_instance: ItemInstance) -> bool:
 		print(i)
 		
 		# TODO: If we get 128 dirt and dirt only stacks to 64, split into two stacks!!
-		inventory[i] = item_instance
-		Signals.update_inventory_slot.emit(i)
+		set_slot(i, item_instance)
 		return true
 	
 	print("BAD NEWS")
