@@ -9,6 +9,8 @@ func _ready() -> void:
 	inventory.resize(9 * 4)
 	inventory.fill(null)
 	
+	Signals.try_pickup_item.connect(add)
+	
 	var inst = ItemInstance.new(
 		ItemRegistry.get_item_data("dirt"),
 		28,
@@ -19,9 +21,7 @@ func prioritized_indices() -> Array:
 	# Is it hack....? Maybe..
 	return range(HOTBAR_OFFSET, inventory.size()) + range(HOTBAR_OFFSET)
 
-func add(item_instance: ItemInstance) -> void:
-	print(prioritized_indices())
-	
+func add(item_instance: ItemInstance) -> bool:
 	# First try to fill incomplete stacks of the same type
 	for i in prioritized_indices():
 		var item = inventory[i]
@@ -33,7 +33,7 @@ func add(item_instance: ItemInstance) -> void:
 		if item_instance.count <= space_remaining:
 			item.count += item_instance.count
 			Signals.update_inventory_slot.emit(i)
-			return
+			return true
 		
 		# We have more to do.
 		item_instance.count -= space_remaining
@@ -49,6 +49,7 @@ func add(item_instance: ItemInstance) -> void:
 		# TODO: If we get 128 dirt and dirt only stacks to 64, split into two stacks!!
 		inventory[i] = item_instance
 		Signals.update_inventory_slot.emit(i)
-		return
+		return true
 	
 	print("BAD NEWS")
+	return false

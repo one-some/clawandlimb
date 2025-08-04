@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=27 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://dud76iv7grm4b" path="res://resources.gd" id="6_7mycd"]
 [ext_resource type="Script" uid="uid://b55h5ok8v2s5s" path="res://hand.gd" id="6_efxa6"]
 [ext_resource type="PackedScene" uid="uid://0fc3n5w2os8h" path="res://ui.tscn" id="12_dg77c"]
+[ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_5vw27"]
 rayleigh_coefficient = 1.0
@@ -176,6 +177,9 @@ script = ExtResource("6_7mycd")
 [node name="Build" type="Node3D" parent="World"]
 unique_name_in_owner = true
 script = ExtResource("1_ig7tw")
+
+[node name="Items" type="Node3D" parent="World"]
+script = ExtResource("12_ycdy4")
 
 [node name="3DCursor" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true

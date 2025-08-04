@@ -55,6 +55,10 @@ func die():
 	tween.tween_callback(Signals.camera_shake.emit.bind(1.0, self.global_position))
 	tween.tween_interval(1.5)
 	tween.tween_callback(func():
+		Signals.drop_item.emit(
+			ItemInstance.from_name("log", randi_range(3, 6)),
+			self.global_position + Vector3(0, 3, 0)
+		)
 		particles.restart()
 		particles.reparent(self.get_parent())
 		particles.emitting = true
