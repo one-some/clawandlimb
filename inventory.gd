@@ -4,6 +4,7 @@ const SLOT_COUNT = 9 * 4
 const HOTBAR_OFFSET = 9 * 3
 var inventory: Array[ItemInstance] = []
 var cursor_item: ItemInstance = null
+var active_hotbar_index = 0
 
 func set_slot(slot: int, item_instance: ItemInstance) -> void:
 	inventory[slot] = item_instance

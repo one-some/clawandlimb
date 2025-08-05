@@ -3,6 +3,10 @@ extends Node3D
 @onready var sun = $DirectionalLight3D
 var time_seconds = 12 * 60 * 60
 
+func _input(event: InputEvent) -> void:
+	if not Input.is_action_just_pressed("debug"): return
+	Inventory.add(ItemInstance.from_name("wooden_axe"))
+
 func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
 

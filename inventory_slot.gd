@@ -4,12 +4,21 @@ extends Panel
 @onready var count_label = $Count
 var slot_number: int
 var hovering = false
+var style_box: StyleBoxFlat
 
 func _ready() -> void:
 	Signals.update_inventory_slot.connect(func(s):
 		if s != slot_number: return
 		update()
 	)
+	
+	# Pleaaaase dont add heavy resources here but why would you girlllll
+	style_box = self.get_theme_stylebox("panel").duplicate(true)
+	self.add_theme_stylebox_override("panel", style_box)
+
+func set_selected(selected: bool) -> void:
+	print("OK", selected)
+	style_box.border_color = Color.YELLOW if selected else Color("797979")
 
 func set_item(item_instance: ItemInstance) -> void:
 	Inventory.inventory[slot_number] = item_instance

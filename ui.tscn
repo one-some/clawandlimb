@@ -153,7 +153,4 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_ok7cu")
 script = ExtResource("9_ok7cu")
 
-[node name="TextureRect" parent="ItemCursorFollow" index="0"]
-mouse_filter = 2
-
 [editable path="ItemCursorFollow"]

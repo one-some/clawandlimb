@@ -9,3 +9,4 @@ signal tooltip_clear()
 
 signal drop_item(item_instance: ItemInstance, position: Vector3)
 signal try_pickup_item(item_instance: ItemInstance)
+signal change_active_hotbar_slot()
