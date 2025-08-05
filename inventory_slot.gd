@@ -45,7 +45,7 @@ func update() -> void:
 
 func _on_mouse_entered() -> void:
 	hovering = true
-	print("OKAY")
+	style_box.border_color = Color.GREEN
 	
 	var item = get_item()
 	if item:
@@ -54,6 +54,7 @@ func _on_mouse_entered() -> void:
 		Signals.tooltip_clear.emit()
 
 func _on_mouse_exited() -> void:
+	style_box.border_color = Color.DIM_GRAY
 	hovering = false
 	
 	Signals.tooltip_clear.emit()
@@ -79,5 +80,10 @@ func _on_click() -> void:
 
 func _input(event: InputEvent) -> void:
 	if not hovering: return
-	if not Input.is_action_just_pressed("click"): return
+	if event is not InputEventMouseButton: return
+	event = event as InputEventMouseButton
+	if event.button_index != MOUSE_BUTTON_LEFT: return
+	if not event.pressed: return
+	
+	print("Click")
 	_on_click()
