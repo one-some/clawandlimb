@@ -10,6 +10,12 @@ func _init(item_data: ItemData, count: int = 1) -> void:
 	self.item_data = item_data
 	self.count = count
 
+func duplicate() -> ItemInstance:
+	return ItemInstance.new(
+		self.item_data,
+		self.count
+	)
+
 static func from_name(name: String, count: int = 1) -> ItemInstance:
 	var data = ItemRegistry.get_item_data(name)
 	# Holy moly why can't I just call the constructor. Ok i get it but still
@@ -23,4 +29,5 @@ func to_json():
 	}
 
 static func from_json(data) -> ItemInstance:
+	if data["count"] == 0: return null
 	return ItemInstance.from_name(data["name"], data["count"])

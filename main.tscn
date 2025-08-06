@@ -204,6 +204,7 @@ script = ExtResource("12_ycdy4")
 [node name="BuildGrid" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.501, 0)
+visible = false
 mesh = SubResource("PlaneMesh_yaehf")
 skeleton = NodePath("../World")
 

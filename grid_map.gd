@@ -45,8 +45,8 @@ func generate_mesh_library() -> void:
 
 func _ready() -> void:
 	generate_mesh_library()
-	for x in range(100):
-		for z in range(100):
+	for x in range(-100, 100):
+		for z in range(-100, 100):
 			var item = (noise.get_noise_2d(x, z) + 1.0) / 2.0
 			#item = 5.0
 			self.set_cell_item(Vector3(x, 0, z), round(item))

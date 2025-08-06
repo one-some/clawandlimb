@@ -1,18 +1,19 @@
 extends Node3D
 
 @onready var cam = %Camera3D
-@onready var threed_cursor = $"%3DCursor"
+@onready var threed_cursor = %"3DCursor"
+@onready var build_grid = %BuildGrid
 
 const plank = preload("res://tex/tiles/plank.png")
 const WALL_HEIGHT = 3.0
 
-var build_mode = false
 var active_wall = null
 var start_pos = null
 
 func set_build_mode(mode: bool):
-	build_mode = mode
+	State.build_mode = mode
 	threed_cursor.visible = mode
+	build_grid.visible = mode
 	
 	if not mode and active_wall:
 		active_wall["body"].queue_free()
@@ -44,14 +45,14 @@ func _input(event: InputEvent) -> void:
 	if State.active_ui: return
 	
 	if Input.is_action_just_pressed("toggle_build"):
-		set_build_mode(not build_mode)
+		set_build_mode(not State.build_mode)
 		return
 	
-	if build_mode and Input.is_action_just_pressed("cancel"):
+	if State.build_mode and Input.is_action_just_pressed("cancel"):
 		set_build_mode(false)
 		return
 
-	if not build_mode: return
+	if not State.build_mode: return
 
 	if not active_wall:
 		active_wall = {

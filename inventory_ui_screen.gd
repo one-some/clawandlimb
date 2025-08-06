@@ -5,12 +5,17 @@ extends Control
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey: return
-	if not Input.is_action_just_pressed("inventory"): return
 	
 	if State.active_ui and State.active_ui != State.ActiveUI.INVENTORY:
 		return
 	
-	State.active_ui = State.ActiveUI.INVENTORY if not State.active_ui else State.ActiveUI.NONE
+	if Input.is_action_just_pressed("inventory"):
+		State.active_ui = State.ActiveUI.INVENTORY if not State.active_ui else State.ActiveUI.NONE
+	elif Input.is_action_just_pressed("esc"):
+		State.active_ui = State.ActiveUI.NONE
+	else:
+		return
+	
 	var open = State.active_ui == State.ActiveUI.INVENTORY
 	crafting_ui.visible = open
 	

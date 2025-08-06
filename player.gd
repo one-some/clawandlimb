@@ -1,8 +1,33 @@
 extends CharacterBody3D
 
 @onready var cam = $"../Camera3D"
-@onready var build = %Build
 const ITEM_MAX_RANGE = 2.0
+
+func _input(event: InputEvent) -> void:
+	if event is not InputEventKey: return
+	if State.build_mode: return
+	if not Input.is_action_just_pressed("drop"): return
+	
+	var item = Inventory.inventory[Inventory.active_hotbar_index]
+	if not item: return
+	
+	# I did this math off the top of my head without a reference and im so proud :D I love you JAMIE!!!
+	# He's not related to this math I just am away on a trip and I miss him
+	# Also if anybody's looking ya this is  was a piece of cake
+	var angle = -(self.rotation.y - (PI / 2))
+	var rot_angle = Vector3(cos(angle), 0.0, sin(angle))
+	var target_pos = global_position + (rot_angle * 2.5)
+	
+	var drop_inst = item.duplicate()
+	drop_inst.count = 1
+	
+	item.count -= drop_inst.count
+	if item.count <= 0:
+		Inventory.set_slot(Inventory.active_hotbar_index, null)
+	else:
+		Inventory.set_slot(Inventory.active_hotbar_index, item)
+	
+	Signals.drop_item.emit(drop_inst, target_pos)
 
 func attract_items() -> void:
 	for item3d: Item3D in get_tree().get_nodes_in_group("Item"):
@@ -22,7 +47,7 @@ func _physics_process(delta: float) -> void:
 	attract_items()
 	
 	if State.active_ui: return
-	if build.build_mode: return
+	if State.build_mode: return
 	
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
 	

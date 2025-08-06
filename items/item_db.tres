@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dkutpsydk3bws" path="res://tex/tiles/dirt.png" id="2_vybfs"]
 [ext_resource type="Texture2D" uid="uid://dyrry2pibnelp" path="res://tex/tiles/log.png" id="3_svh26"]
 [ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/plank.png" id="4_bknbh"]
-[ext_resource type="Texture2D" uid="uid://c3yfam1kgeraf" path="res://tex/axe.jpg" id="5_bknbh"]
+[ext_resource type="Texture2D" uid="uid://bawjvdcsmpdir" path="res://tex/axe.png" id="5_bknbh"]
 
 [sub_resource type="Resource" id="Resource_svh26"]
 script = ExtResource("1_86lrn")

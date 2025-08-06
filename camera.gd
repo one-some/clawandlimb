@@ -3,7 +3,6 @@ extends Camera3D
 @onready var player = $"../Player"
 @onready var threed_cursor = %"3DCursor"
 @onready var build_grid = %BuildGrid
-@onready var build = %Build
 
 var target_pole = Vector3(0.0, 2.0, 0.0)
 var angle_around_point = 0.0
@@ -30,7 +29,7 @@ func update_camera() -> void:
 func _physics_process(delta: float) -> void:
 	if State.active_ui: return
 	
-	if build.build_mode:
+	if State.build_mode:
 		do_freecam_process(delta)
 	else:
 		do_player_cam_process(delta)
@@ -59,8 +58,9 @@ func do_freecam_process(delta: float):
 		forward = forward.normalized()
 		right.normalized()
 		
+		var speed_multiplier = 3.0 if Input.is_action_pressed("faster") else 1.0
 		var move_dir = (forward * input_dir.y) + (right * input_dir.x)
-		target_pole += move_dir * delta * distance_from_pole
+		target_pole += move_dir * delta * distance_from_pole * speed_multiplier
 	
 	var space_state = get_world_3d().direct_space_state
 

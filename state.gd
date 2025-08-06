@@ -5,3 +5,4 @@ enum ActiveUI {
 	INVENTORY
 }
 var active_ui: ActiveUI = ActiveUI.NONE
+var build_mode = false
