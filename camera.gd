@@ -1,7 +1,8 @@
 extends Camera3D
 
 @onready var player = $"../Player"
-@onready var threed_cursor = $"../3DCursor"
+@onready var threed_cursor = %"3DCursor"
+@onready var build_grid = %BuildGrid
 @onready var build = %Build
 
 var target_pole = Vector3(0.0, 2.0, 0.0)
@@ -77,6 +78,12 @@ func do_freecam_process(delta: float):
 		pos.x = round(pos.x)
 		pos.z = round(pos.z)
 		threed_cursor.global_position = pos
+		build_grid.global_position = Vector3(
+			pos.x,
+			0.51,
+			pos.z
+		)
+		((build_grid.mesh as PlaneMesh).material as ShaderMaterial).set_shader_parameter("pointer", Vector2(pos.x, pos.z))
 
 func do_player_cam_process(delta: float):
 	target_pole = target_pole.lerp(player.global_position, 0.4)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=31 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://c7imyrbfwguwo" path="res://equipable_item.gd" id="8_w48qg"]
 [ext_resource type="PackedScene" uid="uid://0fc3n5w2os8h" path="res://ui.tscn" id="12_dg77c"]
 [ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
+[ext_resource type="Shader" uid="uid://deusiyboy5f8r" path="res://grid.gdshader" id="14_vivmo"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_5vw27"]
 rayleigh_coefficient = 1.0
@@ -97,6 +98,19 @@ _data = {
 sample_partition_type = 1
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_kek77"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2cqfq"]
+render_priority = 0
+shader = ExtResource("14_vivmo")
+shader_parameter/gridlineOnEvery = 1.0
+shader_parameter/lineThickness = 0.05
+shader_parameter/originOffset = Vector2(0, 0)
+shader_parameter/color = Color(1, 1, 1, 0.298039)
+shader_parameter/pointer = Vector2(0, 0)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_yaehf"]
+material = SubResource("ShaderMaterial_2cqfq")
+size = Vector2(24, 24)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mycd"]
 transparency = 1
@@ -186,6 +200,12 @@ script = ExtResource("1_ig7tw")
 
 [node name="Items" type="Node3D" parent="World"]
 script = ExtResource("12_ycdy4")
+
+[node name="BuildGrid" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.501, 0)
+mesh = SubResource("PlaneMesh_yaehf")
+skeleton = NodePath("../World")
 
 [node name="3DCursor" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true

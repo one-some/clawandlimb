@@ -1,10 +1,13 @@
-[gd_scene load_steps=17 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=20 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
 [ext_resource type="FontFile" uid="uid://dq2o1ux1rufks" path="res://Cavalhatriz.ttf" id="2_27fn8"]
 [ext_resource type="Script" uid="uid://vthan8fooxnk" path="res://inventory_ui.gd" id="3_27fn8"]
+[ext_resource type="Script" uid="uid://de8mgutmep43g" path="res://inventory_ui_screen.gd" id="4_n5rqp"]
+[ext_resource type="Script" uid="uid://q7g2r04wynfy" path="res://crafting.gd" id="5_e2l4f"]
 [ext_resource type="Script" uid="uid://blnanm6qmbjfj" path="res://item_tooltip.gd" id="5_ibotj"]
+[ext_resource type="PackedScene" uid="uid://tbx2gvjwcyyv" path="res://crafting_entry.tscn" id="6_n5rqp"]
 [ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="6_y4yjw"]
 [ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="7_waa4j"]
 [ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
@@ -103,7 +106,16 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_nltto")
 script = ExtResource("1_nltto")
 
-[node name="Inventory" type="GridContainer" parent="."]
+[node name="InventoryUIScreen" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_n5rqp")
+
+[node name="Inventory" type="GridContainer" parent="InventoryUIScreen"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -116,6 +128,30 @@ grow_vertical = 0
 pivot_offset = Vector2(0, 64)
 columns = 9
 script = ExtResource("3_27fn8")
+
+[node name="Crafting" type="ScrollContainer" parent="InventoryUIScreen"]
+visible = false
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -305.0
+offset_right = -22.0
+offset_bottom = -19.0
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("5_e2l4f")
+
+[node name="CraftingList" type="VBoxContainer" parent="InventoryUIScreen/Crafting"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+alignment = 2
+
+[node name="CraftingEntry" parent="InventoryUIScreen/Crafting/CraftingList" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
 
 [node name="ItemTooltip" type="PanelContainer" parent="."]
 visible = false

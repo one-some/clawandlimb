@@ -4,6 +4,7 @@ extends Panel
 @onready var count_label = $Count
 var slot_number: int
 var hovering = false
+var selected = false
 var style_box: StyleBoxFlat
 
 func _ready() -> void:
@@ -17,7 +18,7 @@ func _ready() -> void:
 	self.add_theme_stylebox_override("panel", style_box)
 
 func set_selected(selected: bool) -> void:
-	print("OK", selected)
+	self.selected = selected
 	style_box.border_color = Color.YELLOW if selected else Color("797979")
 
 func set_item(item_instance: ItemInstance) -> void:
@@ -45,7 +46,7 @@ func update() -> void:
 
 func _on_mouse_entered() -> void:
 	hovering = true
-	style_box.border_color = Color.GREEN
+	style_box.border_color = Color.WHITE
 	
 	var item = get_item()
 	if item:
@@ -54,7 +55,7 @@ func _on_mouse_entered() -> void:
 		Signals.tooltip_clear.emit()
 
 func _on_mouse_exited() -> void:
-	style_box.border_color = Color.DIM_GRAY
+	style_box.border_color = Color.YELLOW if selected else Color("797979")
 	hovering = false
 	
 	Signals.tooltip_clear.emit()
@@ -85,5 +86,4 @@ func _input(event: InputEvent) -> void:
 	if event.button_index != MOUSE_BUTTON_LEFT: return
 	if not event.pressed: return
 	
-	print("Click")
 	_on_click()
