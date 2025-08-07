@@ -26,6 +26,7 @@ Save="*res://save.gd"
 
 [display]
 
+window/stretch/mode="canvas_items"
 window/vsync/vsync_mode=3
 
 [global_group]

@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
-[ext_resource type="PackedScene" uid="uid://bqha05wdb4hvk" path="res://zombie.tscn" id="2_5vw27"]
 [ext_resource type="Script" uid="uid://dmjjygs0kqee" path="res://grid_map.gd" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
 [ext_resource type="Script" uid="uid://cwuwe30qn7rkj" path="res://world.gd" id="4_272bh"]
@@ -15,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://0fc3n5w2os8h" path="res://ui.tscn" id="12_dg77c"]
 [ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
 [ext_resource type="Shader" uid="uid://deusiyboy5f8r" path="res://grid.gdshader" id="14_vivmo"]
+[ext_resource type="Script" uid="uid://bx3ft4mal7bir" path="res://enemies.gd" id="15_2cqfq"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_5vw27"]
 rayleigh_coefficient = 1.0
@@ -137,12 +137,8 @@ environment = SubResource("Environment_lquwl")
 transform = Transform3D(1, 0, 0, 0, -0.412755, 0.910842, 0, -0.910842, -0.412755, 0, 0, 0)
 shadow_enabled = true
 
-[node name="Zombie" parent="." node_paths=PackedStringArray("nav_region", "target") instance=ExtResource("2_5vw27")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.6725, 4.55743, 15.0373)
-nav_region = NodePath("../World")
-target = NodePath("../Player")
-
 [node name="Player" type="CharacterBody3D" parent="."]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.07693, 4.53789, 6.3614)
 script = ExtResource("4_1bvp3")
 
@@ -213,6 +209,14 @@ unique_name_in_owner = true
 material_override = SubResource("StandardMaterial3D_7mycd")
 mesh = SubResource("SphereMesh_272bh")
 
+[node name="Enemies" type="Node3D" parent="."]
+script = ExtResource("15_2cqfq")
+
+[node name="SpawnTimer" type="Timer" parent="Enemies"]
+autostart = true
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="UI" parent="CanvasLayer" instance=ExtResource("12_dg77c")]
+
+[connection signal="timeout" from="Enemies/SpawnTimer" to="Enemies" method="_on_spawn_timer_timeout"]

@@ -7,20 +7,22 @@ func _input(event: InputEvent) -> void:
 	if not Input.is_action_just_pressed("debug"): return
 	Inventory.add(ItemInstance.from_name("wooden_axe"))
 
+func get_day_hour() -> float:
+	return fmod(time_seconds / 60.0 / 60.0, 24.0)
+
+func is_night() -> bool:
+	var hours = get_day_hour()
+	return hours <= 4.0 or hours >= 16.0
+
 func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
 
 func _process(delta: float) -> void:
-	time_seconds += 2.0
+	time_seconds += 14.0
 	
-	var hours = fmod(time_seconds / 60.0 / 60.0, 24.0)
+	var hours = get_day_hour()
 	var sun_norm = fmod(hours + 8, 24.0) / 24.0
 	sun.rotation.x = sun_norm * 2 * PI
-	
-	var bad_guys_work = hours > 20 and hours < 8
-	for guy in get_tree().get_nodes_in_group("Enemy"):
-		guy.process_mode = PROCESS_MODE_INHERIT if bad_guys_work else PROCESS_MODE_DISABLED
-		guy.visible = bad_guys_work
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
