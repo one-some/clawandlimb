@@ -16,27 +16,16 @@ func to_json() -> Variant:
 func from_json(data):
 	for i in range(data.size()):
 		var item = data[i]
-		print(item)
 		if not item: continue
 		set_slot(i, ItemInstance.from_json(item))
-	
-	print("Loaded from json", inventory)
 
 func _ready() -> void:
 	inventory.resize(9 * 4)
 	inventory.fill(null)
-	print("Resized and filled")
 	
 	Save.register_handler("inventory", to_json, from_json)
 	
 	Signals.try_pickup_item.connect(add)
-	
-	var inst = ItemInstance.new(
-		ItemRegistry.get_item_data("dirt"),
-		28,
-	)
-	#add(inst)
-	print("Added")
 
 func prioritized_indices() -> Array:
 	# Is it hack....? Maybe..
@@ -65,7 +54,6 @@ func add(item_instance: ItemInstance) -> bool:
 	for i in prioritized_indices():
 		var item = inventory[i]
 		if item: continue
-		print(i)
 		
 		# TODO: If we get 128 dirt and dirt only stacks to 64, split into two stacks!!
 		set_slot(i, item_instance)

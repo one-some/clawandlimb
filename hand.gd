@@ -41,5 +41,8 @@ func _at_mid_swing():
 
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
-	if not Input.is_action_just_pressed("click"): return
+	
+	if event is not InputEventMouseButton: return
+	if not event.pressed: return
+	if event.button_index != MOUSE_BUTTON_LEFT: return
 	swing()

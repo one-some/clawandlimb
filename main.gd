@@ -4,6 +4,7 @@ extends Node3D
 var time_seconds = 12 * 60 * 60
 
 func _input(event: InputEvent) -> void:
+	if not event is InputEventKey: return
 	if not Input.is_action_just_pressed("debug"): return
 	Inventory.add(ItemInstance.from_name("wooden_axe"))
 

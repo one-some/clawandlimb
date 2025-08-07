@@ -1,3 +1,4 @@
+@warning_ignore_start("unused_signal")
 extends Node
 
 signal camera_shake(strength: float, origin: Vector3)

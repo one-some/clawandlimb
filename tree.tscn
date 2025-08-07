@@ -25,7 +25,7 @@ turbulence_noise_scale = 2.49
 material = ExtResource("3_gvmkm")
 size = Vector2(0.2, 0.2)
 
-[node name="Tree" type="StaticBody3D"]
+[node name="Tree" type="StaticBody3D" groups=["NavigationObstacle"]]
 script = ExtResource("1_nnvrw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

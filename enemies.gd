@@ -7,19 +7,18 @@ const Zombie = preload("res://zombie.tscn")
 const MAX_ENEMIES = 12
 
 func _on_spawn_timer_timeout() -> void:
-	print("yo")
 	timer.wait_time = randf_range(5.0, 16.0)
 	try_spawn()
 
 func get_enemies() -> Array:
 	return get_tree().get_nodes_in_group("Enemy")
 
-func spawn_zombie(pos: Vector3) -> void:
+func spawn_zombie(pos: Vector3) -> CharacterBody3D:
 	var zombie = Zombie.instantiate()
-	zombie.nav_region = $"../World"
 	zombie.target = player
 	self.add_child(zombie)
 	zombie.global_position = pos
+	return zombie
 
 func random_horde_origin_position() -> Vector3:
 	# Awesome math idea i just had. Pls dont laugh.
@@ -33,15 +32,14 @@ func random_horde_origin_position() -> Vector3:
 	pos.z += r * sin(theta)
 	return pos
 
-func position_within_range_of_nodes_in_array(pos: Vector3, nodes: Array, range: float = 1.5) -> bool:
+func position_within_range_of_nodes_in_array(pos: Vector3, nodes: Array, node_range: float = 1.5) -> bool:
 	for node in nodes:
-		if node.global_position.distance_to(pos) <= range:
+		if node.global_position.distance_to(pos) <= node_range:
 			return true
 	return false
 
 func try_spawn() -> void:
 	if not root.is_night():
-		print("Not night")
 		return
 	
 	var enemies = get_enemies()
@@ -64,5 +62,6 @@ func try_spawn() -> void:
 				continue
 			
 			# Okayyyyyyy
-			spawn_zombie(pos)
+			var zombie = spawn_zombie(pos)
+			enemies.append(zombie)
 			break

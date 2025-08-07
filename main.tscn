@@ -94,10 +94,9 @@ _data = {
 &"RESET": SubResource("Animation_efxa6")
 }
 
-[sub_resource type="NavigationMesh" id="NavigationMesh_272bh"]
-sample_partition_type = 1
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vivmo"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_kek77"]
+[sub_resource type="NavigationMesh" id="NavigationMesh_vivmo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2cqfq"]
 render_priority = 0
@@ -176,16 +175,15 @@ metadata/_custom_type_script = "uid://c7imyrbfwguwo"
 
 [node name="Model" parent="Player/Hand/WoodenAxe" instance=ExtResource("6_4c57u")]
 
-[node name="World" type="NavigationRegion3D" parent="."]
+[node name="World" type="Node3D" parent="."]
 unique_name_in_owner = true
-navigation_mesh = SubResource("NavigationMesh_272bh")
 script = ExtResource("4_272bh")
+noise = SubResource("FastNoiseLite_vivmo")
 
-[node name="GridMap" type="GridMap" parent="World"]
+[node name="GridMap" type="GridMap" parent="World" groups=["NavigationObstacle"]]
 cell_size = Vector3(1, 1, 1)
 collision_layer = 17
 script = ExtResource("3_h2yge")
-noise = SubResource("FastNoiseLite_kek77")
 
 [node name="Resources" type="Node3D" parent="World"]
 script = ExtResource("6_7mycd")
@@ -196,6 +194,11 @@ script = ExtResource("1_ig7tw")
 
 [node name="Items" type="Node3D" parent="World"]
 script = ExtResource("12_ycdy4")
+
+[node name="Navigation" type="Node3D" parent="World"]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="World"]
+navigation_mesh = SubResource("NavigationMesh_vivmo")
 
 [node name="BuildGrid" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
