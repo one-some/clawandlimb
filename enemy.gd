@@ -1,29 +1,28 @@
 extends CharacterBody3D
 
-@export var target: Node3D
-@onready var agent = $NavigationAgent3D
+@onready var target = get_tree().get_first_node_in_group("Player")
+@onready var attack_timer = $"AttackCooldownTimer"
+var can_attack = true
+const CLOSE_ENOUGH = 0.8
 
-func vec3_to_xz(vec: Vector3) -> Vector2:
-	return Vector2(vec.x, vec.z)
+func _ready() -> void:
+	attack_timer.timeout.connect(func(): can_attack = true)
 
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
+	if not self.is_on_floor():
 		self.velocity.y -= 14.0 * delta
-	
-	agent.target_position = target.global_position
-	
-	var xz_vel = Vector2.ZERO
-	var path_pos = agent.get_next_path_position()
-	
-	if not agent.is_navigation_finished():
-		var next_pos = vec3_to_xz(path_pos)
-		xz_vel = vec3_to_xz(self.global_position).direction_to(next_pos) * 4.0
-	agent.velocity = Vector3(xz_vel.x, 0.0, xz_vel.y)
-		
 	self.move_and_slide()
 	
+	try_attack()
 
+func attack() -> void:
+	if not can_attack: return
+	can_attack = false
+	attack_timer.start()
+	
+	target.alter_health(-randi_range(10, 15))
 
-func _on_navigation_agent_3d_velocity_computed(safe_velocity: Vector3) -> void:
-	self.velocity.x = safe_velocity.x
-	self.velocity.z = safe_velocity.z
+func try_attack() -> void:
+	if not can_attack: return
+	if self.global_position.distance_to(target.global_position) > CLOSE_ENOUGH: return
+	attack()

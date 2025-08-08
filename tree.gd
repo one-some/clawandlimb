@@ -1,24 +1,21 @@
 extends StaticBody3D
 
-@export var health = 7.0
+var combat = CombatRecipient.new("Tree", 7.0)
 @onready var particles: GPUParticles3D = $GPUParticles3D
+
+func _ready():
+	combat.took_damage.connect(_on_took_damage)
+	combat.died.connect(_on_died)
 
 func drop_leaves(n: int) -> void:
 	for _i in range(n):
 		particles.emit_particle(Transform3D.IDENTITY, Vector3.ZERO, Color.WHITE, Color.WHITE, 0)
 
-func take_damage(damage: float) -> void:
-	if not health: return
-	
-	# the axeman comes swift ...
-	health = max(0.0, health - damage)
-	print(health)
-	
-	# leaves falling from autumn trees ...
+func _on_took_damage(damage: float) -> void:
 	drop_leaves(randi_range(1, 7))
+	
 	Signals.camera_shake.emit(0.05, self.global_position)
 	
-	# shuddering willows.
 	var tween = create_tween().set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 	var key = "rotation_degrees:" + ["x", "z"].pick_random()
 	tween.tween_property(
@@ -29,13 +26,8 @@ func take_damage(damage: float) -> void:
 	)
 	tween.tween_property(self, key, 0.0, 0.1)
 	tween.play()
-	
-	if not health:
-		die()
 
-func die():
-	if health: return
-	
+func _on_died():
 	$CollisionShape3D.disabled = true
 	
 	particles.lifetime = 6.0
@@ -64,7 +56,4 @@ func die():
 		particles.emitting = true
 		self.queue_free.call_deferred()
 	)
-	#tween.tween_callback(func(): self.visible = false)
-	
-	
 	tween.play()

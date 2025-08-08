@@ -1,7 +1,7 @@
 extends GridContainer
 
 const slot_scene = preload("res://inventory_slot.tscn")
-var slots  = []
+var slots = []
 
 func _ready() -> void:
 	await get_tree().current_scene.ready

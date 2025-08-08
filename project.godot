@@ -38,6 +38,7 @@ window/vsync/vsync_mode=3
 Enemy=""
 Item=""
 NavigationObstacle=""
+Player=""
 
 [input]
 

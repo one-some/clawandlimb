@@ -78,11 +78,7 @@ func do_freecam_process(delta: float):
 		pos.x = round(pos.x)
 		pos.z = round(pos.z)
 		threed_cursor.global_position = pos
-		build_grid.global_position = Vector3(
-			pos.x,
-			0.51,
-			pos.z
-		)
+		build_grid.global_position = pos + Vector3(0, 0.1, 0)
 		((build_grid.mesh as PlaneMesh).material as ShaderMaterial).set_shader_parameter("pointer", Vector2(pos.x, pos.z))
 
 func do_player_cam_process(delta: float):

@@ -3,6 +3,17 @@ extends CharacterBody3D
 @onready var cam = $"../Camera3D"
 const ITEM_MAX_RANGE = 2.0
 
+var health = 100.0
+var max_health = 100.0
+
+func _ready() -> void:
+	await get_tree().process_frame
+	alter_health(0.0)
+
+func alter_health(delta: float) -> void:
+	health = clamp(health + delta, 0.0, max_health)
+	Signals.change_player_health.emit(health, max_health)
+
 func _input(event: InputEvent) -> void:
 	if event is not InputEventKey: return
 	if State.build_mode: return

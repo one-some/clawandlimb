@@ -1,9 +1,10 @@
-[gd_scene load_steps=20 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=25 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
 [ext_resource type="FontFile" uid="uid://dq2o1ux1rufks" path="res://Cavalhatriz.ttf" id="2_27fn8"]
 [ext_resource type="Script" uid="uid://vthan8fooxnk" path="res://inventory_ui.gd" id="3_27fn8"]
+[ext_resource type="Script" uid="uid://dnqn4e4idg1ce" path="res://waila.gd" id="3_gs482"]
 [ext_resource type="Script" uid="uid://de8mgutmep43g" path="res://inventory_ui_screen.gd" id="4_n5rqp"]
 [ext_resource type="Script" uid="uid://q7g2r04wynfy" path="res://crafting.gd" id="5_e2l4f"]
 [ext_resource type="Script" uid="uid://blnanm6qmbjfj" path="res://item_tooltip.gd" id="5_ibotj"]
@@ -30,6 +31,30 @@ border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0.8, 0.8, 0.8, 0)
 anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n5rqp"]
+bg_color = Color(0.172549, 0.172549, 0.172549, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_n5rqp"]
+font = ExtResource("7_waa4j")
+font_size = 20
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 2
+shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gs482"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cxd00"]
+bg_color = Color(0.408854, 0.408854, 0.408854, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nltto"]
 bg_color = Color(0, 0, 0, 0.776471)
@@ -94,6 +119,49 @@ theme_override_styles/background = SubResource("StyleBoxFlat_xb563")
 theme_override_styles/fill = SubResource("StyleBoxFlat_fyqef")
 value = 11.0
 rounded = true
+
+[node name="WAILA" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -52.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_n5rqp")
+script = ExtResource("3_gs482")
+
+[node name="Label" type="Label" parent="WAILA"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -23.0
+offset_top = 5.0
+offset_right = 23.0
+offset_bottom = 28.0
+grow_horizontal = 2
+text = "Tree"
+label_settings = SubResource("LabelSettings_n5rqp")
+
+[node name="ProgressBar" type="ProgressBar" parent="WAILA"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 10
+theme_override_styles/background = SubResource("StyleBoxEmpty_gs482")
+theme_override_styles/fill = SubResource("StyleBoxFlat_cxd00")
+value = 40.0
 
 [node name="BackBlur" type="Panel" parent="."]
 visible = false

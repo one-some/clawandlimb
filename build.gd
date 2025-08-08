@@ -5,8 +5,7 @@ extends Node3D
 @onready var world = $".."
 @onready var build_grid = %BuildGrid
 
-const plank = preload("res://tex/tiles/plank.png")
-const WALL_HEIGHT = 3.0
+const Constructable = preload("res://constructable.tscn")
 
 var active_wall = null
 var start_pos = null
@@ -36,11 +35,14 @@ func set_build_mode(mode: bool):
 	build_grid.visible = mode
 	
 	if not mode and active_wall:
-		active_wall["body"].queue_free()
+		active_wall.queue_free()
 		start_pos = null
 		active_wall = null
 
 func commit_wall() -> void:
+	if not active_wall:
+		return
+	
 	# Committing the wall
 	var end_pos = snapped_cursor_position()
 	var int_end_pos = vec_floor_div(Vector2i(
@@ -62,58 +64,27 @@ func commit_wall() -> void:
 		await world.update_chunk_collision(coord)
 	
 	# Finish up materialization of wall
-	active_wall["mesh"].mesh.material.albedo_color = Color.WHITE
-	active_wall["mesh"].mesh.material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+	active_wall.finalize()
+	print("WE DOne")
 	active_wall = null
 	
 	# If u wanna continue girl.
 	start_pos = end_pos
 
-func setup_wall() -> void:
-	active_wall = {
-		"body": StaticBody3D.new(),
-		"mesh": MeshInstance3D.new(),
-		"shape": CollisionShape3D.new(),
-	}
-	
-	active_wall["body"].add_to_group("NavigationObstacle")
-	
-	active_wall["body"].add_child(active_wall["mesh"])
-	active_wall["body"].add_child(active_wall["shape"])
-	active_wall["mesh"].mesh = BoxMesh.new()
-	active_wall["shape"].shape = BoxShape3D.new()
-	
-	var mat = StandardMaterial3D.new()
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.albedo_color = Color(Color.WHITE, 0.5)
-	mat.albedo_texture = plank
-	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	mat.texture_repeat = true
-	active_wall["mesh"].mesh.material = mat
-	
-	self.add_child(active_wall["body"])
-
 func update_building() -> void:
 	if not State.build_mode: return
 	
 	if not active_wall:
-		setup_wall()
+		print("We make a new one")
+		active_wall = Constructable.instantiate()
+		self.add_child(active_wall)
 		
-	var new_pos = snapped_cursor_position()
+	var end_pos = snapped_cursor_position()
 	
-	if not start_pos or start_pos == new_pos:
+	if not start_pos or start_pos == end_pos:
 		return
 	
-	var mesh = active_wall["mesh"]
-	mesh.mesh.size = Vector3(0.3, WALL_HEIGHT, start_pos.distance_to(new_pos))
-	mesh.mesh.material.uv1_scale = Vector3(mesh.mesh.size.z, mesh.mesh.size.y, 1) * 3.0
-	
-	active_wall["shape"].shape.size = mesh.mesh.size
-	active_wall["body"].position = (new_pos + start_pos) / 2
-	if not active_wall["body"].global_position.is_equal_approx(new_pos):
-		active_wall["body"].look_at(new_pos)
-	
-	active_wall["body"].position.y = WALL_HEIGHT / 2.0
+	active_wall.update_points(start_pos, end_pos)
 
 func _process(delta: float) -> void:
 	update_building()

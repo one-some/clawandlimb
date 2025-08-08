@@ -18,6 +18,7 @@ func from_json(data):
 		var item = data[i]
 		if not item: continue
 		set_slot(i, ItemInstance.from_json(item))
+	Signals.change_active_hotbar_slot.emit()
 
 func _ready() -> void:
 	inventory.resize(9 * 4)
