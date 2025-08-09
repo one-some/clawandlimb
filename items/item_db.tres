@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemDBResource" load_steps=11 format=3 uid="uid://bj4bibmitv8ra"]
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=12 format=3 uid="uid://bj4bibmitv8ra"]
 
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
 [ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
@@ -39,12 +39,21 @@ texture = ExtResource("5_bknbh")
 max_stack = 1
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
+[sub_resource type="Resource" id="Resource_bknbh"]
+script = ExtResource("1_86lrn")
+item_name = "Wooden Wall"
+description = "Use this to defend yourself from monsters! Press 'B' to enter Build Mode!"
+texture = ExtResource("4_bknbh")
+max_stack = 64
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
 [resource]
 script = ExtResource("2_216it")
 items = Dictionary[String, ExtResource("1_86lrn")]({
 "dirt": SubResource("Resource_svh26"),
 "log": SubResource("Resource_pnd04"),
 "planks": SubResource("Resource_w5gng"),
-"wooden_axe": SubResource("Resource_vqtxk")
+"wooden_axe": SubResource("Resource_vqtxk"),
+"wooden_wall": SubResource("Resource_bknbh")
 })
 metadata/_custom_type_script = "uid://bstmf2q2vsph2"

@@ -7,7 +7,7 @@ var was_night = false
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey: return
 	if not Input.is_action_just_pressed("debug"): return
-	Inventory.add(ItemInstance.from_name("wooden_axe"))
+	Inventory.add(ItemInstance.from_name("wooden_wall", 11))
 
 func get_day_hour() -> float:
 	return fmod(time_seconds / 60.0 / 60.0, 24.0)

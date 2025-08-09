@@ -280,6 +280,7 @@ text = "It's just a dirt block."
 label_settings = SubResource("LabelSettings_ok7cu")
 
 [node name="ItemCursorFollow" parent="." instance=ExtResource("8_waa4j")]
+visible = false
 layout_mode = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_ok7cu")
