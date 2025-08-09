@@ -15,8 +15,11 @@ func _physics_process(delta: float) -> void:
 
 func _on_change_entity_health(
 	combat: CombatRecipient,
+	origin: CombatRecipient.DamageOrigin,
 	og_health: float
 ) -> void:
+	if origin != CombatRecipient.DamageOrigin.PLAYER: return
+
 	label.text = combat.name
 	fade_timer = FADE_TIMER_MAX
 	

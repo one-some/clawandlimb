@@ -2,7 +2,8 @@ extends Node
 
 enum ActiveUI {
 	NONE = 0,
-	INVENTORY
+	INVENTORY,
+	DEAD
 }
 var active_ui: ActiveUI = ActiveUI.NONE
 var build_mode = false

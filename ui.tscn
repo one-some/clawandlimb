@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=31 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
@@ -13,6 +13,8 @@
 [ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="7_waa4j"]
 [ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
 [ext_resource type="Script" uid="uid://dxhdvcip00ldd" path="res://item_cursor_follow.gd" id="9_ok7cu"]
+[ext_resource type="Script" uid="uid://dsmi4iviuvgnt" path="res://dead.gd" id="14_cxd00"]
+[ext_resource type="StyleBox" uid="uid://c3rj870jxqmdi" path="res://deadly_box_who_wants_it.tres" id="15_etlur"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xb563"]
 bg_color = Color(0.171875, 0.171875, 0.171875, 1)
@@ -86,6 +88,17 @@ font_size = 30
 font_color = Color(1, 1, 1, 0.364706)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ok7cu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gs482"]
+bg_color = Color(0.820312, 0, 0, 0.839216)
+
+[sub_resource type="LabelSettings" id="LabelSettings_cxd00"]
+font = ExtResource("6_y4yjw")
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_etlur"]
+font = ExtResource("7_waa4j")
+font_size = 30
 
 [node name="UI" type="Control"]
 layout_mode = 3
@@ -271,5 +284,62 @@ layout_mode = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_ok7cu")
 script = ExtResource("9_ok7cu")
+
+[node name="Dead" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gs482")
+script = ExtResource("14_cxd00")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Dead"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -273.0
+offset_top = -129.0
+offset_right = 273.0
+offset_bottom = 129.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 65
+
+[node name="YouDiedSister" type="Label" parent="Dead/VBoxContainer"]
+layout_mode = 2
+text = "R.I.P.... U have died"
+label_settings = SubResource("LabelSettings_cxd00")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="YouDiedSister2" type="Label" parent="Dead/VBoxContainer"]
+layout_mode = 2
+text = "You can respawn or close the game"
+label_settings = SubResource("LabelSettings_etlur")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Dead/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_constants/outline_size = 18
+theme_override_fonts/font = ExtResource("6_y4yjw")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/focus = ExtResource("15_etlur")
+theme_override_styles/hover = ExtResource("15_etlur")
+theme_override_styles/pressed = ExtResource("15_etlur")
+theme_override_styles/normal = ExtResource("15_etlur")
+text = "RESPAWN"
+
+[connection signal="pressed" from="Dead/VBoxContainer/Button" to="Dead" method="_on_button_pressed"]
 
 [editable path="ItemCursorFollow"]

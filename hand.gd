@@ -46,7 +46,7 @@ func _at_mid_swing():
 	for i in range(interact_cast.get_collision_count()):
 		var collider = interact_cast.get_collider(i)
 		if "combat" not in collider: continue
-		collider.combat.take_damage(2)
+		collider.combat.take_damage(CombatRecipient.DamageOrigin.PLAYER, 2.0)
 		break
 
 func _input(event: InputEvent) -> void:

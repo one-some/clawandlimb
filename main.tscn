@@ -159,6 +159,7 @@ texture = ExtResource("5_lquwl")
 [node name="ShapeCast3D" type="ShapeCast3D" parent="Player"]
 shape = SubResource("BoxShape3D_7mycd")
 target_position = Vector3(0, 0, 1)
+collision_mask = 3
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Player"]
 libraries = {

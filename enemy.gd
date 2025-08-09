@@ -22,7 +22,7 @@ func attack() -> void:
 	can_attack = false
 	attack_timer.start()
 	
-	target.alter_health(-randi_range(10, 15))
+	target.combat.take_damage(CombatRecipient.DamageOrigin.ENEMY, randi_range(10, 15))
 
 func try_attack() -> void:
 	if not can_attack: return

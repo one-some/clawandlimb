@@ -1,18 +1,32 @@
 extends CharacterBody3D
 
+@onready var og_transform = self.global_transform
 @onready var cam = $"../Camera3D"
 const ITEM_MAX_RANGE = 2.0
 
-var health = 100.0
-var max_health = 100.0
+var combat = CombatRecipient.new("Claire", 100.0)
 
 func _ready() -> void:
 	await get_tree().process_frame
-	alter_health(0.0)
+	
+	combat.died.connect(die)
+	combat.took_damage.connect(func(_dmg): Signals.change_player_health.emit(combat))
+	# Propagate stuff first
+	combat.take_damage(CombatRecipient.DamageOrigin.GOD, 0.0)
+	
+	Signals.player_respawn_requested.connect(respawn)
 
-func alter_health(delta: float) -> void:
-	health = clamp(health + delta, 0.0, max_health)
-	Signals.change_player_health.emit(health, max_health)
+func respawn() -> void:
+	combat.reset()
+	self.rotation_degrees.z = 0.0
+	self.global_transform = self.og_transform
+
+func die() -> void:
+	Signals.player_died.emit()
+	
+	var tween = create_tween()
+	tween.tween_property(self, "rotation_degrees:z", 90.0, 1.0)
+	tween.play()
 
 func _input(event: InputEvent) -> void:
 	if event is not InputEventKey: return
