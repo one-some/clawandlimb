@@ -3,6 +3,7 @@ extends Camera3D
 @onready var player = $"../Player"
 @onready var threed_cursor = %"3DCursor"
 @onready var build_grid = %BuildGrid
+@onready var spring_cast = $SpringCast
 
 var target_pole = Vector3(0.0, 2.0, 0.0)
 var angle_around_point = 0.0
@@ -21,9 +22,20 @@ func update_camera() -> void:
 	var height = distance_from_pole * sin(angle_up_down)
 	var personal_space = distance_from_pole * cos(angle_up_down)
 	
-	self.position.x = target_pole.x + (personal_space * cos(angle_around_point))
-	self.position.y = height
-	self.position.z = target_pole.z + (personal_space * sin(angle_around_point))
+	var dream_pos = Vector3(
+		target_pole.x + (personal_space * cos(angle_around_point)),
+		height,
+		target_pole.z + (personal_space * sin(angle_around_point))
+	)
+	
+	spring_cast.position = target_pole
+	spring_cast.target_position = dream_pos - spring_cast.position
+	
+	if not State.build_mode and spring_cast.is_colliding():
+		self.position = spring_cast.get_collision_point()
+	else:
+		self.position = dream_pos
+	
 	self.look_at(target_pole)
 
 func _physics_process(delta: float) -> void:
@@ -34,6 +46,15 @@ func _physics_process(delta: float) -> void:
 	else:
 		do_player_cam_process(delta)
 	
+	# Shoutout JAMIE <3
+	var cam_key_input_dir = Input.get_vector("camera_left", "camera_right", "camera_down", "camera_up")
+	if cam_key_input_dir:
+		print(cam_key_input_dir)
+		set_camera_angle(
+			angle_around_point + (cam_key_input_dir.x / 25.0),
+			angle_up_down + (cam_key_input_dir.y / 40.0)
+		)
+	
 	#camera_shake_strength = max(0.0, camera_shake_strength - 0.1)
 	camera_shake_strength = lerpf(camera_shake_strength, 0, 0.1)
 	
@@ -43,7 +64,6 @@ func _physics_process(delta: float) -> void:
 	else:
 		self.h_offset = 0.0
 		self.v_offset = 0.0
-			
 	
 	update_camera()
 
@@ -84,17 +104,24 @@ func do_freecam_process(delta: float):
 func do_player_cam_process(delta: float):
 	target_pole = target_pole.lerp(player.global_position, 0.4)
 
+func set_camera_angle(angle_around: float, up_down: float) -> void:
+	angle_around_point = angle_around
+	angle_up_down = up_down
+	
+	# HACK: -0.01 to prevent total top view. That confuses the .look_at in
+	# update_camera. Maybe gimbal lock or something....idk lol
+	angle_up_down = clampf(angle_up_down, 0.3, (PI / 2) - 0.01)
+
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
 	
 	if event is InputEventMouseMotion:
 		if not Input.is_action_pressed("rotate"): return
-		angle_around_point += event.relative.x / 200.0
-		angle_up_down += event.relative.y / 200.0
-		
-		# HACK: -0.01 to prevent total top view. That confuses the .look_at in
-		# update_camera. Maybe gimbal lock or something....idk lol
-		angle_up_down = clampf(angle_up_down, 0.3, (PI / 2) - 0.01)
+		set_camera_angle(
+			angle_around_point + event.relative.x / 200.0,
+			angle_up_down + event.relative.y / 200.0
+		)
+
 	elif event is InputEventMouseButton:
 		distance_from_pole += {
 			MOUSE_BUTTON_WHEEL_UP: -1,
