@@ -3,8 +3,6 @@ extends Node3D
 @onready var interact_cast = $"../ShapeCast3D"
 @onready var anim_player: AnimationPlayer = $"../AnimationPlayer"
 
-var equipped_model = null
-
 enum SwingState {
 	NONE,
 	FORWARDS,
@@ -12,6 +10,8 @@ enum SwingState {
 }
 
 var swing_state = SwingState.NONE
+var equipped_model = null
+var swing_hold = false
 
 func _ready() -> void:
 	anim_player.speed_scale = 2.0
@@ -39,6 +39,10 @@ func swing() -> void:
 	await anim_player.animation_finished
 	
 	swing_state = SwingState.NONE
+	
+	if swing_hold:
+		# If we're still holding mouse1 or whatever, try to swing again
+		swing()
 
 func _at_mid_swing():
 	if swing_state != SwingState.FORWARDS: return
@@ -54,6 +58,9 @@ func _input(event: InputEvent) -> void:
 	if State.build_mode: return
 	
 	if event is not InputEventMouseButton: return
-	if not event.pressed: return
 	if event.button_index != MOUSE_BUTTON_LEFT: return
+	
+	swing_hold = event.pressed
+	if not event.pressed: return
+	
 	swing()

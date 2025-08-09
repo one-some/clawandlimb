@@ -10,6 +10,10 @@ var angle_around_point = 0.0
 var distance_from_pole = 5.0
 var angle_up_down = PI / 4.0
 var camera_shake_strength = 0.0
+var last_hovered_interactable = null
+var right_click_down_pos = null
+
+@export var interactable_material: Material
 
 func _ready() -> void:
 	update_camera()
@@ -67,6 +71,19 @@ func _physics_process(delta: float) -> void:
 	
 	update_camera()
 
+func cast_from_camera(collision_mask: int = 0xFFFFFFFF) -> Dictionary:
+	var space_state = get_world_3d().direct_space_state
+
+	var mouse_pos = get_viewport().get_mouse_position()
+	var ray_origin = self.project_ray_origin(mouse_pos)
+	var ray_direction = self.project_ray_normal(mouse_pos)
+
+	var ray_end = ray_origin + ray_direction * 1000
+	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+	query.collision_mask = collision_mask
+
+	return space_state.intersect_ray(query)
+
 func do_freecam_process(delta: float):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
 	if input_dir:
@@ -82,17 +99,7 @@ func do_freecam_process(delta: float):
 		var move_dir = (forward * input_dir.y) + (right * input_dir.x)
 		target_pole += move_dir * delta * distance_from_pole * speed_multiplier
 	
-	var space_state = get_world_3d().direct_space_state
-
-	var mouse_pos = get_viewport().get_mouse_position()
-	var ray_origin = self.project_ray_origin(mouse_pos)
-	var ray_direction = self.project_ray_normal(mouse_pos)
-
-	var ray_end = ray_origin + ray_direction * 1000
-	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
-	query.collision_mask = 1 << 4
-
-	var result = space_state.intersect_ray(query)
+	var result = cast_from_camera(1 << 4)
 	if result and result["collider"].name == "GridMap":
 		var pos = result["position"]
 		pos.x = round(pos.x)
@@ -101,8 +108,34 @@ func do_freecam_process(delta: float):
 		build_grid.global_position = pos + Vector3(0, 0.1, 0)
 		((build_grid.mesh as PlaneMesh).material as ShaderMaterial).set_shader_parameter("pointer", Vector2(pos.x, pos.z))
 
-func do_player_cam_process(delta: float):
+func visually_mark_interactable_recursive(interactable: Node3D, add: bool) -> void:
+	if interactable is MeshInstance3D:
+		interactable.material_overlay = interactable_material if add else null
+
+	for child in interactable.get_children():
+		visually_mark_interactable_recursive(child, add)
+
+func do_interactable_stuff() -> void:
+	# THIS IS ALL VERY UGLY BUT BEAR :teddy_bear: WITH ME!!!
+	var cast_data = cast_from_camera()
+	var interactable = (cast_data if cast_data else {}).get("collider")
+	
+	if not interactable or "_interact" not in interactable:
+		if last_hovered_interactable:
+			visually_mark_interactable_recursive(last_hovered_interactable, false)
+			last_hovered_interactable = null
+		return
+
+	if interactable != last_hovered_interactable:
+		if last_hovered_interactable:
+			visually_mark_interactable_recursive(last_hovered_interactable, false)
+		visually_mark_interactable_recursive(interactable, true)
+		last_hovered_interactable = interactable
+
+func do_player_cam_process(delta: float) -> void:
 	target_pole = target_pole.lerp(player.global_position, 0.4)
+	
+	do_interactable_stuff()
 
 func set_camera_angle(angle_around: float, up_down: float) -> void:
 	angle_around_point = angle_around
@@ -111,6 +144,25 @@ func set_camera_angle(angle_around: float, up_down: float) -> void:
 	# HACK: -0.01 to prevent total top view. That confuses the .look_at in
 	# update_camera. Maybe gimbal lock or something....idk lol
 	angle_up_down = clampf(angle_up_down, 0.3, (PI / 2) - 0.01)
+
+func _on_right_click() -> void:
+	if not last_hovered_interactable: return
+	last_hovered_interactable._interact() 
+
+func process_mouse_button_event_for_right_click(event: InputEventMouseButton) -> void:
+	if event.button_index != MOUSE_BUTTON_RIGHT: return
+	
+	var mouse_pos = get_viewport().get_mouse_position()
+	
+	if event.pressed or not right_click_down_pos:
+		right_click_down_pos = mouse_pos
+		return
+	
+	var delta = mouse_pos.distance_to(right_click_down_pos)
+	print(delta)
+	
+	if delta < 25.0:
+		_on_right_click()
 
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
@@ -128,17 +180,8 @@ func _input(event: InputEvent) -> void:
 			MOUSE_BUTTON_WHEEL_DOWN: 1,
 		}.get(event.button_index, 0) * 0.5
 		distance_from_pole = clampf(distance_from_pole, 2.0, 20.0)
+		
+		process_mouse_button_event_for_right_click(event)
 	else:
 		return
 	update_camera()
-
-func get_mouse_at_y(y: float) -> Variant:
-	var mouse_pos = get_viewport().get_mouse_position()
-	
-	var ray_origin: Vector3 = self.project_ray_origin(mouse_pos)
-	var ray_direction: Vector3 = self.project_ray_normal(mouse_pos)
-
-	var plane = Plane(Vector3.UP, y)
-	var intersection_point: Variant = plane.intersects_ray(ray_origin, ray_direction)
-
-	return intersection_point

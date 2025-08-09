@@ -35,5 +35,11 @@ func take_damage(origin: DamageOrigin, damage: float) -> void:
 	Signals.change_entity_health.emit(self, origin, og_health)
 
 	if not health:
-		dead = true
-		died.emit()
+		die()
+
+func die() -> void:
+	if dead: return
+	health = 0.0
+	dead = true
+	died.emit()
+	

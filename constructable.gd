@@ -45,3 +45,6 @@ func update_points(start_pos: Vector3, end_pos: Vector3) -> void:
 func finalize() -> void:
 	material.albedo_color = Color.WHITE
 	material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+
+func _interact() -> void:
+	print("Hello my name is construct")

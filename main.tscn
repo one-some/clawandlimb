@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=32 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
@@ -15,6 +15,11 @@
 [ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
 [ext_resource type="Shader" uid="uid://deusiyboy5f8r" path="res://grid.gdshader" id="14_vivmo"]
 [ext_resource type="Script" uid="uid://bx3ft4mal7bir" path="res://enemies.gd" id="15_2cqfq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vivmo"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0, 0, 0, 0.541176)
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_5vw27"]
 rayleigh_coefficient = 1.0
@@ -128,6 +133,7 @@ unique_name_in_owner = true
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 5, 5, 5)
 fov = 70.0
 script = ExtResource("1_0xm2m")
+interactable_material = SubResource("StandardMaterial3D_vivmo")
 
 [node name="SpringCast" type="RayCast3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

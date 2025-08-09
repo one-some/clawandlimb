@@ -9,6 +9,14 @@ const CLOSE_ENOUGH = 0.8
 func _ready() -> void:
 	attack_timer.timeout.connect(func(): can_attack = true)
 	combat.died.connect(func(): self.queue_free())
+	Signals.change_daylight_landmark.connect(_on_change_daylight_landmark)
+
+func _on_change_daylight_landmark(is_day: bool) -> void:
+	if not is_day: return
+	
+	# TODO: BURN?
+	await get_tree().create_timer(randf() * 7.0).timeout
+	self.queue_free()
 
 func _physics_process(delta: float) -> void:
 	if not self.is_on_floor():

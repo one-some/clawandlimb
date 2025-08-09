@@ -18,3 +18,5 @@ signal change_entity_health(combat: CombatRecipient, origin: CombatRecipient.Dam
 signal player_died()
 # DO I HATE THIS!?!?!?
 signal player_respawn_requested()
+
+signal change_daylight_landmark(is_now_day: bool)
