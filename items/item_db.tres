@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemDBResource" load_steps=12 format=3 uid="uid://bj4bibmitv8ra"]
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=14 format=3 uid="uid://bj4bibmitv8ra"]
 
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
 [ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dyrry2pibnelp" path="res://tex/tiles/log.png" id="3_svh26"]
 [ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/plank.png" id="4_bknbh"]
 [ext_resource type="Texture2D" uid="uid://bawjvdcsmpdir" path="res://tex/axe.png" id="5_bknbh"]
+[ext_resource type="Texture2D" uid="uid://cgj7bpwgj6jxm" path="res://tex/door.png" id="6_pnd04"]
 
 [sub_resource type="Resource" id="Resource_svh26"]
 script = ExtResource("1_86lrn")
@@ -47,6 +48,14 @@ texture = ExtResource("4_bknbh")
 max_stack = 64
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
+[sub_resource type="Resource" id="Resource_qoymp"]
+script = ExtResource("1_86lrn")
+item_name = "Wooden Door"
+description = "A critical component of any enterable and or exitable home."
+texture = ExtResource("6_pnd04")
+max_stack = 64
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
 [resource]
 script = ExtResource("2_216it")
 items = Dictionary[String, ExtResource("1_86lrn")]({
@@ -54,6 +63,7 @@ items = Dictionary[String, ExtResource("1_86lrn")]({
 "log": SubResource("Resource_pnd04"),
 "planks": SubResource("Resource_w5gng"),
 "wooden_axe": SubResource("Resource_vqtxk"),
+"wooden_door": SubResource("Resource_qoymp"),
 "wooden_wall": SubResource("Resource_bknbh")
 })
 metadata/_custom_type_script = "uid://bstmf2q2vsph2"

@@ -136,7 +136,6 @@ script = ExtResource("1_0xm2m")
 interactable_material = SubResource("StandardMaterial3D_vivmo")
 
 [node name="SpringCast" type="RayCast3D" parent="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 top_level = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
