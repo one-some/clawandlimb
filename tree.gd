@@ -1,6 +1,6 @@
 extends StaticBody3D
 
-var combat = CombatRecipient.new("Tree", 7.0)
+var combat = CombatRecipient.new("Tree", 20.0)
 @onready var particles: GPUParticles3D = $GPUParticles3D
 
 func _ready():

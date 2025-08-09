@@ -6,6 +6,9 @@ var inventory: Array[ItemInstance] = []
 var cursor_item: ItemInstance = null
 var active_hotbar_index = 0
 
+func active_item() -> ItemInstance:
+	return inventory[active_hotbar_index]
+
 func set_slot(slot: int, item_instance: ItemInstance) -> void:
 	inventory[slot] = item_instance
 	Signals.update_inventory_slot.emit(slot)

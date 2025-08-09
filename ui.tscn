@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=26 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
@@ -31,6 +31,12 @@ border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0.8, 0.8, 0.8, 0)
 anti_aliasing = false
+
+[sub_resource type="LabelSettings" id="LabelSettings_gs482"]
+font = ExtResource("7_waa4j")
+font_size = 30
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n5rqp"]
 bg_color = Color(0.172549, 0.172549, 0.172549, 1)
@@ -119,6 +125,15 @@ theme_override_styles/background = SubResource("StyleBoxFlat_xb563")
 theme_override_styles/fill = SubResource("StyleBoxFlat_fyqef")
 value = 11.0
 rounded = true
+
+[node name="EquippedLabel" type="Label" parent="UIStats"]
+layout_mode = 0
+offset_left = 332.0
+offset_top = -50.0
+offset_right = 522.0
+offset_bottom = -20.0
+text = "Wooden Axe"
+label_settings = SubResource("LabelSettings_gs482")
 
 [node name="WAILA" type="Panel" parent="."]
 layout_mode = 1

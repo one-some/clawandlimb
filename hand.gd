@@ -4,11 +4,17 @@ extends Node3D
 @onready var anim_player: AnimationPlayer = $"../AnimationPlayer"
 
 var equipped_model = null
-var swinging = false
+
+enum SwingState {
+	NONE,
+	FORWARDS,
+	BACKWARDS
+}
+
+var swing_state = SwingState.NONE
 
 func _ready() -> void:
 	anim_player.speed_scale = 2.0
-	
 	Signals.change_active_hotbar_slot.connect(change_equipped_model)
 
 func change_equipped_model() -> void:
@@ -21,18 +27,22 @@ func change_equipped_model() -> void:
 		if real_deal: equipped_model = item
 
 func swing() -> void:
-	if swinging: return
+	if swing_state: return
 	if not equipped_model: return
-	swinging = true
 	
+	swing_state = SwingState.FORWARDS
 	anim_player.play("AxeChop")
 	await anim_player.animation_finished
+	
+	swing_state = SwingState.BACKWARDS
 	anim_player.play_backwards("AxeChop")
 	await anim_player.animation_finished
 	
-	swinging = false
+	swing_state = SwingState.NONE
 
 func _at_mid_swing():
+	if swing_state != SwingState.FORWARDS: return
+	
 	for i in range(interact_cast.get_collision_count()):
 		var collider = interact_cast.get_collider(i)
 		if "combat" not in collider: continue
@@ -41,6 +51,7 @@ func _at_mid_swing():
 
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
+	if State.build_mode: return
 	
 	if event is not InputEventMouseButton: return
 	if not event.pressed: return

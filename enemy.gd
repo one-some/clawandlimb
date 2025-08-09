@@ -2,11 +2,13 @@ extends CharacterBody3D
 
 @onready var target = get_tree().get_first_node_in_group("Player")
 @onready var attack_timer = $"AttackCooldownTimer"
+var combat = CombatRecipient.new("Zombie", 10.0)
 var can_attack = true
 const CLOSE_ENOUGH = 0.8
 
 func _ready() -> void:
 	attack_timer.timeout.connect(func(): can_attack = true)
+	combat.died.connect(func(): self.queue_free())
 
 func _physics_process(delta: float) -> void:
 	if not self.is_on_floor():

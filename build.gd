@@ -34,10 +34,11 @@ func set_build_mode(mode: bool):
 	threed_cursor.visible = mode
 	build_grid.visible = mode
 	
-	if not mode and active_wall:
-		active_wall.queue_free()
+	if not mode:
 		start_pos = null
-		active_wall = null
+		if active_wall:
+			active_wall.queue_free()
+			active_wall = null
 
 func commit_wall() -> void:
 	if not active_wall:

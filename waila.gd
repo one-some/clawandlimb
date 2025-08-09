@@ -12,7 +12,6 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	fade_timer = max(0.0, fade_timer - delta)
 	self.modulate.a = min(2.0, fade_timer) / 2.0
-	print(fade_timer, " Real: ", self.modulate.a)
 
 func _on_change_entity_health(
 	combat: CombatRecipient,
