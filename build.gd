@@ -147,6 +147,9 @@ func _input(event: InputEvent) -> void:
 			set_build_mode_enabled(not State.build_mode)
 		elif State.build_mode and Input.is_action_just_pressed("cancel"):
 			set_build_mode_enabled(false)
+		elif State.build_mode == State.BuildMode.PLACE_MODEL and Input.is_action_just_pressed("rotate_build") and active_constructable:
+			active_constructable.rotation_degrees.y += 45.0
+
 	elif event is InputEventMouseButton:
 		if event.button_index != MOUSE_BUTTON_LEFT: return
 		if not event.pressed: return
