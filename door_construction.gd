@@ -2,10 +2,11 @@ extends StaticBody3D
 
 @onready var cast = $ShapeCast3D
 @onready var csg = $CSGBox3D
-@onready var og_transform = self.global_transform
+var og_transform = null
 
 const PIVOT = Vector3(0.5, 0, 0)
 var open = false
+var opening = false
 
 var combat = CombatRecipient.new("Door", 10.0)
 var start_pos = null
@@ -24,28 +25,38 @@ func finalize() -> void:
 	for i in range(cast.get_collision_count()):
 		var collider = cast.get_collider(i)
 		if not collider: return
-		print(collider)
 		if collider is not CSGCombiner3D: return
 		
 		csg.material = collider.material
 		csg.visible = true
 		csg.reparent(collider)
 		break
+	
+	if csg.get_parent() == self:
+		csg.queue_free()
 
 
 func _interact() -> void:
+	if opening: return
+	opening = true
+	
 	open = not open
 	
-	og_transform = self.global_transform
+	if not og_transform:
+		og_transform = self.global_transform
+	
 	var tween = create_tween()
 	tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
-	tween.set_trans(Tween.TRANS_CIRC)
+	tween.set_trans(Tween.TRANS_QUAD)
 	tween.set_ease(Tween.EASE_IN)
 	if open:
 		tween.tween_method(rot_step, 0.0, 1.0, 0.4)
 	else:
 		tween.tween_method(rot_step, 1.0, 0.0, 0.4)
 	tween.play()
+	
+	await tween.finished
+	opening = false
 
 func rot_step(t: float) -> void:
 	var pivot = og_transform * PIVOT

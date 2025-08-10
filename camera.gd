@@ -11,6 +11,7 @@ var distance_from_pole = 5.0
 var angle_up_down = PI / 4.0
 var camera_shake_strength = 0.0
 var last_hovered_interactable = null
+
 var right_click_down_pos = null
 
 @export var interactable_material: Material
@@ -53,7 +54,6 @@ func _physics_process(delta: float) -> void:
 	# Shoutout JAMIE <3
 	var cam_key_input_dir = Input.get_vector("camera_left", "camera_right", "camera_down", "camera_up")
 	if cam_key_input_dir:
-		print(cam_key_input_dir)
 		set_camera_angle(
 			angle_around_point + (cam_key_input_dir.x / 25.0),
 			angle_up_down + (cam_key_input_dir.y / 40.0)
@@ -152,14 +152,33 @@ func _on_right_click() -> void:
 func process_mouse_button_event_for_right_click(event: InputEventMouseButton) -> void:
 	if event.button_index != MOUSE_BUTTON_RIGHT: return
 	
-	var mouse_pos = get_viewport().get_mouse_position()
+	
+	var mouse_pos = DisplayServer.mouse_get_position()
 	
 	if event.pressed or not right_click_down_pos:
 		right_click_down_pos = mouse_pos
 		return
 	
 	var delta = mouse_pos.distance_to(right_click_down_pos)
-	print(delta)
+	#Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	#Input.warp_mouse(right_click_down_pos)
+	
+	if delta < 25.0:
+		_on_right_click()
+
+func process_mouse_move(event: InputEventMouseMotion) -> void:
+	if not Input.is_action_pressed("rotate"): return
+	
+	var mouse_pos = get_viewport().get_mouse_position()
+	var delta = mouse_pos.distance_to(right_click_down_pos)
+	
+	#if delta < 5.0: return
+	#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
+	set_camera_angle(
+		angle_around_point + event.relative.x / 200.0,
+		angle_up_down + event.relative.y / 200.0
+	)
 	
 	if delta < 25.0:
 		_on_right_click()
@@ -168,11 +187,7 @@ func _input(event: InputEvent) -> void:
 	if State.active_ui: return
 	
 	if event is InputEventMouseMotion:
-		if not Input.is_action_pressed("rotate"): return
-		set_camera_angle(
-			angle_around_point + event.relative.x / 200.0,
-			angle_up_down + event.relative.y / 200.0
-		)
+		process_mouse_move(event)
 
 	elif event is InputEventMouseButton:
 		distance_from_pole += {

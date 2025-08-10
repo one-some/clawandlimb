@@ -13,6 +13,7 @@ func _ready() -> void:
 		
 		slot.slot_number = i
 		slot.update()
+		slot.select_me.connect(func(): set_hotbar_index(i - Inventory.HOTBAR_OFFSET))
 		slot.visible = i >= Inventory.HOTBAR_OFFSET
 	
 	set_hotbar_index(0)

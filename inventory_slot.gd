@@ -1,5 +1,7 @@
 extends Panel
 
+signal select_me
+
 @onready var texture_rect = $TextureRect
 @onready var count_label = $Count
 var slot_number: int
@@ -61,6 +63,10 @@ func _on_mouse_exited() -> void:
 	Signals.tooltip_clear.emit()
 
 func _on_click() -> void:
+	if State.active_ui != State.ActiveUI.INVENTORY:
+		select_me.emit()
+		return
+	
 	var item = get_item()
 	
 	if not (item or Inventory.cursor_item):

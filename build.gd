@@ -18,8 +18,10 @@ func _ready() -> void:
 
 func _change_active_hotbar_slot() -> void:
 	var item = Inventory.active_item()
+	
 	if not item:
 		candidate_build_mode = State.BuildMode.PLACE_NOTHING
+		set_build_mode_enabled(false)
 		return
 	
 	var key = ItemRegistry.key_from_data(item.item_data)
@@ -32,8 +34,8 @@ func _change_active_hotbar_slot() -> void:
 	else:
 		candidate_build_mode = State.BuildMode.PLACE_NOTHING
 	
-	if State.build_mode != State.BuildMode.NONE:
-		set_build_mode(candidate_build_mode)
+	set_build_mode(candidate_build_mode)
+	set_build_mode_enabled(candidate_build_mode != State.BuildMode.PLACE_NOTHING)
 
 func snapped_cursor_position() -> Vector3:
 	var pos = threed_cursor.position
@@ -60,6 +62,7 @@ func reset_building(init_start_pos: bool = false) -> void:
 	print("Resetting with ", State.build_mode)
 	
 	if active_constructable:
+		active_constructable.queue_free()
 		active_constructable = null
 	
 	if State.build_mode == State.BuildMode.PLACE_MODEL:
@@ -79,6 +82,7 @@ func reset_building(init_start_pos: bool = false) -> void:
 func set_build_mode(build_mode: State.BuildMode) -> void:
 	threed_cursor.visible = build_mode != State.BuildMode.PLACE_MODEL
 	State.build_mode = build_mode
+	
 	reset_building()
 
 func set_build_mode_enabled(mode: bool) -> void:
@@ -131,8 +135,6 @@ func _process(delta: float) -> void:
 	update_building()
 
 func on_click() -> void:
-	print(State.build_mode)
-	
 	match State.build_mode:
 		State.BuildMode.PLACE_WALL:
 			if active_constructable.start_pos:
