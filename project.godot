@@ -142,6 +142,7 @@ rotate_build={
 [layer_names]
 
 3d_physics/layer_2="NPC"
+3d_physics/layer_3="Wall"
 
 [rendering]
 

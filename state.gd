@@ -12,5 +12,6 @@ enum BuildMode {
 	PLACE_NOTHING,
 	PLACE_WALL,
 	PLACE_MODEL,
+	PLACE_DOOR
 }
 var build_mode: BuildMode = BuildMode.NONE

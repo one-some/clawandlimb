@@ -7,6 +7,7 @@ extends Node3D
 
 const Wall = preload("res://wall.tscn")
 const TestModel = preload("res://workbench.tscn")
+const Door = preload("res://door.tscn")
 
 # Yes this is terrible but I need time to think about it and sort it out :50
 var candidate_build_mode = State.BuildMode.NONE
@@ -26,6 +27,8 @@ func _change_active_hotbar_slot() -> void:
 		candidate_build_mode = State.BuildMode.PLACE_WALL
 	elif key == "workbench":
 		candidate_build_mode = State.BuildMode.PLACE_MODEL
+	elif key == "wooden_door":
+		candidate_build_mode = State.BuildMode.PLACE_DOOR
 	else:
 		candidate_build_mode = State.BuildMode.PLACE_NOTHING
 	
@@ -63,6 +66,8 @@ func reset_building(init_start_pos: bool = false) -> void:
 		active_constructable = TestModel.instantiate()
 	elif State.build_mode == State.BuildMode.PLACE_WALL:
 		active_constructable = Wall.instantiate()
+	elif State.build_mode == State.BuildMode.PLACE_DOOR:
+		active_constructable = Door.instantiate()
 	else:
 		return
 	
@@ -133,9 +138,9 @@ func on_click() -> void:
 			if active_constructable.start_pos:
 				commit_wall()
 				return
-			
 			active_constructable.set_start(threed_cursor.position)
-		State.BuildMode.PLACE_MODEL:
+		State.BuildMode.PLACE_MODEL, State.BuildMode.PLACE_DOOR:
+			active_constructable.finalize()
 			active_constructable = null
 			reset_building(false)
 
@@ -147,7 +152,11 @@ func _input(event: InputEvent) -> void:
 			set_build_mode_enabled(not State.build_mode)
 		elif State.build_mode and Input.is_action_just_pressed("cancel"):
 			set_build_mode_enabled(false)
-		elif State.build_mode == State.BuildMode.PLACE_MODEL and Input.is_action_just_pressed("rotate_build") and active_constructable:
+		elif (
+			Input.is_action_just_pressed("rotate_build") 
+			and active_constructable
+			and State.build_mode in [State.BuildMode.PLACE_MODEL, State.BuildMode.PLACE_DOOR]
+		):
 			active_constructable.rotation_degrees.y += 45.0
 
 	elif event is InputEventMouseButton:
