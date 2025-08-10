@@ -6,4 +6,11 @@ enum ActiveUI {
 	DEAD
 }
 var active_ui: ActiveUI = ActiveUI.NONE
-var build_mode = false
+
+enum BuildMode {
+	NONE = 0,
+	PLACE_NOTHING,
+	PLACE_WALL,
+	PLACE_MODEL,
+}
+var build_mode: BuildMode = BuildMode.NONE

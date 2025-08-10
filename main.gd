@@ -9,6 +9,7 @@ func _input(event: InputEvent) -> void:
 	if not Input.is_action_just_pressed("debug"): return
 	Inventory.add(ItemInstance.from_name("wooden_wall", 11))
 	Inventory.add(ItemInstance.from_name("wooden_door", 2))
+	Inventory.add(ItemInstance.from_name("workbench", 2))
 
 func get_day_hour() -> float:
 	return fmod(time_seconds / 60.0 / 60.0, 24.0)
@@ -21,7 +22,7 @@ func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
 
 func _process(delta: float) -> void:
-	time_seconds += 14.0
+	time_seconds += 1.0
 	
 	var hours = get_day_hour()
 	var sun_norm = fmod(hours + 8, 24.0) / 24.0

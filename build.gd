@@ -5,16 +5,40 @@ extends Node3D
 @onready var world = $".."
 @onready var build_grid = %BuildGrid
 
-const Constructable = preload("res://constructable.tscn")
+const Wall = preload("res://wall.tscn")
+const TestModel = preload("res://workbench.tscn")
 
-var active_wall = null
-var start_pos = null
+# Yes this is terrible but I need time to think about it and sort it out :50
+var candidate_build_mode = State.BuildMode.NONE
+var active_constructable = null
+
+func _ready() -> void:
+	Signals.change_active_hotbar_slot.connect(_change_active_hotbar_slot)
+
+func _change_active_hotbar_slot() -> void:
+	var item = Inventory.active_item()
+	if not item:
+		candidate_build_mode = State.BuildMode.PLACE_NOTHING
+		return
+	
+	var key = ItemRegistry.key_from_data(item.item_data)
+	if key == "wooden_wall":
+		candidate_build_mode = State.BuildMode.PLACE_WALL
+	elif key == "workbench":
+		candidate_build_mode = State.BuildMode.PLACE_MODEL
+	else:
+		candidate_build_mode = State.BuildMode.PLACE_NOTHING
+	
+	if State.build_mode != State.BuildMode.NONE:
+		set_build_mode(candidate_build_mode)
 
 func snapped_cursor_position() -> Vector3:
 	var pos = threed_cursor.position
 
-	if not start_pos:
+	if not active_constructable or not active_constructable.start_pos:
 		return pos
+	
+	var start_pos = active_constructable.start_pos
 	
 	var delta = start_pos - pos 
 	if abs(delta.x) > abs(delta.z):
@@ -29,20 +53,42 @@ func vec_floor_div(v: Vector2i, div: int) -> Vector2i:
 		floor(v.y / float(div))
 	)
 
-func set_build_mode(mode: bool):
-	State.build_mode = mode
+func reset_building(init_start_pos: bool = false) -> void:
+	print("Resetting with ", State.build_mode)
+	
+	if active_constructable:
+		active_constructable = null
+	
+	if State.build_mode == State.BuildMode.PLACE_MODEL:
+		active_constructable = TestModel.instantiate()
+	elif State.build_mode == State.BuildMode.PLACE_WALL:
+		active_constructable = Wall.instantiate()
+	else:
+		return
+	
+	# If u wanna continue girl.
+	active_constructable.start_pos = snapped_cursor_position() if init_start_pos else null
+	
+	self.add_child(active_constructable)
+
+func set_build_mode(build_mode: State.BuildMode) -> void:
+	threed_cursor.visible = build_mode != State.BuildMode.PLACE_MODEL
+	State.build_mode = build_mode
+	reset_building()
+
+func set_build_mode_enabled(mode: bool) -> void:
+	State.build_mode = candidate_build_mode if mode else State.BuildMode.NONE
 	threed_cursor.visible = mode
 	build_grid.visible = mode
 	
-	if not mode:
-		start_pos = null
-		if active_wall:
-			active_wall.queue_free()
-			active_wall = null
+	if not mode and active_constructable:
+		active_constructable.queue_free()
+		active_constructable = null
+	reset_building()
 
 func commit_wall() -> void:
-	if not active_wall:
-		return
+	assert(State.build_mode == State.BuildMode.PLACE_WALL)
+	assert(active_constructable)
 	
 	# Committing the wall
 	var end_pos = snapped_cursor_position()
@@ -52,8 +98,8 @@ func commit_wall() -> void:
 	), world.CHUNK_SIZE)
 	
 	var int_start_pos = vec_floor_div(Vector2i(
-		start_pos.x,
-		start_pos.z
+		active_constructable.start_pos.x,
+		active_constructable.start_pos.z
 	), world.CHUNK_SIZE)
 	print(int_start_pos, " - ", int_end_pos)
 	
@@ -65,46 +111,42 @@ func commit_wall() -> void:
 		await world.update_chunk_collision(coord)
 	
 	# Finish up materialization of wall
-	active_wall.finalize()
-	print("WE DOne")
-	active_wall = null
-	
-	# If u wanna continue girl.
-	start_pos = end_pos
+	active_constructable.finalize()
+	active_constructable = null
+	reset_building(true)
 
 func update_building() -> void:
-	if not State.build_mode: return
+	if State.build_mode == State.BuildMode.NONE: return
+	if State.build_mode == State.BuildMode.PLACE_NOTHING: return
 	
-	if not active_wall:
-		print("We make a new one")
-		active_wall = Constructable.instantiate()
-		self.add_child(active_wall)
-		
 	var end_pos = snapped_cursor_position()
-	
-	if not start_pos or start_pos == end_pos:
-		return
-	
-	active_wall.update_points(start_pos, end_pos)
+	active_constructable.set_end(end_pos)
 
 func _process(delta: float) -> void:
 	update_building()
 
 func on_click() -> void:
-	if start_pos:
-		commit_wall()
-		return
-		
-	start_pos = threed_cursor.position
+	print(State.build_mode)
+	
+	match State.build_mode:
+		State.BuildMode.PLACE_WALL:
+			if active_constructable.start_pos:
+				commit_wall()
+				return
+			
+			active_constructable.set_start(threed_cursor.position)
+		State.BuildMode.PLACE_MODEL:
+			active_constructable = null
+			reset_building(false)
 
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
 	
 	if event is InputEventKey:
 		if Input.is_action_just_pressed("toggle_build"):
-			set_build_mode(not State.build_mode)
+			set_build_mode_enabled(not State.build_mode)
 		elif State.build_mode and Input.is_action_just_pressed("cancel"):
-			set_build_mode(false)
+			set_build_mode_enabled(false)
 	elif event is InputEventMouseButton:
 		if event.button_index != MOUSE_BUTTON_LEFT: return
 		if not event.pressed: return

@@ -8,7 +8,10 @@ var mesh: BoxMesh
 var collision_shape: CollisionShape3D
 
 var material = StandardMaterial3D.new()
-var combat = CombatRecipient.new("Constructable", 10.0)
+var combat = CombatRecipient.new("Wall", 10.0)
+
+var start_pos = null
+var end_pos = null
 
 func _ready() -> void:
 	# FIXME: Do we need to bind here
@@ -31,7 +34,18 @@ func _ready() -> void:
 	material.texture_repeat = true
 	mesh.material = material
 
-func update_points(start_pos: Vector3, end_pos: Vector3) -> void:
+func set_start(pos: Vector3) -> void:
+	start_pos = pos
+	update_points()
+
+func set_end(pos: Vector3) -> void:
+	end_pos = pos
+	update_points()
+
+func update_points() -> void:
+	if start_pos == null or end_pos == null: return
+	if start_pos == end_pos: return
+	
 	mesh.size = Vector3(0.3, WALL_HEIGHT, start_pos.distance_to(end_pos))
 	material.uv1_scale = Vector3(mesh.size.z, mesh.size.y, 1) * 3.0
 	

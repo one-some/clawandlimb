@@ -2,16 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cgj7bpwgj6jxm"
-path="res://.godot/imported/door.png-4d5e8cade28be86d7db5274e76577caf.ctex"
+uid="uid://cmof533bddg2g"
+path="res://.godot/imported/Crafting_0.png-670a851da2d7003193fbb2e7ced6cb82.ctex"
 metadata={
 "vram_texture": false
+}
+generator_parameters={
+"md5": "867c83f60c45a092b55f00ac3f75d9ee"
 }
 
 [deps]
 
-source_file="res://tex/door.png"
-dest_files=["res://.godot/imported/door.png-4d5e8cade28be86d7db5274e76577caf.ctex"]
+source_file="res://mdl/Crafting_0.png"
+dest_files=["res://.godot/imported/Crafting_0.png-670a851da2d7003193fbb2e7ced6cb82.ctex"]
 
 [params]
 
@@ -21,7 +24,7 @@ compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -31,4 +34,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
