@@ -9,6 +9,9 @@ func _ready() -> void:
 
 func set_item(item_instance: ItemInstance) -> void:
 	self.visible = true
+	
+	# TODO: SHriinnkk
+	self.size.x = 0.0
 	name_label.text = item_instance.item_data.item_name
 	desc_label.text = item_instance.item_data.description
 
