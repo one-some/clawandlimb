@@ -237,6 +237,5 @@ autostart = true
 [node name="UI" parent="CanvasLayer" instance=ExtResource("12_dg77c")]
 
 [node name="CrazyWorld" parent="." instance=ExtResource("16_2cqfq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.91189, 0)
 
 [connection signal="timeout" from="Enemies/SpawnTimer" to="Enemies" method="_on_spawn_timer_timeout"]

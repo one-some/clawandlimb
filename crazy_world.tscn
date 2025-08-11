@@ -1,7 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://o55jlkit05em"]
 
-[ext_resource type="PackedScene" uid="uid://vtgna0fhhvj" path="res://worldren/chunk.tscn" id="1_s63oa"]
+[ext_resource type="Script" uid="uid://cpnghr3brrwxp" path="res://crazy_world.gd" id="1_b016s"]
 
 [node name="CrazyWorld" type="Node3D"]
-
-[node name="Chunk" parent="." instance=ExtResource("1_s63oa")]
+script = ExtResource("1_b016s")

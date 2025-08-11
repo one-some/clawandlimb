@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bftyf05csr1wg"
-path="res://.godot/imported/grass.png-20b2bdbdeb2b66a6535e5e1b28020ea8.ctex"
+path="res://.godot/imported/1_grass.png-45757e75d57a569ef52c52ea05d7098c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tex/tiles/grass.png"
-dest_files=["res://.godot/imported/grass.png-20b2bdbdeb2b66a6535e5e1b28020ea8.ctex"]
+source_file="res://tex/tiles/1_grass.png"
+dest_files=["res://.godot/imported/1_grass.png-45757e75d57a569ef52c52ea05d7098c.ctex"]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

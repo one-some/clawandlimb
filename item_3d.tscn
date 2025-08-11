@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://btv2i6jmpoitm"]
 
-[ext_resource type="Texture2D" uid="uid://dkutpsydk3bws" path="res://tex/tiles/dirt.png" id="1_7rk10"]
+[ext_resource type="Texture2D" uid="uid://dkutpsydk3bws" path="res://tex/tiles/0_dirt.png" id="1_7rk10"]
 [ext_resource type="Script" uid="uid://buu14kw7gg5u6" path="res://item_3d.gd" id="1_lwd0h"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lwd0h"]

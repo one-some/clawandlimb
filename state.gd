@@ -15,3 +15,5 @@ enum BuildMode {
 	PLACE_DOOR
 }
 var build_mode: BuildMode = BuildMode.NONE
+
+var _hack_tile_images: Array[Image] = []

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxsr2d8qmr12t"
-path="res://.godot/imported/stone.png-3e6988fa980729354ce8a9260f38fbbe.ctex"
+path="res://.godot/imported/2_stone.png-fc68ef0857edef77d7ad508f26171cac.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tex/tiles/stone.png"
-dest_files=["res://.godot/imported/stone.png-3e6988fa980729354ce8a9260f38fbbe.ctex"]
+source_file="res://tex/tiles/2_stone.png"
+dest_files=["res://.godot/imported/2_stone.png-fc68ef0857edef77d7ad508f26171cac.ctex"]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

@@ -24,6 +24,7 @@ func generate_mesh_library() -> void:
 		mesh.material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 		
 		var image = mesh.material.albedo_texture.get_image()
+		State._hack_tile_images.append(image)
 		#if not image.is_compressed():
 			#to_grayscale(image)
 			#image.bump_map_to_normal_map(4.0)
