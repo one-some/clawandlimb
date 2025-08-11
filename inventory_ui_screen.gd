@@ -1,7 +1,7 @@
 extends Control
 
-@onready var inventory_grid = $Inventory
-@onready var crafting_ui = $Crafting
+@onready var inventory_grid = $Cont/Inv/Inventory
+@onready var crafting_ui = $Cont/Crafting
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey: return

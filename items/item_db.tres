@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="ItemDBResource" load_steps=16 format=3 uid="uid://bj4bibmitv8ra"]
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=18 format=3 uid="uid://bj4bibmitv8ra"]
 
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
 [ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
 [ext_resource type="Texture2D" uid="uid://dkutpsydk3bws" path="res://tex/tiles/dirt.png" id="2_vybfs"]
 [ext_resource type="Texture2D" uid="uid://dyrry2pibnelp" path="res://tex/tiles/log.png" id="3_svh26"]
 [ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/plank.png" id="4_bknbh"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="4_qoymp"]
 [ext_resource type="Texture2D" uid="uid://bawjvdcsmpdir" path="res://tex/axe.png" id="5_bknbh"]
 [ext_resource type="Texture2D" uid="uid://cgj7bpwgj6jxm" path="res://tex/door.png" id="6_pnd04"]
 [ext_resource type="Texture2D" uid="uid://dv0bdvhcurmd4" path="res://tex/crafting.png" id="7_w5gng"]
@@ -15,6 +16,7 @@ item_name = "Dirt"
 description = "It's Dirt bro."
 texture = ExtResource("2_vybfs")
 max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_pnd04"]
@@ -23,7 +25,16 @@ item_name = "Log"
 description = ""
 texture = ExtResource("3_svh26")
 max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
+[sub_resource type="Resource" id="Resource_iky56"]
+script = ExtResource("4_qoymp")
+ingredients = {
+"log": 1.0
+}
+output_count = 2
+metadata/_custom_type_script = "uid://8mocn31chcqv"
 
 [sub_resource type="Resource" id="Resource_w5gng"]
 script = ExtResource("1_86lrn")
@@ -31,6 +42,7 @@ item_name = "Planks"
 description = ""
 texture = ExtResource("4_bknbh")
 max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_iky56")])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_vqtxk"]
@@ -39,6 +51,7 @@ item_name = "Wooden Axe"
 description = "It fall apart :O"
 texture = ExtResource("5_bknbh")
 max_stack = 1
+recipes = Array[ExtResource("4_qoymp")]([])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_qoymp"]
@@ -47,6 +60,7 @@ item_name = "Wooden Door"
 description = "A critical component of any enterable and or exitable home."
 texture = ExtResource("6_pnd04")
 max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_bknbh"]
@@ -55,6 +69,7 @@ item_name = "Wooden Wall"
 description = "Use this to defend yourself from monsters! Press 'B' to enter Build Mode!"
 texture = ExtResource("4_bknbh")
 max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_doynf"]
@@ -63,6 +78,7 @@ item_name = "Workbench"
 description = "Craft bro"
 texture = ExtResource("7_w5gng")
 max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [resource]

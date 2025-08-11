@@ -33,6 +33,10 @@ gdscript/warnings/unused_parameter=0
 window/stretch/mode="canvas_items"
 window/vsync/vsync_mode=3
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/dictionary_inspector/plugin.cfg")
+
 [global_group]
 
 Enemy=""
