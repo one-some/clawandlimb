@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=42 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
@@ -88,6 +88,14 @@ font_size = 20
 font_color = Color(0.585938, 0.585938, 0.585938, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7rqds"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_os5c7"]
+content_margin_left = 4.0
+content_margin_top = 8.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.393229, 0.314379, 0.314379, 1)
+anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rqds"]
 content_margin_left = 4.0
@@ -409,6 +417,7 @@ theme_override_colors/font_color = Color(0.778259, 0.960938, 0.79824, 1)
 theme_override_fonts/font = ExtResource("7_waa4j")
 theme_override_font_sizes/font_size = 40
 theme_override_styles/focus = SubResource("StyleBoxEmpty_7rqds")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_os5c7")
 theme_override_styles/hover = SubResource("StyleBoxFlat_7rqds")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_nvb2n")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vkygq")

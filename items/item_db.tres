@@ -39,7 +39,7 @@ metadata/_custom_type_script = "uid://8mocn31chcqv"
 [sub_resource type="Resource" id="Resource_w5gng"]
 script = ExtResource("1_86lrn")
 item_name = "Planks"
-description = ""
+description = "A common material."
 texture = ExtResource("4_bknbh")
 max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_iky56")])

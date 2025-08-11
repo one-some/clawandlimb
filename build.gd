@@ -58,7 +58,7 @@ func vec_floor_div(v: Vector2i, div: int) -> Vector2i:
 		floor(v.y / float(div))
 	)
 
-func reset_building(init_start_pos: bool = false) -> void:
+func reset_building(init_start_pos = null) -> void:
 	print("Resetting with ", State.build_mode)
 	
 	if active_constructable:
@@ -75,7 +75,8 @@ func reset_building(init_start_pos: bool = false) -> void:
 		return
 	
 	# If u wanna continue girl.
-	active_constructable.start_pos = snapped_cursor_position() if init_start_pos else null
+	#active_constructable.start_pos = snapped_cursor_position() if init_start_pos else null
+	active_constructable.start_pos = init_start_pos
 	
 	self.add_child(active_constructable)
 
@@ -100,10 +101,9 @@ func commit_wall() -> void:
 	assert(active_constructable)
 	
 	# Committing the wall
-	var end_pos = snapped_cursor_position()
 	var int_end_pos = vec_floor_div(Vector2i(
-		end_pos.x,
-		end_pos.y
+		active_constructable.end_pos.x,
+		active_constructable.end_pos.y
 	), world.CHUNK_SIZE)
 	
 	var int_start_pos = vec_floor_div(Vector2i(
@@ -121,8 +121,9 @@ func commit_wall() -> void:
 	
 	# Finish up materialization of wall
 	active_constructable.finalize()
+	var end_pos = active_constructable.end_pos
 	active_constructable = null
-	reset_building(true)
+	reset_building(end_pos)
 
 func update_building() -> void:
 	if State.build_mode == State.BuildMode.NONE: return

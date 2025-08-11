@@ -8,6 +8,7 @@ const IngredientLabelSettings = preload("res://generic_labelsettings_20px.tres")
 @onready var details_description = $Details/VBoxContainer/Description
 @onready var ingredients_container = $Details/VBoxContainer/VBoxContainer/Ingredients
 @onready var ingredients_label = $Details/VBoxContainer/VBoxContainer/IngLabel
+@onready var craft_button = $Details/VBoxContainer/VBoxContainer/CraftButton
 
 var recipes: Dictionary[ItemData, Array] = {}
 var shown_recipe: ItemRecipe = null
@@ -36,7 +37,6 @@ func update_shown_recipes() -> void:
 			entry.pressed.connect(show_recipe.bind(item_data, recipe))
 			
 			if first_recipe:
-				print("I TIRIED")
 				entry.pressed.emit()
 				first_recipe = false
 
@@ -47,15 +47,23 @@ func show_recipe(item_data: ItemData, recipe: ItemRecipe) -> void:
 	details_texture_rect.texture = item_data.texture
 	details_label.text = item_data.item_name
 	details_description.text = item_data.description
-	ingredients_label.text = "Ingredients for x%s" % recipe.output_count
+	ingredients_label.text = "Ingredients for x%s:" % recipe.output_count
 	
 	for child in ingredients_container.get_children():
 		child.queue_free()
 	
+	craft_button.disabled = not Inventory.can_fufill_recipe(recipe)
+	
 	for ingredient in recipe.get_legit_ingredients_because_the_inspector_sucks_my_gock():
 		var label = Label.new()
 		label.text = "(x%s) %s" % [ingredient.count, ingredient.item_data.item_name]
-		label.label_settings = IngredientLabelSettings
+		
+		if Inventory.count_item(ingredient.item_data) >= ingredient.count:
+			label.label_settings = IngredientLabelSettings
+		else:
+			label.label_settings = IngredientLabelSettings.duplicate()
+			label.label_settings.font_color = Color.DARK_RED
+		
 		ingredients_container.add_child(label)
 
 

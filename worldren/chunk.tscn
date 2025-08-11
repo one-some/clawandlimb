@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://vtgna0fhhvj"]
+
+[ext_resource type="Script" uid="uid://ddfwd4jhwcs3o" path="res://worldren/chunk.gd" id="1_mayh1"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_mayh1"]
+
+[node name="Chunk" type="MeshInstance3D"]
+script = ExtResource("1_mayh1")
+noise = SubResource("FastNoiseLite_mayh1")
