@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://tbx2gvjwcyyv"]
+[gd_scene load_steps=6 format=3 uid="uid://tbx2gvjwcyyv"]
 
 [ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/plank.png" id="1_p3mkq"]
 [ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="2_571oj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_571oj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_irxef"]
 bg_color = Color(0, 0, 0, 0.847059)
@@ -18,11 +20,26 @@ font_color = Color(0.778646, 0.778646, 0.778646, 1)
 outline_size = 1
 outline_color = Color(0.294271, 0.294271, 0.294271, 1)
 
-[node name="CraftingEntry" type="Panel"]
+[node name="CraftingEntry" type="Button"]
 custom_minimum_size = Vector2(0, 32)
+offset_right = 8.0
+offset_bottom = 8.0
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_571oj")
+flat = true
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_irxef")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="Panel"]
 layout_mode = 2
 offset_left = 4.0
 offset_top = 4.0
@@ -30,11 +47,14 @@ offset_right = 28.0
 offset_bottom = 28.0
 texture = ExtResource("1_p3mkq")
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="Panel"]
 layout_mode = 2
 offset_left = 33.0
 offset_top = 8.0
 offset_right = 136.0
 offset_bottom = 31.0
+mouse_filter = 1
 text = "Dirt Block"
 label_settings = SubResource("LabelSettings_e2l4f")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

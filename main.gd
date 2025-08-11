@@ -19,6 +19,10 @@ func is_night() -> bool:
 	return hours <= 4.0 or hours >= 16.0
 
 func _ready() -> void:
+	print(
+		'"I must be going," he said out loud, and he added on a note of rather cheap wit, '
+		+ '"and I\'m taking my box of cakes with me."'
+	)
 	get_tree().set_auto_accept_quit(false)
 
 func _process(delta: float) -> void:

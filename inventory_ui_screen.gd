@@ -3,6 +3,9 @@ extends Control
 @onready var inventory_grid = $Cont/Inv/Inventory
 @onready var crafting_ui = $Cont/Crafting
 
+func _ready() -> void:
+	set_inventory_open(false)
+
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey: return
 	
@@ -16,7 +19,9 @@ func _input(event: InputEvent) -> void:
 	else:
 		return
 	
-	var open = State.active_ui == State.ActiveUI.INVENTORY
+	set_inventory_open(State.active_ui == State.ActiveUI.INVENTORY)
+
+func set_inventory_open(open: bool) -> void:
 	crafting_ui.visible = open
 	
 	var i = 0

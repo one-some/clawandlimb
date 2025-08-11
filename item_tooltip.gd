@@ -4,6 +4,7 @@ extends PanelContainer
 @onready var desc_label = $MarginContainer/VBoxContainer/Description
 
 func _ready() -> void:
+	self.visible = false
 	Signals.tooltip_set_item.connect(set_item)
 	Signals.tooltip_clear.connect(func(): self.visible = false)
 

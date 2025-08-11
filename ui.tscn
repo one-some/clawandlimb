@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=41 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
@@ -10,9 +10,11 @@
 [ext_resource type="PackedScene" uid="uid://tbx2gvjwcyyv" path="res://crafting_entry.tscn" id="6_n5rqp"]
 [ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="6_y4yjw"]
 [ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="7_waa4j"]
+[ext_resource type="Script" uid="uid://q7g2r04wynfy" path="res://crafting.gd" id="8_7rqds"]
 [ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
 [ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/plank.png" id="9_etlur"]
 [ext_resource type="Script" uid="uid://dxhdvcip00ldd" path="res://item_cursor_follow.gd" id="9_ok7cu"]
+[ext_resource type="LabelSettings" uid="uid://d1gp74yg17uxo" path="res://generic_labelsettings_20px.tres" id="11_nvb2n"]
 [ext_resource type="Script" uid="uid://dsmi4iviuvgnt" path="res://dead.gd" id="14_cxd00"]
 [ext_resource type="StyleBox" uid="uid://c3rj870jxqmdi" path="res://deadly_box_who_wants_it.tres" id="15_etlur"]
 
@@ -68,7 +70,7 @@ bg_color = Color(0.408854, 0.408854, 0.408854, 1)
 bg_color = Color(0, 0, 0, 0.776471)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_etlur"]
-bg_color = Color(0.0963542, 0.0963542, 0.0963542, 1)
+bg_color = Color(0.0980392, 0.0980392, 0.0980392, 0.917647)
 
 [sub_resource type="LabelSettings" id="LabelSettings_7rqds"]
 font = ExtResource("7_waa4j")
@@ -85,9 +87,23 @@ font = ExtResource("7_waa4j")
 font_size = 20
 font_color = Color(0.585938, 0.585938, 0.585938, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_b2p7n"]
-font = ExtResource("7_waa4j")
-font_size = 20
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7rqds"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rqds"]
+content_margin_left = 4.0
+content_margin_top = 8.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.206739, 0.327594, 0.208697, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nvb2n"]
+content_margin_left = 4.0
+content_margin_top = 8.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.154077, 0.25164, 0.155701, 1)
+anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vkygq"]
 content_margin_left = 4.0
@@ -262,12 +278,14 @@ script = ExtResource("3_27fn8")
 [node name="Crafting" type="HBoxContainer" parent="InventoryUIScreen/Cont"]
 layout_mode = 2
 size_flags_horizontal = 3
+script = ExtResource("8_7rqds")
 
 [node name="ItemTabs" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting"]
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Buttons" type="HBoxContainer" parent="InventoryUIScreen/Cont/Crafting/ItemTabs"]
+visible = false
 layout_mode = 2
 
 [node name="Button" type="Button" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/Buttons"]
@@ -285,6 +303,8 @@ text = "Materials"
 [node name="ItemsCont" type="Panel" parent="InventoryUIScreen/Cont/Crafting/ItemTabs"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_etlur")
 
 [node name="Items" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont"]
 layout_mode = 1
@@ -299,6 +319,7 @@ theme_override_constants/separation = 2
 
 [node name="CraftingEntry" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
 layout_mode = 2
+flat = false
 
 [node name="CraftingEntry2" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
 layout_mode = 2
@@ -340,6 +361,7 @@ grow_vertical = 2
 [node name="Result" type="HBoxContainer" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="TextureRect" type="TextureRect" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/Result"]
 layout_mode = 2
@@ -358,6 +380,7 @@ layout_mode = 2
 size_flags_vertical = 2
 text = "Hello its wooden p;anks"
 label_settings = SubResource("LabelSettings_nvb2n")
+autowrap_mode = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer"]
 layout_mode = 2
@@ -367,25 +390,32 @@ layout_mode = 2
 text = "Ingredients for x4:"
 label_settings = SubResource("LabelSettings_os5c7")
 
-[node name="Label" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer"]
+[node name="Ingredients" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer/Ingredients"]
 layout_mode = 2
 text = "(x1) Log"
-label_settings = SubResource("LabelSettings_b2p7n")
+label_settings = ExtResource("11_nvb2n")
 
-[node name="Label2" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer/Ingredients"]
 layout_mode = 2
 text = "(x1) Evil Thing"
-label_settings = SubResource("LabelSettings_b2p7n")
+label_settings = ExtResource("11_nvb2n")
 
-[node name="Button" type="Button" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer"]
+[node name="CraftButton" type="Button" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.778259, 0.960938, 0.79824, 1)
 theme_override_fonts/font = ExtResource("7_waa4j")
 theme_override_font_sizes/font_size = 40
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7rqds")
+theme_override_styles/hover = SubResource("StyleBoxFlat_7rqds")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nvb2n")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vkygq")
 text = "Craft"
 
 [node name="ItemTooltip" type="PanelContainer" parent="."]
+visible = false
 layout_mode = 0
 offset_right = 210.0
 offset_bottom = 78.0
@@ -477,6 +507,7 @@ theme_override_styles/pressed = ExtResource("15_etlur")
 theme_override_styles/normal = ExtResource("15_etlur")
 text = "RESPAWN"
 
+[connection signal="pressed" from="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer/CraftButton" to="InventoryUIScreen/Cont/Crafting" method="_on_craft_button_pressed"]
 [connection signal="pressed" from="Dead/VBoxContainer/Button" to="Dead" method="_on_button_pressed"]
 
 [editable path="ItemCursorFollow"]

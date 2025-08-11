@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemDBResource" load_steps=18 format=3 uid="uid://bj4bibmitv8ra"]
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=21 format=3 uid="uid://bj4bibmitv8ra"]
 
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
 [ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
@@ -30,9 +30,9 @@ metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_iky56"]
 script = ExtResource("4_qoymp")
-ingredients = {
-"log": 1.0
-}
+ingredients = Dictionary[String, int]({
+"log": 1
+})
 output_count = 2
 metadata/_custom_type_script = "uid://8mocn31chcqv"
 
@@ -54,14 +54,30 @@ max_stack = 1
 recipes = Array[ExtResource("4_qoymp")]([])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
+[sub_resource type="Resource" id="Resource_uuhee"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"planks": 8
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
 [sub_resource type="Resource" id="Resource_qoymp"]
 script = ExtResource("1_86lrn")
 item_name = "Wooden Door"
 description = "A critical component of any enterable and or exitable home."
 texture = ExtResource("6_pnd04")
 max_stack = 64
-recipes = Array[ExtResource("4_qoymp")]([])
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_uuhee")])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
+[sub_resource type="Resource" id="Resource_u6jay"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"planks": 1
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
 
 [sub_resource type="Resource" id="Resource_bknbh"]
 script = ExtResource("1_86lrn")
@@ -69,8 +85,17 @@ item_name = "Wooden Wall"
 description = "Use this to defend yourself from monsters! Press 'B' to enter Build Mode!"
 texture = ExtResource("4_bknbh")
 max_stack = 64
-recipes = Array[ExtResource("4_qoymp")]([])
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_u6jay")])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
+[sub_resource type="Resource" id="Resource_f2qmd"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"log": 2,
+"planks": 4
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
 
 [sub_resource type="Resource" id="Resource_doynf"]
 script = ExtResource("1_86lrn")
@@ -78,7 +103,7 @@ item_name = "Workbench"
 description = "Craft bro"
 texture = ExtResource("7_w5gng")
 max_stack = 64
-recipes = Array[ExtResource("4_qoymp")]([])
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_f2qmd")])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [resource]

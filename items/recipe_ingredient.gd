@@ -1,4 +1,8 @@
 class_name RecipeIngredient extends Resource
 
-@export var name: String
+@export var item_data: ItemData
 @export var count: int = 1
+
+func _init(item_data: ItemData, count: int) -> void:
+	self.item_data = item_data
+	self.count = count

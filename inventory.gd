@@ -13,6 +13,49 @@ func set_slot(slot: int, item_instance: ItemInstance) -> void:
 	inventory[slot] = item_instance
 	Signals.update_inventory_slot.emit(slot)
 
+func remove_item(item_data: ItemData, count: int) -> void:
+	assert(count_item(item_data) >= count)
+	
+	for i in range(inventory.size()):
+		var item = inventory[i]
+		if not item: continue
+		if item.item_data != item_data: continue
+		
+		if item.count > count:
+			item.count -= count
+			set_slot(i, item)
+			count = 0
+			break
+		
+		count -= item.count
+		set_slot(i, null)
+		if count == 0: break
+		
+	assert(count == 0)
+
+func count_item(item_data: ItemData) -> int:
+	var out = 0
+	
+	for instance in inventory:
+		if not instance: continue
+		if instance.item_data == item_data:
+			out += instance.count
+	
+	return out
+
+func try_craft_recipe(recipe: ItemRecipe) -> bool:
+	if not can_fufill_recipe(recipe): return false
+	
+	for ingredient in recipe.get_legit_ingredients_because_the_inspector_sucks_my_gock():
+		remove_item(ingredient.item_data, ingredient.count)
+	
+	return true
+
+func can_fufill_recipe(recipe: ItemRecipe) -> bool:
+	for ingredient in recipe.get_legit_ingredients_because_the_inspector_sucks_my_gock():
+		if count_item(ingredient.item_data) < ingredient.count: return false
+	return true
+
 func to_json() -> Variant:
 	return inventory.map(func(x): return x.to_json() if x else null)
 
