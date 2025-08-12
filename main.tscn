@@ -160,6 +160,7 @@ mesh = SubResource("CapsuleMesh_1bvp3")
 shape = SubResource("ConvexPolygonShape3D_7mycd")
 
 [node name="Naruto" type="Sprite3D" parent="Player"]
+cast_shadow = 2
 pixel_size = 0.003
 billboard = 2
 shaded = true

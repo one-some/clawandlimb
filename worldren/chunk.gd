@@ -2,7 +2,10 @@ extends MeshInstance3D
 
 var chunk_pos: Vector3
 var data = ChunkData.new()
-@export var noise: Noise
+
+@export var low_noise: Noise
+@export var high_noise: Noise
+@export var selector_noise: Noise
 
 func lazy_load_hack() -> void:
 	var shader_mat: ShaderMaterial = material_override
@@ -11,23 +14,34 @@ func lazy_load_hack() -> void:
 		print(State._hack_tile_images.map(func(x: Image): return x.get_format()))
 		t2d_arr.create_from_images(State._hack_tile_images)
 		shader_mat.set_shader_parameter("textures", t2d_arr)
+
+func sample_noise(pos: Vector3) -> float:
+	var out = low_noise.get_noise_3dv(pos / 40.0)
 	
+	var selector = selector_noise.get_noise_3dv(pos / 20.0)
+	var high = high_noise.get_noise_3dv(pos)
+	
+	out += 20.0 * high * selector
+	
+	return out
 
 func _ready() -> void:
 	lazy_load_hack()
 
-func generate() -> void:
-	self.global_position = chunk_pos * ChunkData.CHUNK_SIZE
+func generate(chunk_pos: Vector3) -> void:
+	self.chunk_pos = chunk_pos
+	self.set_deferred("global_position", chunk_pos * ChunkData.CHUNK_SIZE)
 	
 	for x in ChunkData.PADDED_SIZE:
 		for y in ChunkData.PADDED_SIZE:
 			for z in ChunkData.PADDED_SIZE:
 				var local_pos = Vector3(x, y, z)
 				var global_pos = (chunk_pos * ChunkData.CHUNK_SIZE) + local_pos
-				var val = noise.get_noise_3dv(global_pos)
+				
+				var val = sample_noise(global_pos)
 				var idx = data.get_index(local_pos)
 				
-				data.density[idx] = val - (global_pos.y / 20.0)
+				data.density[idx] = val - (global_pos.y / 10.0)
 				
 				var mat = 2 # Stone
 				if global_pos.y > -3.0:
@@ -57,8 +71,13 @@ func generate_mesh() -> void:
 					Vector3(x, y + 1, z + 1),
 				]
 				
-				var corner_densities = corner_positions.map(func(x): return data.density[data.get_index(x)])
-				var corner_materials = corner_positions.map(func(x): return data.material[data.get_index(x)])
+				var corner_densities = []
+				var corner_materials = []
+				
+				for corner in corner_positions:
+					var idx = data.get_index(corner)
+					corner_densities.append(data.density[idx])
+					corner_materials.append(data.material[idx])
 				
 				# TODO: Check for destroyed corners.....
 				
@@ -155,4 +174,7 @@ func generate_mesh() -> void:
 					i += 3
 	st.generate_normals()
 	#st.generate_tangents()
-	self.mesh = st.commit()
+	(func():
+		self.mesh = st.commit()
+		self.create_trimesh_collision()
+	).call_deferred()
