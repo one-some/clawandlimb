@@ -3,35 +3,36 @@ shader_type spatial;
 uniform sampler2DArray textures : filter_nearest, source_color;
 
 varying vec3 world_pos;
-varying flat vec4 material_ids;
-varying vec2 blend_uv;
+varying vec3 world_normal;
+varying vec4 mat_weights;
+varying flat vec4 mat_ids;
 
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	material_ids = COLOR;
-	blend_uv = UV2;
+	world_normal = (inverse(transpose(MODEL_MATRIX)) * vec4(NORMAL, 0.0)).xyz;
+	
+	mat_weights = COLOR;
+	mat_ids = CUSTOM0;
+}
+
+vec4 triplanar_sample(float id, vec3 pos, vec3 norm) {
+	vec4 x_tex = texture(textures, vec3(pos.zy, id));
+	vec4 y_tex = texture(textures, vec3(pos.xz, id));
+	vec4 z_tex = texture(textures, vec3(pos.xy, id));
+	
+	vec3 weights = abs(norm);
+	weights /= (weights.x + weights.y + weights.z);
+	
+	return (x_tex * weights.x) + (y_tex * weights.y) + (z_tex * weights.z);
 }
 
 void fragment() {
-	vec3 weights = abs(NORMAL);
-	weights /= (weights.x + weights.y + weights.z);
+	vec4 final_color = vec4(0.0, 0.0, 0.0, 1.0);
 	
-    float material_id_a = round(material_ids.r * 255.0);
-    float material_id_b = round(material_ids.g * 255.0);
-	float mat_weight = blend_uv.x;
-	
-	vec4 x_tex_a = texture(textures, vec3(world_pos.zy, material_id_a));
-	vec4 y_tex_a = texture(textures, vec3(world_pos.xz, material_id_a));
-	vec4 z_tex_a = texture(textures, vec3(world_pos.xy, material_id_a));
-	vec4 color_a = (x_tex_a * weights.x) + (y_tex_a * weights.y) + (z_tex_a * weights.z);
-	
-	
-	vec4 x_tex_b = texture(textures, vec3(world_pos.zy, material_id_b));
-	vec4 y_tex_b = texture(textures, vec3(world_pos.xz, material_id_b));
-	vec4 z_tex_b = texture(textures, vec3(world_pos.xy, material_id_b));
-	vec4 color_b = (x_tex_b * weights.x) + (y_tex_b * weights.y) + (z_tex_b * weights.z);
-	
-	vec4 final_color = mix(color_a, color_b, mat_weight);
+	final_color += triplanar_sample(mat_ids.x, world_pos, world_normal) * mat_weights.x;
+	final_color += triplanar_sample(mat_ids.y, world_pos, world_normal) * mat_weights.y;
+	final_color += triplanar_sample(mat_ids.z, world_pos, world_normal) * mat_weights.z;
+	final_color += triplanar_sample(mat_ids.w, world_pos, world_normal) * mat_weights.w;
 	
 	ALBEDO = final_color.rgb;
 }
