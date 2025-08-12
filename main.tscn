@@ -1,9 +1,8 @@
-[gd_scene load_steps=33 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=32 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
-[ext_resource type="Script" uid="uid://dmjjygs0kqee" path="res://grid_map.gd" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
 [ext_resource type="Script" uid="uid://cwuwe30qn7rkj" path="res://world.gd" id="4_272bh"]
 [ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
@@ -193,14 +192,7 @@ unique_name_in_owner = true
 script = ExtResource("4_272bh")
 noise = SubResource("FastNoiseLite_vivmo")
 
-[node name="GridMap" type="GridMap" parent="World" groups=["NavigationObstacle"]]
-visible = false
-cell_size = Vector3(1, 1, 1)
-collision_layer = 17
-script = ExtResource("3_h2yge")
-
 [node name="Resources" type="Node3D" parent="World"]
-visible = false
 script = ExtResource("6_7mycd")
 
 [node name="Build" type="Node3D" parent="World"]
@@ -214,6 +206,8 @@ script = ExtResource("12_ycdy4")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="World"]
 navigation_mesh = SubResource("NavigationMesh_vivmo")
+
+[node name="CrazyWorld" parent="World" instance=ExtResource("16_2cqfq")]
 
 [node name="BuildGrid" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true
@@ -236,7 +230,5 @@ autostart = true
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="UI" parent="CanvasLayer" instance=ExtResource("12_dg77c")]
-
-[node name="CrazyWorld" parent="." instance=ExtResource("16_2cqfq")]
 
 [connection signal="timeout" from="Enemies/SpawnTimer" to="Enemies" method="_on_spawn_timer_timeout"]

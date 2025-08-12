@@ -1,5 +1,7 @@
 extends MeshInstance3D
 
+signal mesh_generated
+
 var chunk_pos: Vector3
 var data = ChunkData.new()
 
@@ -8,6 +10,11 @@ var data = ChunkData.new()
 @export var selector_noise: Noise
 
 func lazy_load_hack() -> void:
+	if not low_noise.seed:
+		low_noise.seed = randf() * 2000000
+		high_noise.seed = randf() * 2000000
+		selector_noise.seed = randf() * 2000000
+	
 	var shader_mat: ShaderMaterial = material_override
 	if not shader_mat.get_shader_parameter("textures"):
 		var t2d_arr = Texture2DArray.new()
@@ -177,4 +184,11 @@ func generate_mesh() -> void:
 	(func():
 		self.mesh = st.commit()
 		self.create_trimesh_collision()
+		
+		for c in get_children():
+			if c is not StaticBody3D: continue
+			c.add_to_group("NavigationObstacle")
+			break
+		
+		mesh_generated.emit()
 	).call_deferred()

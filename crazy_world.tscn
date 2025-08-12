@@ -4,3 +4,5 @@
 
 [node name="CrazyWorld" type="Node3D"]
 script = ExtResource("1_b016s")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
