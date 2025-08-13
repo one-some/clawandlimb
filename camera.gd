@@ -81,8 +81,24 @@ func cast_from_camera(collision_mask: int = 0xFFFFFFFF) -> Dictionary:
 	var ray_end = ray_origin + ray_direction * 1000
 	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
 	query.collision_mask = collision_mask
-
+	
 	return space_state.intersect_ray(query)
+
+func try_move_threed_cursor() -> void:
+	var result = cast_from_camera(1 << 4)
+	print(result["collider"].name if result else "No")
+	if not result: return
+	if result["collider"].name != "ChunkCollider": return
+	
+	var pos = result["position"]
+	pos = pos.round()
+	
+	if Input.is_action_pressed("build_y_lock"):
+		pos.y = threed_cursor.global_position.y
+	
+	threed_cursor.global_position = pos
+	build_grid.global_position = pos + Vector3(0, 0.1, 0)
+	((build_grid.mesh as PlaneMesh).material as ShaderMaterial).set_shader_parameter("pointer", Vector2(pos.x, pos.z))
 
 func do_freecam_process(delta: float):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
@@ -99,14 +115,7 @@ func do_freecam_process(delta: float):
 		var move_dir = (forward * input_dir.y) + (right * input_dir.x)
 		target_pole += move_dir * delta * distance_from_pole * speed_multiplier
 	
-	var result = cast_from_camera(1 << 4)
-	if result and result["collider"].name == "GridMap":
-		var pos = result["position"]
-		pos.x = round(pos.x)
-		pos.z = round(pos.z)
-		threed_cursor.global_position = pos
-		build_grid.global_position = pos + Vector3(0, 0.1, 0)
-		((build_grid.mesh as PlaneMesh).material as ShaderMaterial).set_shader_parameter("pointer", Vector2(pos.x, pos.z))
+	try_move_threed_cursor()
 
 func visually_mark_interactable_recursive(interactable: Node3D, add: bool) -> void:
 	if interactable is MeshInstance3D:
@@ -185,6 +194,12 @@ func process_mouse_move(event: InputEventMouseMotion) -> void:
 
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
+	
+	if event is InputEventKey and event.pressed:
+		if Input.is_action_just_pressed("build_y_up"):
+			threed_cursor.position.y += 1
+		elif Input.is_action_just_pressed("build_y_down"):
+			threed_cursor.position.y -= 1
 	
 	if event is InputEventMouseMotion:
 		process_mouse_move(event)

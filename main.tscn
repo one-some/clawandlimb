@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=31 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
@@ -101,8 +101,6 @@ _data = {
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_vivmo"]
 
-[sub_resource type="NavigationMesh" id="NavigationMesh_vivmo"]
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2cqfq"]
 render_priority = 0
 shader = ExtResource("14_vivmo")
@@ -201,11 +199,6 @@ script = ExtResource("1_ig7tw")
 
 [node name="Items" type="Node3D" parent="World"]
 script = ExtResource("12_ycdy4")
-
-[node name="Navigation" type="Node3D" parent="World"]
-
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="World"]
-navigation_mesh = SubResource("NavigationMesh_vivmo")
 
 [node name="CrazyWorld" parent="World" instance=ExtResource("16_2cqfq")]
 

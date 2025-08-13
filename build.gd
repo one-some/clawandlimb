@@ -8,6 +8,7 @@ extends Node3D
 const Wall = preload("res://wall.tscn")
 const TestModel = preload("res://workbench.tscn")
 const Door = preload("res://door.tscn")
+const TerrainDestroyer = preload("res://terrain_destroyer.tscn")
 
 # Yes this is terrible but I need time to think about it and sort it out :50
 var candidate_build_mode = State.BuildMode.NONE
@@ -31,6 +32,8 @@ func _change_active_hotbar_slot() -> void:
 		candidate_build_mode = State.BuildMode.PLACE_MODEL
 	elif key == "wooden_door":
 		candidate_build_mode = State.BuildMode.PLACE_DOOR
+	elif key == "wooden_shovel":
+		candidate_build_mode = State.BuildMode.REMOVE_TERRAIN
 	else:
 		candidate_build_mode = State.BuildMode.PLACE_NOTHING
 	
@@ -44,8 +47,9 @@ func snapped_cursor_position() -> Vector3:
 		return pos
 	
 	var start_pos = active_constructable.start_pos
+	pos.y = start_pos.y
 	
-	var delta = start_pos - pos 
+	var delta = start_pos - pos
 	if abs(delta.x) > abs(delta.z):
 		pos.z = start_pos.z
 	else:
@@ -71,6 +75,9 @@ func reset_building(init_start_pos = null) -> void:
 		active_constructable = Wall.instantiate()
 	elif State.build_mode == State.BuildMode.PLACE_DOOR:
 		active_constructable = Door.instantiate()
+	elif State.build_mode == State.BuildMode.REMOVE_TERRAIN:
+		print("Making")
+		active_constructable = TerrainDestroyer.instantiate()
 	else:
 		return
 	
@@ -125,27 +132,47 @@ func commit_wall() -> void:
 	active_constructable = null
 	reset_building(end_pos)
 
+func allow_freehand() -> bool:
+	return State.build_mode == State.BuildMode.REMOVE_TERRAIN
+
 func update_building() -> void:
+	if not active_constructable: return
 	if State.build_mode == State.BuildMode.NONE: return
 	if State.build_mode == State.BuildMode.PLACE_NOTHING: return
 	
-	var end_pos = snapped_cursor_position()
+	var end_pos = snapped_cursor_position() if not allow_freehand() else threed_cursor.position
 	active_constructable.set_end(end_pos)
 
 func _process(delta: float) -> void:
 	update_building()
 
 func on_click() -> void:
+	if State.build_mode in [State.BuildMode.NONE, State.BuildMode.PLACE_NOTHING]:
+		return
+	
+	if not active_constructable:
+		reset_building()
+		return
+	
+	if not active_constructable.start_pos:
+		active_constructable.set_start(threed_cursor.position)
+		return
+	
 	match State.build_mode:
 		State.BuildMode.PLACE_WALL:
 			if active_constructable.start_pos:
 				commit_wall()
 				return
-			active_constructable.set_start(threed_cursor.position)
-		State.BuildMode.PLACE_MODEL, State.BuildMode.PLACE_DOOR:
+		State.BuildMode.REMOVE_TERRAIN:
+			if active_constructable.start_pos:
+				active_constructable.finalize()
+				active_constructable = null
+				reset_building()
+				return
+		_:
 			active_constructable.finalize()
 			active_constructable = null
-			reset_building(false)
+			reset_building()
 
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return

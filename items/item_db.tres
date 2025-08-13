@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemDBResource" load_steps=20 format=3 uid="uid://bj4bibmitv8ra"]
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=23 format=3 uid="uid://bj4bibmitv8ra"]
 
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
 [ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bawjvdcsmpdir" path="res://tex/axe.png" id="5_bknbh"]
 [ext_resource type="Texture2D" uid="uid://cgj7bpwgj6jxm" path="res://tex/door.png" id="6_pnd04"]
 [ext_resource type="Texture2D" uid="uid://dv0bdvhcurmd4" path="res://tex/crafting.png" id="7_w5gng"]
+[ext_resource type="Texture2D" uid="uid://w0v44gvw746x" path="res://tex/shovel.png" id="8_vqtxk"]
 
 [sub_resource type="Resource" id="Resource_svh26"]
 script = ExtResource("1_86lrn")
@@ -69,6 +70,23 @@ max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_uuhee")])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
+[sub_resource type="Resource" id="Resource_17pv3"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"planks": 3
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[sub_resource type="Resource" id="Resource_pde2t"]
+script = ExtResource("1_86lrn")
+item_name = "Wooden Shovel"
+description = "Flatten an area to build on! Erode the world around you!"
+texture = ExtResource("8_vqtxk")
+max_stack = 1
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_17pv3")])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
 [sub_resource type="Resource" id="Resource_u6jay"]
 script = ExtResource("4_qoymp")
 ingredients = Dictionary[String, int]({
@@ -112,6 +130,7 @@ items = Dictionary[String, ExtResource("1_86lrn")]({
 "planks": SubResource("Resource_w5gng"),
 "wooden_axe": SubResource("Resource_vqtxk"),
 "wooden_door": SubResource("Resource_qoymp"),
+"wooden_shovel": SubResource("Resource_pde2t"),
 "wooden_wall": SubResource("Resource_bknbh"),
 "workbench": SubResource("Resource_doynf")
 })

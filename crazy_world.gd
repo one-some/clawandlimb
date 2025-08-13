@@ -1,10 +1,43 @@
-extends Node3D
+class_name ChunkManager extends Node3D
 
 const Chunk = preload("res://worldren/chunk.tscn")
 @onready var nav_region = $NavigationRegion3D
 var ids = []
 var world_aabb = AABB()
 var chunks_left = 0
+var chunks = {}
+
+func get_chunk_pos_from_global_pos(pos: Vector3) -> Vector3:
+	return (pos / ChunkData.CHUNK_SIZE).floor()
+
+func set_density_global(pos: Vector3, density: float) -> Array:
+	var modified = []
+	var main_chunk_pos = get_chunk_pos_from_global_pos(pos)
+	
+	for dx in range(0, -2, -1):
+		for dy in range(0, -2, -1):
+			for dz in range(0, -2, -1):
+				var chunk_pos = main_chunk_pos + Vector3(dx, dy, dz)
+				if chunk_pos not in chunks: continue
+				
+				var chunk = chunks[chunk_pos]
+				var data: ChunkData = chunk.data
+				var global_origin = chunk_pos * ChunkData.CHUNK_SIZE
+				var local_pos = pos - global_origin
+				
+				if local_pos.x < 0: continue
+				if local_pos.y < 0: continue
+				if local_pos.z < 0: continue
+				if local_pos.x >= ChunkData.PADDED_SIZE: continue
+				if local_pos.y >= ChunkData.PADDED_SIZE: continue
+				if local_pos.z >= ChunkData.PADDED_SIZE: continue
+				
+				data.density[data.get_index(local_pos)] = density
+				
+				if chunk_pos not in modified:
+					modified.append(chunk_pos)
+	
+	return modified
 
 func gen_nav() -> void:
 	# Nav stuff
@@ -37,13 +70,16 @@ func load_tiles() -> void:
 		State._hack_tile_images.append(image)
 
 func _ready() -> void:
+	# Does this suck. Let me know.
+	State.chunk_manager = self
+	
 	load_tiles()
 	
 	var positions = []
 	
-	for x in range(-5, 5):
+	for x in range(-2, 2):
 		for y in range(-2, 2):
-			for z in range(-5, 5):
+			for z in range(-2, 2):
 				positions.append(Vector3(x, y, z))
 	
 	var origin = Vector3(0, 0, 0)
@@ -57,6 +93,7 @@ func _ready() -> void:
 	
 	for pos in positions:
 		var chunk = Chunk.instantiate()
+		chunks[pos] = chunk
 		chunk.mesh_generated.connect(_on_chunk_mesh_generated.bind(chunk))
 		self.add_child(chunk)
 		

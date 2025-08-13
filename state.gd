@@ -12,8 +12,10 @@ enum BuildMode {
 	PLACE_NOTHING,
 	PLACE_WALL,
 	PLACE_MODEL,
-	PLACE_DOOR
+	PLACE_DOOR,
+	REMOVE_TERRAIN
 }
 var build_mode: BuildMode = BuildMode.NONE
 
 var _hack_tile_images: Array[Image] = []
+var chunk_manager: ChunkManager

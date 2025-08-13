@@ -4,6 +4,7 @@ signal mesh_generated
 
 var chunk_pos: Vector3
 var data = ChunkData.new()
+var body: StaticBody3D
 
 @export var low_noise: Noise
 @export var high_noise: Noise
@@ -11,9 +12,9 @@ var data = ChunkData.new()
 
 func lazy_load_hack() -> void:
 	if not low_noise.seed:
-		low_noise.seed = randf() * 2000000
-		high_noise.seed = randf() * 2000000
-		selector_noise.seed = randf() * 2000000
+		low_noise.seed = (randf() -0.5) * 2000000
+		high_noise.seed = (randf() - 0.5) * 2000000
+		selector_noise.seed = (randf() - 0.5) * 2000000
 	
 	var shader_mat: ShaderMaterial = material_override
 	if not shader_mat.get_shader_parameter("textures"):
@@ -183,11 +184,20 @@ func generate_mesh() -> void:
 	#st.generate_tangents()
 	(func():
 		self.mesh = st.commit()
+		
+		if body:
+			body.name = "_DIE_DIE_DIE"
+			body.queue_free()
+		
 		self.create_trimesh_collision()
 		
 		for c in get_children():
 			if c is not StaticBody3D: continue
+			if c == body: continue
+			body = c
+			c.name = "ChunkCollider"
 			c.add_to_group("NavigationObstacle")
+			c.set_collision_layer_value(5, true)
 			break
 		
 		mesh_generated.emit()
