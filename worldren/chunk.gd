@@ -59,6 +59,7 @@ func generate(chunk_pos: Vector3) -> void:
 	self.chunk_pos = chunk_pos
 	self.set_deferred("global_position", chunk_pos * ChunkData.CHUNK_SIZE)
 	
+	var tree_grid = {}
 	var candidate_tree_positions = []
 	
 	for x in ChunkData.PADDED_SIZE:
@@ -73,22 +74,19 @@ func generate(chunk_pos: Vector3) -> void:
 				var density = val
 				data.density[idx] = density
 				
-				if density < 0.05 and density > -0.01 and randf() < 0.1:
-					var add = true
-					for pos in candidate_tree_positions:
-						if pos.distance_to(global_pos) > 3.0: continue
-						add = false
-						break
-					
-					if add:
-						candidate_tree_positions.append(global_pos)
-				
 				var mat = 2 # Stone
 				if density < 0.4:
 					mat = 1 # Grass
 				elif density < 1.8:
 					mat = 0 # Stone
 				data.material[idx] = mat
+				
+				if mat == 1 and density < 0.05 and density > -0.01 and randf() < 0.1:
+					var tree_cell = (local_pos / 4.0).floor()
+					if not tree_cell in tree_grid:
+						tree_grid[tree_cell] = true
+						candidate_tree_positions.append(global_pos)
+
 	
 	for pos in candidate_tree_positions:
 		var tree = tree_res.instantiate()
@@ -102,6 +100,17 @@ func generate_mesh() -> void:
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	st.set_custom_format(0, SurfaceTool.CUSTOM_RGBA_FLOAT)
+	
+	var corner_densities = []
+	corner_densities.resize(8)
+	var corner_materials = []
+	corner_materials.resize(8)
+	var vertex_map = []
+	vertex_map.resize(12)
+	var cell_vertices = []
+	cell_vertices.resize(12)
+	var vertex_data_map = []
+	vertex_data_map.resize(12)
 	
 	for x in ChunkData.CHUNK_SIZE:
 		for y in ChunkData.CHUNK_SIZE:
@@ -117,8 +126,8 @@ func generate_mesh() -> void:
 					Vector3(x, y + 1, z + 1),
 				]
 				
-				var corner_densities = []
-				var corner_materials = []
+				corner_densities.clear()
+				corner_materials.clear()
 				
 				for corner in corner_positions:
 					var idx = data.get_index(corner)
@@ -137,10 +146,8 @@ func generate_mesh() -> void:
 					continue
 				
 				var edge_mask = MarchData.edge_table[index]
-				var cell_vertices = []
-				var vertex_data_map = []
-				var vertex_map = []
-				vertex_map.resize(12)
+				cell_vertices.clear()
+				vertex_data_map.clear()
 				vertex_map.fill(-1)
 				
 				for i in range(12):
@@ -175,28 +182,31 @@ func generate_mesh() -> void:
 						(1.0 - rel_pos.x) * rel_pos.y * rel_pos.z,
 					]
 					
-					var mat_weights = {}
+					var top_mats = [-1, -1, -1, -1]
+					var top_weights = [0.0, 0.0, 0.0, 0.0]
+					
+					var unique_mats = {}
 					for j in range(8):
 						var mat_id = corner_materials[j]
-						if mat_id not in mat_weights:
-							mat_weights[mat_id] = 0.0
-						mat_weights[mat_id] += weights[j]
+						if mat_id not in unique_mats:
+							unique_mats[mat_id] = 0.0
+						unique_mats[mat_id] += weights[j]
 					
-					var sorted_mats = mat_weights.keys()
-					sorted_mats.sort_custom(func(a, b): return mat_weights[a] > mat_weights[b])
+					for mat_id in unique_mats:
+						var weight = unique_mats[mat_id]
+						for k in range(4):
+							if weight <= top_weights[k]: continue
+							for l in range(3, k, -1):
+								top_weights[l] = top_weights[l - 1]
+								top_mats[l] = top_mats[l - 1]
+							top_weights[k] = weight
+							top_mats[k] = mat_id
+							break
 					
-					var final_ids = Vector4.ZERO
-					var final_weights = Vector4.ZERO
-					var total_weight = 0.0
-					
-					var num_mats = min(sorted_mats.size(), 4)
-					for j in range(num_mats):
-						var mat_id = sorted_mats[j]
-						var weight = mat_weights[mat_id]
-						final_ids[j] = float(mat_id)
-						final_weights[j] = weight
-						total_weight += weight
-					
+					var final_ids = Vector4(top_mats[0], top_mats[1], top_mats[2], top_mats[3])
+					var final_weights = Vector4(top_weights[0], top_weights[1], top_weights[2], top_weights[3])
+
+					var total_weight = final_weights.x + final_weights.y + final_weights.z + final_weights.w
 					if total_weight > 0.0:
 						final_weights /= total_weight
 					
