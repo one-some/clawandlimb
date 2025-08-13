@@ -1,19 +1,14 @@
-extends CSGCombiner3D
+extends Constructable
 
 const Plank = preload("res://tex/tiles/plank.png")
 const WALL_HEIGHT = 3.0
 
-@onready var box = $CSGBox3D
+@onready var box = $Wall/CSGBox3D
 
 var material = StandardMaterial3D.new()
-var combat = CombatRecipient.new("Wall", 10.0)
-
-var start_pos = null
-var end_pos = null
 
 func _ready() -> void:
-	# FIXME: Do we need to bind here
-	combat.died.connect(func(): self.queue_free())
+	combat.name = "Wall"
 	
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	material.albedo_color = Color(Color.WHITE, 0.5)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://b560fl14oimxg"]
 
-[ext_resource type="Script" uid="uid://dxy407qcj2u6r" path="res://door_construction.gd" id="1_ba8gm"]
-[ext_resource type="PackedScene" uid="uid://blwhawsiihjt4" path="res://mdl/Door.gltf" id="2_v6xrn"]
+[ext_resource type="Script" uid="uid://dxy407qcj2u6r" path="res://build/door_construction.gd" id="1_ap4h7"]
+[ext_resource type="PackedScene" uid="uid://blwhawsiihjt4" path="res://mdl/Door.gltf" id="2_nwe36"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v6xrn"]
 transparency = 1
@@ -13,22 +13,25 @@ size = Vector3(1, 2, 0.2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_0phs7"]
 size = Vector3(1, 2, 1)
 
-[node name="Door" type="StaticBody3D"]
-script = ExtResource("1_ba8gm")
+[node name="Door" type="Node3D"]
+script = ExtResource("1_ap4h7")
+metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
+[node name="Door" type="StaticBody3D" parent="."]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Door"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
 operation = 2
 size = Vector3(1, 2.1, 1)
 material = SubResource("StandardMaterial3D_v6xrn")
 
-[node name="blockbench_export" parent="." instance=ExtResource("2_v6xrn")]
+[node name="blockbench_export" parent="Door" instance=ExtResource("2_nwe36")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Door"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("BoxShape3D_v6xrn")
 
-[node name="ShapeCast3D" type="ShapeCast3D" parent="."]
+[node name="ShapeCast3D" type="ShapeCast3D" parent="Door"]
 shape = SubResource("BoxShape3D_0phs7")
 target_position = Vector3(0, 1, 0)
 collision_mask = 4

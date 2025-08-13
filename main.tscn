@@ -1,7 +1,7 @@
 [gd_scene load_steps=30 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
-[ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
 [ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
 [ext_resource type="Shader" uid="uid://deusiyboy5f8r" path="res://grid.gdshader" id="14_vivmo"]
 [ext_resource type="Script" uid="uid://bx3ft4mal7bir" path="res://enemies.gd" id="15_2cqfq"]
-[ext_resource type="PackedScene" uid="uid://o55jlkit05em" path="res://crazy_world.tscn" id="16_2cqfq"]
+[ext_resource type="PackedScene" uid="uid://o55jlkit05em" path="res://worldren/crazy_world.tscn" id="16_2cqfq"]
 [ext_resource type="AudioStream" uid="uid://cxlsf6rlj0caa" path="res://aud/wind.wav" id="16_yaehf"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vivmo"]

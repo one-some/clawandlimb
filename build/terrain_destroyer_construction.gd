@@ -1,12 +1,6 @@
-extends MeshInstance3D
+extends Constructable
 
-var box: BoxMesh = self.mesh
-
-var start_pos = null
-var end_pos = null
-
-func set_start(pos: Vector3) -> void:
-	start_pos = pos
+@onready var box: BoxMesh = $TerrainDestroyer.mesh
 
 func set_end(pos: Vector3) -> void:
 	if not start_pos:

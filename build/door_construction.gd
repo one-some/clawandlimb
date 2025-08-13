@@ -1,22 +1,17 @@
-extends StaticBody3D
+extends Constructable
 
-@onready var cast = $ShapeCast3D
-@onready var csg = $CSGBox3D
+@onready var holder = $Door
+@onready var cast = $Door/ShapeCast3D
+@onready var csg = $Door/CSGBox3D
 var og_transform = null
 
 const PIVOT = Vector3(0.5, 0, 0)
 var open = false
 var opening = false
 
-var combat = CombatRecipient.new("Door", 10.0)
-var start_pos = null
-var end_pos = null
-
 func _ready() -> void:
-	combat.died.connect(func(): self.queue_free())
-
-func set_start(pos: Vector3) -> void:
-	self.global_position = pos
+	one_and_done = true
+	combat.name = "Door"
 
 func set_end(pos: Vector3) -> void:
 	self.global_position = pos
@@ -32,9 +27,8 @@ func finalize() -> void:
 		csg.reparent(collider)
 		break
 	
-	if csg.get_parent() == self:
+	if csg.get_parent() == holder:
 		csg.queue_free()
-
 
 func _interact() -> void:
 	if opening: return

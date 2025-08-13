@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://o55jlkit05em"]
 
-[ext_resource type="Script" uid="uid://cpnghr3brrwxp" path="res://crazy_world.gd" id="1_b016s"]
+[ext_resource type="Script" uid="uid://cpnghr3brrwxp" path="res://worldren/crazy_world.gd" id="1_b016s"]
 
 [node name="CrazyWorld" type="Node3D"]
 script = ExtResource("1_b016s")

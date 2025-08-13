@@ -4,14 +4,12 @@ extends Node3D
 @onready var threed_cursor = %"3DCursor"
 @onready var build_grid = %BuildGrid
 
-const Wall = preload("res://wall.tscn")
-const TestModel = preload("res://workbench.tscn")
-const Door = preload("res://door.tscn")
-const TerrainDestroyer = preload("res://terrain_destroyer.tscn")
+const Wall = preload("res://build/wall.tscn")
+const TestModel = preload("res://build/workbench.tscn")
+const Door = preload("res://build/door.tscn")
+const TerrainDestroyer = preload("res://build/terrain_destroyer.tscn")
 
-# Yes this is terrible but I need time to think about it and sort it out :50
-var candidate_build_mode = State.BuildMode.NONE
-var active_constructable = null
+var active_constructable: Constructable = null
 
 func _ready() -> void:
 	Signals.change_active_hotbar_slot.connect(_change_active_hotbar_slot)
@@ -20,25 +18,21 @@ func _change_active_hotbar_slot() -> void:
 	var item = Inventory.active_item()
 	
 	if not item:
-		candidate_build_mode = State.BuildMode.PLACE_NOTHING
-		set_build_mode_enabled(false)
+		set_build_mode(State.BuildMode.PLACE_NOTHING)
 		return
 	
 	var key = ItemRegistry.key_from_data(item.item_data)
 	if key == "wooden_wall":
-		candidate_build_mode = State.BuildMode.PLACE_WALL
+		set_build_mode(State.BuildMode.PLACE_WALL)
 	elif key == "workbench":
-		candidate_build_mode = State.BuildMode.PLACE_MODEL
+		set_build_mode(State.BuildMode.PLACE_MODEL)
 	elif key == "wooden_door":
-		candidate_build_mode = State.BuildMode.PLACE_DOOR
+		set_build_mode(State.BuildMode.PLACE_DOOR)
 	elif key == "wooden_shovel":
-		candidate_build_mode = State.BuildMode.REMOVE_TERRAIN
+		set_build_mode(State.BuildMode.REMOVE_TERRAIN)
 	else:
-		candidate_build_mode = State.BuildMode.PLACE_NOTHING
+		set_build_mode(State.BuildMode.PLACE_NOTHING)
 	
-	set_build_mode(candidate_build_mode)
-	set_build_mode_enabled(candidate_build_mode != State.BuildMode.PLACE_NOTHING)
-
 func snapped_cursor_position() -> Vector3:
 	var pos = threed_cursor.position
 
@@ -65,42 +59,53 @@ func reset_building(init_start_pos = null) -> void:
 	print("Resetting with ", State.build_mode)
 	
 	if active_constructable:
+		print("[reset] queue free and null")
 		active_constructable.queue_free()
 		active_constructable = null
 	
+	print("ok")
+	
 	if State.build_mode == State.BuildMode.PLACE_MODEL:
+		print("[reset] tst")
 		active_constructable = TestModel.instantiate()
 	elif State.build_mode == State.BuildMode.PLACE_WALL:
+		print("[reset] wall")
 		active_constructable = Wall.instantiate()
 	elif State.build_mode == State.BuildMode.PLACE_DOOR:
+		print("[reset] door")
 		active_constructable = Door.instantiate()
 	elif State.build_mode == State.BuildMode.REMOVE_TERRAIN:
-		print("Making")
+		print("[reset] r_terr")
 		active_constructable = TerrainDestroyer.instantiate()
 	else:
+		print("Nothing..?")
 		return
 	
 	# If u wanna continue girl.
 	#active_constructable.start_pos = snapped_cursor_position() if init_start_pos else null
 	active_constructable.start_pos = init_start_pos
 	
+	print("BLEHHH")
 	self.add_child(active_constructable)
 
 func set_build_mode(build_mode: State.BuildMode) -> void:
-	threed_cursor.visible = build_mode != State.BuildMode.PLACE_MODEL
+	threed_cursor.visible = build_mode not in [
+		State.BuildMode.PLACE_MODEL
+		State.BuildMode.
+	]
 	State.build_mode = build_mode
 	
-	reset_building()
-
-func set_build_mode_enabled(mode: bool) -> void:
-	State.build_mode = candidate_build_mode if mode else State.BuildMode.NONE
 	threed_cursor.visible = mode
 	build_grid.visible = mode
 	
 	if not mode and active_constructable:
 		active_constructable.queue_free()
 		active_constructable = null
+	
+	print("Whatt..")
 	reset_building()
+	print("OK Ugh")
+	
 
 func commit_wall() -> void:
 	assert(State.build_mode == State.BuildMode.PLACE_WALL)
@@ -135,6 +140,7 @@ func allow_freehand() -> bool:
 	return State.build_mode == State.BuildMode.REMOVE_TERRAIN
 
 func update_building() -> void:
+	print("Upt")
 	if not active_constructable: return
 	if State.build_mode == State.BuildMode.NONE: return
 	if State.build_mode == State.BuildMode.PLACE_NOTHING: return
@@ -151,10 +157,12 @@ func on_click() -> void:
 	
 	if not active_constructable:
 		reset_building()
+		print("[click] No active constructable. Resetting.")
 		return
 	
-	if not active_constructable.start_pos:
+	if not active_constructable.start_pos and not active_constructable.one_and_done:
 		active_constructable.set_start(threed_cursor.position)
+		print("[click] No start pos. Setting.")
 		return
 	
 	match State.build_mode:
@@ -169,6 +177,7 @@ func on_click() -> void:
 				reset_building()
 				return
 		_:
+			print("Bruuuuu")
 			active_constructable.finalize()
 			active_constructable = null
 			reset_building()
@@ -181,6 +190,7 @@ func _input(event: InputEvent) -> void:
 			set_build_mode_enabled(not State.build_mode)
 		elif State.build_mode and Input.is_action_just_pressed("cancel"):
 			set_build_mode_enabled(false)
+			print("Post.")
 		elif (
 			Input.is_action_just_pressed("rotate_build") 
 			and active_constructable

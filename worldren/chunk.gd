@@ -8,6 +8,8 @@ var chunk_pos: Vector3
 var data = ChunkData.new()
 var body: StaticBody3D
 
+var tree_grid = {}
+
 @export var low_noise: FastNoiseLite
 @export var high_noise: FastNoiseLite
 @export var rough_noise: FastNoiseLite
@@ -59,7 +61,6 @@ func generate(chunk_pos: Vector3) -> void:
 	self.chunk_pos = chunk_pos
 	self.set_deferred("global_position", chunk_pos * ChunkData.CHUNK_SIZE)
 	
-	var tree_grid = {}
 	var candidate_tree_positions = []
 	
 	for x in ChunkData.PADDED_SIZE:
@@ -82,7 +83,7 @@ func generate(chunk_pos: Vector3) -> void:
 				data.material[idx] = mat
 				
 				if mat == 1 and density < 0.05 and density > -0.01 and randf() < 0.1:
-					var tree_cell = (local_pos / 4.0).floor()
+					var tree_cell = (global_pos / 4.0).round()
 					if not tree_cell in tree_grid:
 						tree_grid[tree_cell] = true
 						candidate_tree_positions.append(global_pos)

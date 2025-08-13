@@ -86,7 +86,7 @@ func cast_from_camera(collision_mask: int = 0xFFFFFFFF) -> Dictionary:
 
 func try_move_threed_cursor() -> void:
 	var result = cast_from_camera(1 << 4)
-	print(result["collider"].name if result else "No")
+	#print(result["collider"].name if result else "No")
 	if not result: return
 	if result["collider"].name != "ChunkCollider": return
 	
