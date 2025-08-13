@@ -2,6 +2,7 @@ extends StaticBody3D
 
 var combat = CombatRecipient.new("Tree", 20.0)
 @onready var particles: GPUParticles3D = $GPUParticles3D
+@onready var anim_player: AnimationPlayer = $AnimationPlayer
 
 func _ready():
 	combat.took_damage.connect(_on_took_damage)
@@ -27,6 +28,9 @@ func _on_took_damage(damage: float) -> void:
 	tween.tween_property(self, key, 0.0, 0.1)
 	tween.play()
 
+func _impact() -> void:
+	Signals.camera_shake.emit.bind(1.0, self.global_position)
+
 func _on_died():
 	$CollisionShape3D.disabled = true
 	
@@ -36,24 +40,16 @@ func _on_died():
 	(particles.process_material as ParticleProcessMaterial).initial_velocity_min = 20.0
 	(particles.process_material as ParticleProcessMaterial).spread = 180.0
 	
-	var tween = create_tween().set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
-	tween.tween_property(
-		self,
-		"rotation_degrees:" + ["x", "z"].pick_random(),
-		66.6 * [-1, 1].pick_random(),
-		2.0
+	anim_player.play("Fall")
+	await anim_player.animation_finished
+	# No not that kind of tree
+	await get_tree().create_timer(1.0).timeout
+	
+	Signals.drop_item.emit(
+		ItemInstance.from_name("log", randi_range(3, 6)),
+		self.global_position + Vector3(0, 3, 0)
 	)
-	#tween.tween_callback(drop_leaves.bind(30))
-	tween.tween_callback(Signals.camera_shake.emit.bind(1.0, self.global_position))
-	tween.tween_interval(1.5)
-	tween.tween_callback(func():
-		Signals.drop_item.emit(
-			ItemInstance.from_name("log", randi_range(3, 6)),
-			self.global_position + Vector3(0, 3, 0)
-		)
-		particles.restart()
-		particles.reparent(self.get_parent())
-		particles.emitting = true
-		self.queue_free.call_deferred()
-	)
-	tween.play()
+	particles.restart()
+	particles.reparent(self.get_parent())
+	particles.emitting = true
+	self.queue_free.call_deferred()

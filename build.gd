@@ -2,7 +2,6 @@ extends Node3D
 
 @onready var cam = %Camera3D
 @onready var threed_cursor = %"3DCursor"
-@onready var world = $".."
 @onready var build_grid = %BuildGrid
 
 const Wall = preload("res://wall.tscn")
@@ -111,12 +110,12 @@ func commit_wall() -> void:
 	var int_end_pos = vec_floor_div(Vector2i(
 		active_constructable.end_pos.x,
 		active_constructable.end_pos.y
-	), world.CHUNK_SIZE)
+	), ChunkData.CHUNK_SIZE)
 	
 	var int_start_pos = vec_floor_div(Vector2i(
 		active_constructable.start_pos.x,
 		active_constructable.start_pos.z
-	), world.CHUNK_SIZE)
+	), ChunkData.CHUNK_SIZE)
 	print(int_start_pos, " - ", int_end_pos)
 	
 	for coord in Geometry2D.bresenham_line(
@@ -124,7 +123,7 @@ func commit_wall() -> void:
 		int_end_pos
 	):
 		print("Updating ", coord)
-		await world.update_chunk_collision(coord)
+		State.chunk_manager.update_chunk_collision(coord)
 	
 	# Finish up materialization of wall
 	active_constructable.finalize()

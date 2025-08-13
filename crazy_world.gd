@@ -4,8 +4,10 @@ const Chunk = preload("res://worldren/chunk.tscn")
 @onready var nav_region = $NavigationRegion3D
 var ids = []
 var world_aabb = AABB()
+
 var chunks_left = 0
 var chunks = {}
+var chunk_threads = {}
 
 func get_chunk_pos_from_global_pos(pos: Vector3) -> Vector3:
 	return (pos / ChunkData.CHUNK_SIZE).floor()
@@ -69,27 +71,25 @@ func load_tiles() -> void:
 		var image = ResourceLoader.load(path + file).get_image()
 		State._hack_tile_images.append(image)
 
-func _ready() -> void:
-	# Does this suck. Let me know.
-	State.chunk_manager = self
-	
-	load_tiles()
+func generate_around(global_origin: Vector3, extent: int = 3) -> void:
+	var chunk_origin = get_chunk_pos_from_global_pos(global_origin)
 	
 	var positions = []
-	
-	const extent = 6
-	
 	for x in range(-extent, extent):
 		for y in range(-2, 2):
 			for z in range(-extent, extent):
-				positions.append(Vector3(x, y, z))
+				positions.append(chunk_origin + Vector3(x, y, z))
 	
-	var origin = Vector3(0, 0, 0)
-	positions.sort_custom(func(a, b): return b.distance_to(origin) > a.distance_to(origin))
+	positions = positions.filter(func(x): return x not in chunks)
+	if not positions: return
+	
+	positions.sort_custom(func(a, b): return b.distance_to(chunk_origin) > a.distance_to(chunk_origin))
 	#positions = positions.slice(0, 10)
 	
 	chunks_left = positions.size()
+	print("Generating %s chunks :3", chunks_left)
 	
+	# FIXME: Does doing this multiple times break navigation
 	var first_pos = positions[0] * ChunkData.CHUNK_SIZE
 	world_aabb = AABB(first_pos, Vector3.ZERO)
 	
@@ -108,11 +108,23 @@ func _ready() -> void:
 			)
 		))
 		
-		ids.append(WorkerThreadPool.add_task(chunk.generate.bind(pos)))
+		var task_id = WorkerThreadPool.add_task(chunk.generate.bind(pos))
+		chunk_threads[chunk] = task_id
+	
+
+func _ready() -> void:
+	# Does this suck. Let me know.
+	State.chunk_manager = self
+	
+	load_tiles()
+	
+	generate_around(Vector3.ZERO, 6)
 
 func _on_chunk_mesh_generated(chunk: MeshInstance3D) -> void:
-	chunks_left -= 1
+	var task_id = chunk_threads[chunk]
+	WorkerThreadPool.wait_for_task_completion(task_id)
 	
+	chunks_left -= 1
 	print("%s chunks left" % chunks_left)
 	
 	if not chunks_left:
@@ -135,6 +147,18 @@ func bake_world_nav(aabb: AABB) -> void:
 	await nav_region.bake_finished
 	print("World navigation bake finished!")
 
+
+func _on_chunk_gen_timeout() -> void:
+	var cam = get_viewport().get_camera_3d()
+	generate_around(cam.global_position, 3)
+
+func update_chunk_collision(chunk_pos: Vector2) -> void:
+	print("LOL NOT ACTUALLY UPDATYING SHIITTTT")
+
 func _exit_tree() -> void:
-	for id in ids:
-		WorkerThreadPool.wait_for_task_completion(id)
+	# If something terrible happens...
+	#for task_id in chunk_threads.values():
+	#WorkerThreadPool.wait_for_task_completion(task_id)
+	# Ok actually this just freezes the game on close. I'll
+	pass
+	# on that.

@@ -19,6 +19,7 @@ func _ready() -> void:
 	style_box = self.get_theme_stylebox("panel").duplicate(true)
 	self.add_theme_stylebox_override("panel", style_box)
 
+@warning_ignore("shadowed_variable")
 func set_selected(selected: bool) -> void:
 	self.selected = selected
 	style_box.border_color = Color.YELLOW if selected else Color("797979")

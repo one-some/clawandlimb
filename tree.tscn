@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://cq63pgrkk0pj2"]
+[gd_scene load_steps=12 format=3 uid="uid://cq63pgrkk0pj2"]
 
 [ext_resource type="PackedScene" uid="uid://blb1m1ebb25mm" path="res://mdl/Tree.gltf" id="1_brfkd"]
 [ext_resource type="Script" uid="uid://c4ag73a8j0y34" path="res://tree.gd" id="1_nnvrw"]
 [ext_resource type="Material" uid="uid://7m75kf52v7aa" path="res://leaves.tres" id="3_gvmkm"]
+[ext_resource type="AudioStream" uid="uid://brvxqb8cay4na" path="res://aud/tree_falling.mp3" id="4_44ud8"]
+[ext_resource type="AudioStream" uid="uid://bj15t0snxi7f7" path="res://aud/tree_thud.mp3" id="5_ind6k"]
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_brfkd"]
 points = PackedVector3Array(0.4375, 4.44736, 0.3125, -0.4375, 0.140093, -0.5625, -0.4375, 0.140093, 0.294643, 0.4375, 0.0521893, 0.3125, 0.419643, 0.140093, -0.5625, -0.4375, 4.35946, -0.5625, 0.419643, 4.35946, -0.5625, -0.4375, 4.35946, 0.294643)
@@ -25,6 +27,76 @@ turbulence_noise_scale = 2.49
 material = ExtResource("3_gvmkm")
 size = Vector2(0.2, 0.2)
 
+[sub_resource type="Animation" id="Animation_6vbnm"]
+resource_name = "Fall"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:x")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1, 1.03333, 1.06667, 1.1, 1.13333, 1.16667, 1.2, 1.23333, 1.26667, 1.3, 1.33333, 1.36667, 1.4, 1.43333, 1.46667, 1.5, 1.53333, 1.56667, 1.6, 1.63333, 1.66667, 1.7, 1.73333, 1.76667, 1.8, 1.83333, 1.86667, 1.9, 1.93333, 1.96667, 2, 2.03333, 2.06667, 2.1, 2.13333, 2.16667, 2.2, 2.23333, 2.26667, 2.3, 2.33333, 2.36667, 2.4, 2.43333, 2.46667, 2.5, 2.53333, 2.56667, 2.6, 2.63333, 2.66667, 2.7, 2.73333, 2.76667, 2.8, 2.83333, 2.86667, 2.9, 2.93333, 2.96667, 3, 3.03333, 3.06667, 3.1, 3.13333, 3.16667, 3.2, 3.23333, 3.26667, 3.3, 3.33333, 3.36667, 3.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 6.68851e-05, 0.000170051, 0.000281477, 0.000401823, 0.000531804, 0.000672192, 0.000823818, 0.000987585, 0.00116446, 0.0013555, 0.00156183, 0.00178468, 0.00202538, 0.00228534, 0.00256611, 0.00286937, 0.0031969, 0.00355065, 0.00393273, 0.0043454, 0.0047911, 0.00527248, 0.00579241, 0.00635396, 0.00696047, 0.00761553, 0.00832304, 0.00908719, 0.00991252, 0.0108039, 0.0117667, 0.0128065, 0.0139296, 0.0151427, 0.0164528, 0.0178678, 0.0193961, 0.0210468, 0.0228296, 0.0247551, 0.0268348, 0.029081, 0.031507, 0.0341273, 0.0369573, 0.0400139, 0.0433153, 0.0468809, 0.050732, 0.0548914, 0.0593838, 0.0642359, 0.0694764, 0.0751364, 0.0812496, 0.0878523, 0.0949835, 0.102686, 0.111004, 0.119989, 0.129693, 0.140174, 0.151495, 0.163721, 0.176926, 0.191189, 0.206593, 0.223231, 0.2412, 0.260608, 0.281571, 0.304211, 0.328664, 0.355074, 0.383599, 0.414408, 0.447683, 0.483622, 0.522439, 0.564363, 0.609644, 0.658549, 0.71137, 0.76842, 0.830037, 0.896588, 0.968467, 1.0461, 1.12995, 1.22173, 1.20313, 1.18812, 1.17542, 1.16431, 1.15494, 1.14836, 1.14604, 1.14854, 1.15287, 1.15341, 1.15139, 1.15192]
+}
+tracks/1/type = "audio"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AudioStreamPlayer3D")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("4_44ud8")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("5_ind6k")
+}],
+"times": PackedFloat32Array(0.0333333, 2.83333)
+}
+tracks/1/use_blend = true
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_impact"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_bcqui"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bgygo"]
+_data = {
+&"Fall": SubResource("Animation_6vbnm"),
+&"RESET": SubResource("Animation_bcqui")
+}
+
 [node name="Tree" type="StaticBody3D" groups=["NavigationObstacle"]]
 script = ExtResource("1_nnvrw")
 
@@ -42,5 +114,12 @@ lifetime = 2.0
 one_shot = true
 process_material = SubResource("ParticleProcessMaterial_nnvrw")
 draw_pass_1 = SubResource("PlaneMesh_44ud8")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_bgygo")
+}
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 
 [editable path="blockbench_export"]

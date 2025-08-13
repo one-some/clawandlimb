@@ -22,7 +22,7 @@ func finalize() -> void:
 	var size = (end_pos - start_pos).abs()
 	
 	# Shift up one (HACK)
-	size.y -= 1
+	size.y += 2
 	start.y += 1
 	
 	var end = start + size

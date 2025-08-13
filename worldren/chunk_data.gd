@@ -14,5 +14,6 @@ func _init() -> void:
 	density.fill(0.0)
 
 func get_index(pos: Vector3) -> int:
+	@warning_ignore("narrowing_conversion")
 	var idx: int = pos.x + (pos.y * PADDED_SIZE) + (pos.z * PADDED_SIZE * PADDED_SIZE)
 	return idx

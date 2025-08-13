@@ -14,6 +14,7 @@ var max_health: float
 var health: float
 var dead = false
 
+@warning_ignore("shadowed_variable")
 func _init(name: String, max_health: float) -> void:
 	self.name = name
 	self.health = max_health

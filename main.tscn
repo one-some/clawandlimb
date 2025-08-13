@@ -1,10 +1,9 @@
-[gd_scene load_steps=31 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=30 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
-[ext_resource type="Script" uid="uid://cwuwe30qn7rkj" path="res://world.gd" id="4_272bh"]
 [ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
 [ext_resource type="PackedScene" uid="uid://bjkfgco15fjsp" path="res://mdl/Axe.gltf" id="6_4c57u"]
 [ext_resource type="Script" uid="uid://dud76iv7grm4b" path="res://resources.gd" id="6_7mycd"]
@@ -15,6 +14,7 @@
 [ext_resource type="Shader" uid="uid://deusiyboy5f8r" path="res://grid.gdshader" id="14_vivmo"]
 [ext_resource type="Script" uid="uid://bx3ft4mal7bir" path="res://enemies.gd" id="15_2cqfq"]
 [ext_resource type="PackedScene" uid="uid://o55jlkit05em" path="res://crazy_world.tscn" id="16_2cqfq"]
+[ext_resource type="AudioStream" uid="uid://cxlsf6rlj0caa" path="res://aud/wind.wav" id="16_yaehf"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vivmo"]
 transparency = 1
@@ -99,8 +99,6 @@ _data = {
 &"RESET": SubResource("Animation_efxa6")
 }
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_vivmo"]
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2cqfq"]
 render_priority = 0
 shader = ExtResource("14_vivmo")
@@ -147,6 +145,7 @@ shadow_enabled = true
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.077, 10, 6.361)
 collision_layer = 0
+collision_mask = 17
 script = ExtResource("4_1bvp3")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Player"]
@@ -186,9 +185,6 @@ metadata/_custom_type_script = "uid://c7imyrbfwguwo"
 [node name="Model" parent="Player/Hand/WoodenAxe" instance=ExtResource("6_4c57u")]
 
 [node name="World" type="Node3D" parent="."]
-unique_name_in_owner = true
-script = ExtResource("4_272bh")
-noise = SubResource("FastNoiseLite_vivmo")
 
 [node name="Resources" type="Node3D" parent="World"]
 script = ExtResource("6_7mycd")
@@ -223,5 +219,10 @@ autostart = true
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="UI" parent="CanvasLayer" instance=ExtResource("12_dg77c")]
+
+[node name="DaBirdies" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("16_yaehf")
+volume_db = -13.0
+autoplay = true
 
 [connection signal="timeout" from="Enemies/SpawnTimer" to="Enemies" method="_on_spawn_timer_timeout"]

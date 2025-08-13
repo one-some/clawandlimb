@@ -14,9 +14,12 @@ var body: StaticBody3D
 
 func lazy_load_hack() -> void:
 	if not low_noise.seed:
-		low_noise.seed = (randf() -0.5) * 2000000
-		high_noise.seed = (randf() - 0.5) * 2000000
-		rough_noise.seed = (randf() - 0.5) * 2000000
+		@warning_ignore("narrowing_conversion")
+		low_noise.seed = (randf() -0.5) * 2000000.0
+		@warning_ignore("narrowing_conversion")
+		high_noise.seed = (randf() - 0.5) * 2000000.0
+		@warning_ignore("narrowing_conversion")
+		rough_noise.seed = (randf() - 0.5) * 2000000.0
 	
 	var shader_mat: ShaderMaterial = material_override
 	if not shader_mat.get_shader_parameter("textures"):
@@ -51,6 +54,7 @@ func sample_noise(pos: Vector3) -> float:
 func _ready() -> void:
 	lazy_load_hack()
 
+@warning_ignore("shadowed_variable")
 func generate(chunk_pos: Vector3) -> void:
 	self.chunk_pos = chunk_pos
 	self.set_deferred("global_position", chunk_pos * ChunkData.CHUNK_SIZE)
@@ -72,12 +76,12 @@ func generate(chunk_pos: Vector3) -> void:
 				if density < 0.05 and density > -0.01 and randf() < 0.1:
 					var add = true
 					for pos in candidate_tree_positions:
-						if pos.distance_to(global_position) > 1.0: continue
+						if pos.distance_to(global_pos) > 3.0: continue
 						add = false
 						break
 					
 					if add:
-						candidate_tree_positions.append(global_position)
+						candidate_tree_positions.append(global_pos)
 				
 				var mat = 2 # Stone
 				if density < 0.4:
@@ -85,8 +89,6 @@ func generate(chunk_pos: Vector3) -> void:
 				elif density < 1.8:
 					mat = 0 # Stone
 				data.material[idx] = mat
-	
-	print(len(candidate_tree_positions))
 	
 	for pos in candidate_tree_positions:
 		var tree = tree_res.instantiate()
@@ -217,6 +219,7 @@ func generate_mesh() -> void:
 						# The most we can do is just render nothing or garbage
 						# geometry instead of crashing
 						var vertex_index_in_cell = vertex_map[triangles[idx]]
+						@warning_ignore("shadowed_variable")
 						var data = vertex_data_map[vertex_index_in_cell]
 						
 						st.set_color(Color(data.weights.x, data.weights.y, data.weights.z, data.weights.w))
@@ -231,17 +234,19 @@ func generate_mesh() -> void:
 		if body:
 			body.name = "_DIE_DIE_DIE"
 			body.queue_free()
+			body = null
 		
-		self.create_trimesh_collision()
+		body = StaticBody3D.new()
+		self.add_child(body)
 		
-		for c in get_children():
-			if c is not StaticBody3D: continue
-			if c == body: continue
-			body = c
-			c.name = "ChunkCollider"
-			c.add_to_group("NavigationObstacle")
-			c.set_collision_layer_value(5, true)
-			break
+		var collision_shape = CollisionShape3D.new()
+		collision_shape.shape = self.mesh.create_trimesh_shape()
+		body.add_child(collision_shape)
+		
+		body.name = "ChunkCollider"
+		body.add_to_group("NavigationObstacle")
+		body.set_collision_layer_value(5, true)
+		assert(body)
 		
 		mesh_generated.emit()
 	).call_deferred()

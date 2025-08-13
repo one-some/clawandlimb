@@ -6,3 +6,8 @@
 script = ExtResource("1_b016s")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+
+[node name="ChunkGen" type="Timer" parent="."]
+autostart = true
+
+[connection signal="timeout" from="ChunkGen" to="." method="_on_chunk_gen_timeout"]
