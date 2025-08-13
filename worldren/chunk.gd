@@ -2,19 +2,21 @@ extends MeshInstance3D
 
 signal mesh_generated
 
+const tree_res = preload("res://tree.tscn")
+
 var chunk_pos: Vector3
 var data = ChunkData.new()
 var body: StaticBody3D
 
-@export var low_noise: Noise
-@export var high_noise: Noise
-@export var selector_noise: Noise
+@export var low_noise: FastNoiseLite
+@export var high_noise: FastNoiseLite
+@export var rough_noise: FastNoiseLite
 
 func lazy_load_hack() -> void:
 	if not low_noise.seed:
 		low_noise.seed = (randf() -0.5) * 2000000
 		high_noise.seed = (randf() - 0.5) * 2000000
-		selector_noise.seed = (randf() - 0.5) * 2000000
+		rough_noise.seed = (randf() - 0.5) * 2000000
 	
 	var shader_mat: ShaderMaterial = material_override
 	if not shader_mat.get_shader_parameter("textures"):
@@ -23,13 +25,26 @@ func lazy_load_hack() -> void:
 		t2d_arr.create_from_images(State._hack_tile_images)
 		shader_mat.set_shader_parameter("textures", t2d_arr)
 
+func snip_middle(n: float, middle: float) -> float:
+	if abs(n) < middle:
+		return 0.0
+	
+	if n >= 0:
+		return n - middle
+	return n + middle
+
 func sample_noise(pos: Vector3) -> float:
-	var out = low_noise.get_noise_3dv(pos / 40.0)
+	var out = -pos.y
 	
-	var selector = selector_noise.get_noise_3dv(pos / 20.0)
-	var high = high_noise.get_noise_3dv(pos)
+	out += low_noise.get_noise_3dv(pos * 7.0) * 2.0
 	
-	out += 20.0 * high * selector
+	var low_valley_guage = low_noise.get_noise_3dv(pos * 10.0)
+	low_valley_guage = snip_middle(low_valley_guage, 0.3)
+	out += low_noise.get_noise_3dv(pos) * 200.0 * low_valley_guage
+	
+	
+	#var high = high_noise.get_noise_3dv(pos) * 5.0
+	#var rough = rough_noise.get_noise_3dv(pos) * 0.05
 	
 	return out
 
@@ -40,6 +55,8 @@ func generate(chunk_pos: Vector3) -> void:
 	self.chunk_pos = chunk_pos
 	self.set_deferred("global_position", chunk_pos * ChunkData.CHUNK_SIZE)
 	
+	var candidate_tree_positions = []
+	
 	for x in ChunkData.PADDED_SIZE:
 		for y in ChunkData.PADDED_SIZE:
 			for z in ChunkData.PADDED_SIZE:
@@ -49,14 +66,33 @@ func generate(chunk_pos: Vector3) -> void:
 				var val = sample_noise(global_pos)
 				var idx = data.get_index(local_pos)
 				
-				data.density[idx] = val - (global_pos.y / 10.0)
+				var density = val
+				data.density[idx] = density
+				
+				if density < 0.05 and density > -0.01 and randf() < 0.1:
+					var add = true
+					for pos in candidate_tree_positions:
+						if pos.distance_to(global_position) > 1.0: continue
+						add = false
+						break
+					
+					if add:
+						candidate_tree_positions.append(global_position)
 				
 				var mat = 2 # Stone
-				if global_pos.y > -3.0:
+				if density < 0.4:
 					mat = 1 # Grass
-				elif global_pos.y > -5.0:
-					mat = 0 # Dirt
+				elif density < 1.8:
+					mat = 0 # Stone
 				data.material[idx] = mat
+	
+	print(len(candidate_tree_positions))
+	
+	for pos in candidate_tree_positions:
+		var tree = tree_res.instantiate()
+		tree.position = pos
+		tree.rotation.y = randf() * PI * 2
+		self.add_child.call_deferred(tree)
 	
 	generate_mesh()
 
@@ -169,10 +205,17 @@ func generate_mesh() -> void:
 					
 					vertex_map[i] = cell_vertices.size() - 1
 				
-				var triangles = MarchData.tri_table[index]
+				var starter = MarchData.tri_subarray_lengths[index]
+				var ender = MarchData.tri_subarray_lengths[index + 1]
+				var triangles = MarchData.tri_edge_indices.slice(starter, ender)
+				
 				var i = 0
-				while triangles[i] != -1:
+				while i < triangles.size():
 					for idx in [i, i + 2, i + 1]:
+						# HACK: Godot literally cannot handle reading 2d arrays
+						# multithreaded and just returns garbage data sometimes.
+						# The most we can do is just render nothing or garbage
+						# geometry instead of crashing
 						var vertex_index_in_cell = vertex_map[triangles[idx]]
 						var data = vertex_data_map[vertex_index_in_cell]
 						

@@ -71,8 +71,8 @@ func attract_items() -> void:
 func _physics_process(delta: float) -> void:
 	attract_items()
 	
-	if self.global_position.y < -5:
-		combat.die()
+	#if self.global_position.y < -5:
+		#combat.die()
 	
 	if State.active_ui: return
 	if State.build_mode: return

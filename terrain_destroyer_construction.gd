@@ -20,6 +20,11 @@ func set_end(pos: Vector3) -> void:
 func finalize() -> void:
 	var start = start_pos.min(end_pos)
 	var size = (end_pos - start_pos).abs()
+	
+	# Shift up one (HACK)
+	size.y -= 1
+	start.y += 1
+	
 	var end = start + size
 	
 	var affected_chunks = []

@@ -152,7 +152,8 @@ func set_camera_angle(angle_around: float, up_down: float) -> void:
 	
 	# HACK: -0.01 to prevent total top view. That confuses the .look_at in
 	# update_camera. Maybe gimbal lock or something....idk lol
-	angle_up_down = clampf(angle_up_down, 0.3, (PI / 2) - 0.01)
+	var almost_half_pi = (PI / 2) - 0.01
+	angle_up_down = clampf(angle_up_down, -almost_half_pi, almost_half_pi)
 
 func _on_right_click() -> void:
 	if not last_hovered_interactable: return

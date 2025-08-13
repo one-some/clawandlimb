@@ -77,9 +77,11 @@ func _ready() -> void:
 	
 	var positions = []
 	
-	for x in range(-2, 2):
+	const extent = 6
+	
+	for x in range(-extent, extent):
 		for y in range(-2, 2):
-			for z in range(-2, 2):
+			for z in range(-extent, extent):
 				positions.append(Vector3(x, y, z))
 	
 	var origin = Vector3(0, 0, 0)

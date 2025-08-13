@@ -145,7 +145,7 @@ shadow_enabled = true
 
 [node name="Player" type="CharacterBody3D" parent="." groups=["Player"]]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.07693, 4.53789, 6.3614)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.077, 10, 6.361)
 collision_layer = 0
 script = ExtResource("4_1bvp3")
 
