@@ -21,10 +21,11 @@ func finalize() -> void:
 		var collider = cast.get_collider(i)
 		if not collider: return
 		if collider is not CSGCombiner3D: return
+		var wall_node = collider.get_parent()
 		
-		csg.material = collider.material
-		csg.visible = true
-		csg.reparent(collider)
+		csg.material = wall_node.material
+		csg.visible = false
+		csg.reparent(wall_node)
 		break
 	
 	if csg.get_parent() == holder:

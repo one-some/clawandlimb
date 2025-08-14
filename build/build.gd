@@ -36,7 +36,7 @@ func _change_active_hotbar_slot() -> void:
 func snapped_cursor_position() -> Vector3:
 	var pos = threed_cursor.position
 
-	if not active_constructable or not active_constructable.start_pos:
+	if not active_constructable or active_constructable.start_pos == null:
 		return pos
 	
 	var start_pos = active_constructable.start_pos
@@ -55,57 +55,42 @@ func vec_floor_div(v: Vector2i, div: int) -> Vector2i:
 		floor(v.y / float(div))
 	)
 
-func reset_building(init_start_pos = null) -> void:
-	print("Resetting with ", State.build_mode)
+# TODO: Optional start_pos
+func set_build_mode(build_mode: State.BuildMode, start_pos: Variant = null) -> void:
+	print("Setting build mode to ", build_mode)
+	
+	threed_cursor.visible = build_mode not in [
+		State.BuildMode.NONE,
+		State.BuildMode.PLACE_MODEL
+	]
+	State.build_mode = build_mode
+	build_grid.visible = build_mode != State.BuildMode.NONE
 	
 	if active_constructable:
-		print("[reset] queue free and null")
-		active_constructable.queue_free()
+		print("MAIN THREAD: Queuing 'active_constructable' for deletion.")
+		print(active_constructable.name)
+		remove_child(active_constructable)
+		active_constructable.free()
+		#active_constructable.queue_free()
 		active_constructable = null
 	
-	print("ok")
-	
 	if State.build_mode == State.BuildMode.PLACE_MODEL:
-		print("[reset] tst")
 		active_constructable = TestModel.instantiate()
 	elif State.build_mode == State.BuildMode.PLACE_WALL:
-		print("[reset] wall")
 		active_constructable = Wall.instantiate()
 	elif State.build_mode == State.BuildMode.PLACE_DOOR:
-		print("[reset] door")
 		active_constructable = Door.instantiate()
 	elif State.build_mode == State.BuildMode.REMOVE_TERRAIN:
-		print("[reset] r_terr")
 		active_constructable = TerrainDestroyer.instantiate()
 	else:
-		print("Nothing..?")
 		return
 	
-	# If u wanna continue girl.
-	#active_constructable.start_pos = snapped_cursor_position() if init_start_pos else null
-	active_constructable.start_pos = init_start_pos
+	if start_pos:
+		# If u wanna continue girl.
+		active_constructable.set_start(start_pos)
 	
 	print("BLEHHH")
 	self.add_child(active_constructable)
-
-func set_build_mode(build_mode: State.BuildMode) -> void:
-	threed_cursor.visible = build_mode not in [
-		State.BuildMode.PLACE_MODEL
-		State.BuildMode.
-	]
-	State.build_mode = build_mode
-	
-	threed_cursor.visible = mode
-	build_grid.visible = mode
-	
-	if not mode and active_constructable:
-		active_constructable.queue_free()
-		active_constructable = null
-	
-	print("Whatt..")
-	reset_building()
-	print("OK Ugh")
-	
 
 func commit_wall() -> void:
 	assert(State.build_mode == State.BuildMode.PLACE_WALL)
@@ -114,7 +99,7 @@ func commit_wall() -> void:
 	# Committing the wall
 	var int_end_pos = vec_floor_div(Vector2i(
 		active_constructable.end_pos.x,
-		active_constructable.end_pos.y
+		active_constructable.end_pos.z
 	), ChunkData.CHUNK_SIZE)
 	
 	var int_start_pos = vec_floor_div(Vector2i(
@@ -132,15 +117,11 @@ func commit_wall() -> void:
 	
 	# Finish up materialization of wall
 	active_constructable.finalize()
-	var end_pos = active_constructable.end_pos
-	active_constructable = null
-	reset_building(end_pos)
 
 func allow_freehand() -> bool:
 	return State.build_mode == State.BuildMode.REMOVE_TERRAIN
 
 func update_building() -> void:
-	print("Upt")
 	if not active_constructable: return
 	if State.build_mode == State.BuildMode.NONE: return
 	if State.build_mode == State.BuildMode.PLACE_NOTHING: return
@@ -155,12 +136,12 @@ func on_click() -> void:
 	if State.build_mode in [State.BuildMode.NONE, State.BuildMode.PLACE_NOTHING]:
 		return
 	
-	if not active_constructable:
-		reset_building()
-		print("[click] No active constructable. Resetting.")
-		return
+	#if not active_constructable:
+		#reset_building()
+		#print("[click] No active constructable. Resetting.")
+		#return
 	
-	if not active_constructable.start_pos and not active_constructable.one_and_done:
+	if active_constructable.start_pos == null and not active_constructable.one_and_done:
 		active_constructable.set_start(threed_cursor.position)
 		print("[click] No start pos. Setting.")
 		return
@@ -168,28 +149,32 @@ func on_click() -> void:
 	match State.build_mode:
 		State.BuildMode.PLACE_WALL:
 			if active_constructable.start_pos:
+				var new_start = active_constructable.end_pos
 				commit_wall()
+				active_constructable = null
+				set_build_mode(State.BuildMode.PLACE_WALL, new_start)
 				return
 		State.BuildMode.REMOVE_TERRAIN:
 			if active_constructable.start_pos:
 				active_constructable.finalize()
 				active_constructable = null
-				reset_building()
+				set_build_mode(State.BuildMode.REMOVE_TERRAIN)
 				return
 		_:
+			var build_mode = State.build_mode
 			print("Bruuuuu")
 			active_constructable.finalize()
 			active_constructable = null
-			reset_building()
+			_change_active_hotbar_slot()
 
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
 	
 	if event is InputEventKey:
-		if Input.is_action_just_pressed("toggle_build"):
-			set_build_mode_enabled(not State.build_mode)
-		elif State.build_mode and Input.is_action_just_pressed("cancel"):
-			set_build_mode_enabled(false)
+		#if Input.is_action_just_pressed("toggle_build"):
+			#set_build_mode_enabled(not State.build_mode)
+		if State.build_mode and Input.is_action_just_pressed("cancel"):
+			set_build_mode(State.BuildMode.NONE)
 			print("Post.")
 		elif (
 			Input.is_action_just_pressed("rotate_build") 
