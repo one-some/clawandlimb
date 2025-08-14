@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://bhmmb2vl3pirl"]
+
+[ext_resource type="Script" uid="uid://tdvoweodhvut" path="res://rock.gd" id="1_68h2w"]
+[ext_resource type="PackedScene" uid="uid://cr0adbqrwek1" path="res://mdl/Rock.gltf" id="1_o0qsl"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_68h2w"]
+size = Vector3(1.5, 1.5, 1.5)
+
+[node name="Rock" type="StaticBody3D"]
+script = ExtResource("1_68h2w")
+
+[node name="blockbench_export" parent="." instance=ExtResource("1_o0qsl")]
+transform = Transform3D(1.5, 0, 0, 0, 3, 0, 0, 0, 1.5, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+shape = SubResource("BoxShape3D_68h2w")

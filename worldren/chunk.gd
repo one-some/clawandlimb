@@ -3,6 +3,7 @@ extends MeshInstance3D
 signal mesh_generated
 
 const tree_res = preload("res://tree.tscn")
+const rock_res = preload("res://rock.tscn")
 
 var chunk_pos: Vector3
 var data = ChunkData.new()
@@ -90,10 +91,15 @@ func generate(chunk_pos: Vector3) -> void:
 
 	
 	for pos in candidate_tree_positions:
-		var tree = tree_res.instantiate()
-		tree.position = pos
-		tree.rotation.y = randf() * PI * 2
-		self.add_child.call_deferred(tree)
+		var thing: Node3D
+		if randf() < 0.3:
+			thing = rock_res.instantiate()
+		else:
+			thing = tree_res.instantiate()
+		
+		thing.position = pos
+		thing.rotation.y = randf() * PI * 2
+		self.add_child.call_deferred(thing)
 	
 	generate_mesh()
 

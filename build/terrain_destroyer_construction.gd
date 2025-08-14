@@ -2,9 +2,13 @@ extends Constructable
 
 @onready var box: BoxMesh = $TerrainDestroyer.mesh
 
+func _ready() -> void:
+	self.visible = false
+
 func set_end(pos: Vector3) -> void:
 	if not start_pos:
 		return
+	self.visible = true
 		
 	end_pos = pos
 	

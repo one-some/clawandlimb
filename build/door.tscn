@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://b560fl14oimxg"]
+[gd_scene load_steps=7 format=3 uid="uid://b560fl14oimxg"]
 
 [ext_resource type="Script" uid="uid://dxy407qcj2u6r" path="res://build/door_construction.gd" id="1_ap4h7"]
 [ext_resource type="PackedScene" uid="uid://blwhawsiihjt4" path="res://mdl/Door.gltf" id="2_nwe36"]
+[ext_resource type="Script" uid="uid://4dueomdcjo7c" path="res://build/door_opener.gd" id="2_wio8n"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v6xrn"]
 transparency = 1
@@ -18,6 +19,7 @@ script = ExtResource("1_ap4h7")
 metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
 
 [node name="Door" type="StaticBody3D" parent="."]
+script = ExtResource("2_wio8n")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)

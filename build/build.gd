@@ -12,13 +12,14 @@ const TerrainDestroyer = preload("res://build/terrain_destroyer.tscn")
 var active_constructable: Constructable = null
 
 func _ready() -> void:
+	set_build_mode(State.build_mode)
 	Signals.change_active_hotbar_slot.connect(_change_active_hotbar_slot)
 
 func _change_active_hotbar_slot() -> void:
 	var item = Inventory.active_item()
 	
 	if not item:
-		set_build_mode(State.BuildMode.PLACE_NOTHING)
+		set_build_mode(State.BuildMode.NONE)
 		return
 	
 	var key = ItemRegistry.key_from_data(item.item_data)
@@ -31,7 +32,7 @@ func _change_active_hotbar_slot() -> void:
 	elif key == "wooden_shovel":
 		set_build_mode(State.BuildMode.REMOVE_TERRAIN)
 	else:
-		set_build_mode(State.BuildMode.PLACE_NOTHING)
+		set_build_mode(State.BuildMode.NONE)
 	
 func snapped_cursor_position() -> Vector3:
 	var pos = threed_cursor.position
@@ -58,6 +59,8 @@ func vec_floor_div(v: Vector2i, div: int) -> Vector2i:
 # TODO: Optional start_pos
 func set_build_mode(build_mode: State.BuildMode, start_pos: Variant = null) -> void:
 	print("Setting build mode to ", build_mode)
+	if build_mode == 1:
+		breakpoint
 	
 	threed_cursor.visible = build_mode not in [
 		State.BuildMode.NONE,
@@ -67,10 +70,14 @@ func set_build_mode(build_mode: State.BuildMode, start_pos: Variant = null) -> v
 	build_grid.visible = build_mode != State.BuildMode.NONE
 	
 	if active_constructable:
-		print("MAIN THREAD: Queuing 'active_constructable' for deletion.")
-		print(active_constructable.name)
+		#print("MAIN THREAD: Queuing 'active_constructable' for deletion.")
+		#print(active_constructable.name)
 		remove_child(active_constructable)
-		active_constructable.free()
+		
+		# HACK: This freezes the game until chunks are done generating lol
+		# spent 8 hours trying to debug why but didn't really get anywhere. We
+		# just gonna let it happen
+		#active_constructable.free()
 		#active_constructable.queue_free()
 		active_constructable = null
 	
@@ -89,7 +96,6 @@ func set_build_mode(build_mode: State.BuildMode, start_pos: Variant = null) -> v
 		# If u wanna continue girl.
 		active_constructable.set_start(start_pos)
 	
-	print("BLEHHH")
 	self.add_child(active_constructable)
 
 func commit_wall() -> void:
@@ -106,7 +112,7 @@ func commit_wall() -> void:
 		active_constructable.start_pos.x,
 		active_constructable.start_pos.z
 	), ChunkData.CHUNK_SIZE)
-	print(int_start_pos, " - ", int_end_pos)
+	#print(int_start_pos, " - ", int_end_pos)
 	
 	for coord in Geometry2D.bresenham_line(
 		int_start_pos,
@@ -162,7 +168,6 @@ func on_click() -> void:
 				return
 		_:
 			var build_mode = State.build_mode
-			print("Bruuuuu")
 			active_constructable.finalize()
 			active_constructable = null
 			_change_active_hotbar_slot()
@@ -175,7 +180,6 @@ func _input(event: InputEvent) -> void:
 			#set_build_mode_enabled(not State.build_mode)
 		if State.build_mode and Input.is_action_just_pressed("cancel"):
 			set_build_mode(State.BuildMode.NONE)
-			print("Post.")
 		elif (
 			Input.is_action_just_pressed("rotate_build") 
 			and active_constructable

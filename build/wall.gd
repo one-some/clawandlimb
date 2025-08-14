@@ -8,6 +8,7 @@ const WALL_HEIGHT = 3.0
 var material = StandardMaterial3D.new()
 
 func _ready() -> void:
+	self.visible = false
 	combat.name = "Wall"
 	
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -26,8 +27,10 @@ func set_end(pos: Vector3) -> void:
 	update_points()
 
 func update_points() -> void:
+	self.visible = false
 	if start_pos == null or end_pos == null: return
 	if start_pos == end_pos: return
+	self.visible = true
 	
 	box.size = Vector3(0.3, WALL_HEIGHT, start_pos.distance_to(end_pos))
 	material.uv1_scale = Vector3(box.size.z, box.size.y, 1) * 3.0

@@ -87,7 +87,7 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	#positions = positions.slice(0, 10)
 	
 	chunks_left = positions.size()
-	print("Generating %s chunks :3", chunks_left)
+	print("Generating %s chunks :3" % chunks_left)
 	
 	# FIXME: Does doing this multiple times break navigation
 	var first_pos = positions[0] * ChunkData.CHUNK_SIZE

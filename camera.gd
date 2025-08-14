@@ -11,6 +11,7 @@ var distance_from_pole = 5.0
 var angle_up_down = PI / 4.0
 var camera_shake_strength = 0.0
 var last_hovered_interactable = null
+var last_set_threed_cursor_pos = Vector3.ZERO
 
 var right_click_down_pos = null
 
@@ -93,9 +94,16 @@ func try_move_threed_cursor() -> void:
 	var pos = result["position"]
 	pos = pos.round()
 	
+	if pos == last_set_threed_cursor_pos:
+		return
+	last_set_threed_cursor_pos = pos
+	
 	if Input.is_action_pressed("build_y_lock"):
 		pos.y = threed_cursor.global_position.y
 	
+	set_threed_cursor_pos(pos)
+
+func set_threed_cursor_pos(pos: Vector3) -> void:
 	threed_cursor.global_position = pos
 	build_grid.global_position = pos + Vector3(0, 0.1, 0)
 	((build_grid.mesh as PlaneMesh).material as ShaderMaterial).set_shader_parameter("pointer", Vector2(pos.x, pos.z))
@@ -198,9 +206,9 @@ func _input(event: InputEvent) -> void:
 	
 	if event is InputEventKey and event.pressed:
 		if Input.is_action_just_pressed("build_y_up"):
-			threed_cursor.position.y += 1
+			set_threed_cursor_pos(threed_cursor.position + Vector3(0, 1, 0))
 		elif Input.is_action_just_pressed("build_y_down"):
-			threed_cursor.position.y -= 1
+			set_threed_cursor_pos(threed_cursor.position + Vector3(0, -1, 0))
 	
 	if event is InputEventMouseMotion:
 		process_mouse_move(event)
