@@ -221,7 +221,7 @@ func _input(event: InputEvent) -> void:
 			MOUSE_BUTTON_WHEEL_UP: -1,
 			MOUSE_BUTTON_WHEEL_DOWN: 1,
 		}.get(event.button_index, 0) * 0.5
-		distance_from_pole = clampf(distance_from_pole, 2.0, 20.0)
+		distance_from_pole = clampf(distance_from_pole, 2.0, 40.0)
 		
 		process_mouse_button_event_for_right_click(event)
 	else:
