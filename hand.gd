@@ -1,5 +1,6 @@
 extends Node3D
 
+@onready var fist = $Fist
 @onready var interact_cast = $"../ShapeCast3D"
 @onready var anim_player: AnimationPlayer = $"../AnimationPlayer"
 
@@ -22,9 +23,12 @@ func change_equipped_model() -> void:
 	equipped_model = null
 	
 	for item: EquippableItem in get_children():
-		var real_deal = (not equipped and not item.item_id) or (equipped and item.item_id == ItemRegistry.key_from_data(equipped.item_data))
+		var real_deal = equipped and item.item_id == ItemRegistry.key_from_data(equipped.item_data)
 		item.visible = real_deal and equipped
 		if real_deal: equipped_model = item
+
+	if not equipped_model:
+		equipped_model = fist
 
 func swing() -> void:
 	if swing_state: return
@@ -34,11 +38,15 @@ func swing() -> void:
 		$WoodenAxe: "AxeChop",
 	}.get(equipped_model, "Punch")
 	
+	var speed = {
+		$WoodenAxe: 2.0
+	}.get(equipped_model, 1.0)
+	
 	if animation == "Punch":
-		$Fist.visible = true
+		fist.visible = true
 	
 	swing_state = SwingState.FORWARDS
-	anim_player.play(animation)
+	anim_player.play(animation, -1, speed)
 	await anim_player.animation_finished
 	
 	if animation == "AxeChop":
@@ -50,7 +58,7 @@ func swing() -> void:
 	swing_state = SwingState.NONE
 	
 	if animation == "Punch":
-		$Fist.visible = false
+		fist.visible = false
 	
 	if swing_hold:
 		# If we're still holding mouse1 or whatever, try to swing again
@@ -68,7 +76,7 @@ func _at_mid_swing():
 		
 		var damage = {
 			$WoodenAxe: 4.0,
-		}.get(equipped_model, 2.0)
+		}.get(equipped_model, 1.5)
 		
 		collider.combat.take_damage(CombatRecipient.DamageOrigin.PLAYER, damage)
 		break

@@ -48,7 +48,32 @@ func update_points() -> void:
 	
 	self.position.y = (WALL_HEIGHT / 2.0)
 
+func vec_floor_div(v: Vector2i, div: int) -> Vector2i:
+	# FIXME: Do we need this?? Feels duped from somewhere else
+	return Vector2i(
+		floor(v.x / float(div)),
+		floor(v.y / float(div))
+	)
+
 func finalize() -> void:
+	var int_end_pos = vec_floor_div(Vector2i(
+		end_pos.x,
+		end_pos.z
+	), ChunkData.CHUNK_SIZE)
+	
+	var int_start_pos = vec_floor_div(Vector2i(
+		start_pos.x,
+		start_pos.z
+	), ChunkData.CHUNK_SIZE)
+	#print(int_start_pos, " - ", int_end_pos)
+	
+	for coord in Geometry2D.bresenham_line(
+		int_start_pos,
+		int_end_pos
+	):
+		print("Updating ", coord)
+		State.chunk_manager.update_chunk_collision(coord)
+	
 	material.albedo_color = Color.WHITE
 	material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 

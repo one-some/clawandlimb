@@ -70,6 +70,23 @@ func _on_click() -> void:
 	
 	var item = get_item()
 	
+	if Input.is_action_pressed("move_stack"):
+		var inv_slots
+		if slot_number < Inventory.HOTBAR_OFFSET:
+			inv_slots = range(Inventory.HOTBAR_OFFSET, Inventory.inventory.size())
+		else:
+			inv_slots = range(0, Inventory.HOTBAR_OFFSET)
+		
+		for prospective in inv_slots:
+			var item_in_slot = Inventory.inventory[prospective]
+			if item_in_slot: continue
+			Inventory.set_slot(prospective, item)
+			set_item(null)
+			break
+			
+		return
+	
+	
 	if not (item or Inventory.cursor_item):
 		return
 	

@@ -142,7 +142,7 @@ func _on_chunk_gen_timeout() -> void:
 	generate_around(cam.global_position, 3)
 
 func update_chunk_collision(chunk_pos: Vector2) -> void:
-	print("LOL NOT ACTUALLY UPDATYING SHIITTTT")
+	print("LOL NOT ACTUALLY UPDATYING (anything)")
 
 func _exit_tree() -> void:
 	# If something terrible happens...

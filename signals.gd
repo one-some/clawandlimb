@@ -20,3 +20,5 @@ signal player_died()
 signal player_respawn_requested()
 
 signal change_daylight_landmark(is_now_day: bool)
+
+signal update_3d_cursor_pos(pos: Vector3)

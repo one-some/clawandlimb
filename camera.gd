@@ -107,6 +107,7 @@ func set_threed_cursor_pos(pos: Vector3) -> void:
 	threed_cursor.global_position = pos
 	build_grid.global_position = pos + Vector3(0, 0.1, 0)
 	((build_grid.mesh as PlaneMesh).material as ShaderMaterial).set_shader_parameter("pointer", Vector2(pos.x, pos.z))
+	Signals.update_3d_cursor_pos.emit(pos)
 
 func do_freecam_process(delta: float):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
