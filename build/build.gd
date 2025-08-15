@@ -1,8 +1,8 @@
 extends Node3D
 
-@onready var cam = %Camera3D
-@onready var threed_cursor = %"3DCursor"
-@onready var build_grid = %BuildGrid
+@onready var cam: Camera3D = %Camera3D
+@onready var threed_cursor: MeshInstance3D = %"3DCursor"
+@onready var build_grid: MeshInstance3D = %BuildGrid
 
 const Wall = preload("res://build/wall.tscn")
 const TestModel = preload("res://build/workbench.tscn")
@@ -10,6 +10,7 @@ const Door = preload("res://build/door.tscn")
 const TerrainDestroyer = preload("res://build/terrain_destroyer.tscn")
 const Tile = preload("res://tile.tscn")
 
+var down_click_pos = null
 var active_constructable: Constructable = null
 
 func _ready() -> void:
@@ -146,19 +147,28 @@ func update_building() -> void:
 func _process(delta: float) -> void:
 	update_building()
 
-func on_click() -> void:
+func on_mouse_left(down: bool) -> void:
 	if State.build_mode in [State.BuildMode.NONE, State.BuildMode.PLACE_NOTHING]:
 		return
 	
-	#if not active_constructable:
-		#reset_building()
-		#print("[click] No active constructable. Resetting.")
-		#return
-	
-	if active_constructable.start_pos == null and not active_constructable.one_and_done:
-		active_constructable.set_start(threed_cursor.position)
-		print("[click] No start pos. Setting.")
+	if down:
+		print("We're down")
+		down_click_pos = threed_cursor.position
 		return
+		
+	print("We're up")
+	# Going up
+	if down_click_pos == threed_cursor.position:
+		print("Old way")
+		# We are doing a "click once start, click once end" deal. No dragging.
+		if active_constructable.start_pos == null and not active_constructable.one_and_done:
+			active_constructable.set_start(threed_cursor.position)
+			print("[click] No start pos. Setting.")
+			return
+	else:
+		# Dragging
+		active_constructable.set_start(down_click_pos)
+		print("Drag end. From ", down_click_pos, " to ", threed_cursor.position)
 	
 	match State.build_mode:
 		State.BuildMode.PLACE_WALL:
@@ -168,7 +178,8 @@ func on_click() -> void:
 				active_constructable = null
 				set_build_mode(State.BuildMode.PLACE_WALL, new_start)
 				return
-		State.BuildMode.REMOVE_TERRAIN:
+		State.BuildMode.REMOVE_TERRAIN, State.BuildMode.PLACE_TILE:
+			print(active_constructable.start_pos)
 			if active_constructable.start_pos:
 				active_constructable.finalize()
 				active_constructable = null
@@ -196,5 +207,4 @@ func _input(event: InputEvent) -> void:
 
 	elif event is InputEventMouseButton:
 		if event.button_index != MOUSE_BUTTON_LEFT: return
-		if not event.pressed: return
-		on_click()
+		on_mouse_left(event.pressed)
