@@ -4,6 +4,7 @@ var combat = CombatRecipient.new("Constructable", 10.0)
 var start_pos = null
 var end_pos = null
 var one_and_done = false
+var allow_freehand = false
 
 func _ready() -> void:
 	combat.died.connect(func(): self.queue_free())

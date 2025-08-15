@@ -27,7 +27,7 @@ func _on_died():
 	$CollisionShape3D.disabled = true
 	
 	Signals.drop_item.emit(
-		ItemInstance.from_name("log", randi_range(3, 6)),
+		ItemInstance.from_name("stone", randi_range(1, 4)),
 		self.global_position + Vector3(0, 1, 0)
 	)
 	self.queue_free.call_deferred()

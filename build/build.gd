@@ -8,6 +8,7 @@ const Wall = preload("res://build/wall.tscn")
 const TestModel = preload("res://build/workbench.tscn")
 const Door = preload("res://build/door.tscn")
 const TerrainDestroyer = preload("res://build/terrain_destroyer.tscn")
+const Tile = preload("res://tile.tscn")
 
 var active_constructable: Constructable = null
 
@@ -22,8 +23,8 @@ func _change_active_hotbar_slot() -> void:
 		set_build_mode(State.BuildMode.NONE)
 		return
 	
-	var key = ItemRegistry.key_from_data(item.item_data)
-	if key == "wooden_wall":
+	var key = item.key()
+	if key in ["wooden_wall", "stone_wall"]:
 		set_build_mode(State.BuildMode.PLACE_WALL)
 	elif key == "workbench":
 		set_build_mode(State.BuildMode.PLACE_MODEL)
@@ -31,6 +32,8 @@ func _change_active_hotbar_slot() -> void:
 		set_build_mode(State.BuildMode.PLACE_DOOR)
 	elif key == "wooden_shovel":
 		set_build_mode(State.BuildMode.REMOVE_TERRAIN)
+	elif key == "plank_floor":
+		set_build_mode(State.BuildMode.PLACE_TILE)
 	else:
 		set_build_mode(State.BuildMode.NONE)
 	
@@ -81,16 +84,24 @@ func set_build_mode(build_mode: State.BuildMode, start_pos: Variant = null) -> v
 		#active_constructable.queue_free()
 		active_constructable = null
 	
-	if State.build_mode == State.BuildMode.PLACE_MODEL:
-		active_constructable = TestModel.instantiate()
-	elif State.build_mode == State.BuildMode.PLACE_WALL:
-		active_constructable = Wall.instantiate()
-	elif State.build_mode == State.BuildMode.PLACE_DOOR:
-		active_constructable = Door.instantiate()
-	elif State.build_mode == State.BuildMode.REMOVE_TERRAIN:
-		active_constructable = TerrainDestroyer.instantiate()
-	else:
-		return
+	match State.build_mode:
+		State.BuildMode.PLACE_MODEL:
+			active_constructable = TestModel.instantiate()
+		State.BuildMode.PLACE_WALL:
+			active_constructable = Wall.instantiate()
+			var key = Inventory.active_item().key()
+			active_constructable.wall_type = {
+				"wooden_wall": "wood",
+				"stone_wall": "stone"
+			}[key]
+		State.BuildMode.PLACE_DOOR:
+			active_constructable = Door.instantiate()
+		State.BuildMode.PLACE_TILE:
+			active_constructable = Tile.instantiate()
+		State.BuildMode.REMOVE_TERRAIN:
+			active_constructable = TerrainDestroyer.instantiate()
+		_:
+			return
 	
 	if start_pos:
 		# If u wanna continue girl.
@@ -124,15 +135,12 @@ func commit_wall() -> void:
 	# Finish up materialization of wall
 	active_constructable.finalize()
 
-func allow_freehand() -> bool:
-	return State.build_mode == State.BuildMode.REMOVE_TERRAIN
-
 func update_building() -> void:
 	if not active_constructable: return
 	if State.build_mode == State.BuildMode.NONE: return
 	if State.build_mode == State.BuildMode.PLACE_NOTHING: return
 	
-	var end_pos = snapped_cursor_position() if not allow_freehand() else threed_cursor.position
+	var end_pos = snapped_cursor_position() if not active_constructable.allow_freehand else threed_cursor.position
 	active_constructable.set_end(end_pos)
 
 func _process(delta: float) -> void:

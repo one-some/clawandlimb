@@ -17,6 +17,9 @@ func duplicate() -> ItemInstance:
 		self.count
 	)
 
+func key() -> String:
+	return ItemRegistry.key_from_data(item_data)
+
 @warning_ignore("shadowed_variable")
 static func from_name(name: String, count: int = 1) -> ItemInstance:
 	var data = ItemRegistry.get_item_data(name)

@@ -4,6 +4,7 @@ extends Constructable
 
 func _ready() -> void:
 	self.visible = false
+	self.allow_freehand = true
 
 func set_end(pos: Vector3) -> void:
 	if not start_pos:

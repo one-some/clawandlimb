@@ -15,6 +15,7 @@ enum BuildMode {
 	PLACE_WALL,
 	PLACE_MODEL,
 	PLACE_DOOR,
+	PLACE_TILE,
 	REMOVE_TERRAIN
 }
 var build_mode: BuildMode = BuildMode.NONE

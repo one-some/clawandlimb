@@ -26,7 +26,7 @@ func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
 
 func _process(delta: float) -> void:
-	time_seconds += 2.0
+	time_seconds += 22.0
 	
 	var hours = get_day_hour()
 	var sun_norm = fmod(hours + 8, 24.0) / 24.0

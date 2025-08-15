@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemDBResource" load_steps=25 format=3 uid="uid://bj4bibmitv8ra"]
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=31 format=3 uid="uid://bj4bibmitv8ra"]
 
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
 [ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://cgj7bpwgj6jxm" path="res://tex/door.png" id="6_pnd04"]
 [ext_resource type="Texture2D" uid="uid://dv0bdvhcurmd4" path="res://tex/crafting.png" id="7_w5gng"]
 [ext_resource type="Texture2D" uid="uid://w0v44gvw746x" path="res://tex/shovel.png" id="8_vqtxk"]
+[ext_resource type="Texture2D" uid="uid://cxsr2d8qmr12t" path="res://tex/tiles/2_stone.png" id="10_doynf"]
 
 [sub_resource type="Resource" id="Resource_svh26"]
 script = ExtResource("1_86lrn")
@@ -132,12 +133,58 @@ max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_f2qmd")])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
+[sub_resource type="Resource" id="Resource_x5t3b"]
+script = ExtResource("1_86lrn")
+item_name = "Stone"
+description = "Rock on!"
+texture = ExtResource("10_doynf")
+max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
+[sub_resource type="Resource" id="Resource_0unfh"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"stone": 1
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[sub_resource type="Resource" id="Resource_yrton"]
+script = ExtResource("1_86lrn")
+item_name = "Stone Wall"
+description = "Looks stronger. Is it? Find out soon!"
+texture = ExtResource("10_doynf")
+max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_0unfh")])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
+[sub_resource type="Resource" id="Resource_bdpfg"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"planks": 1
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[sub_resource type="Resource" id="Resource_nnws5"]
+script = ExtResource("1_86lrn")
+item_name = "Wooden Plank Floor"
+description = "Watch for splinters!"
+texture = ExtResource("5_iky56")
+max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_bdpfg")])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
 [resource]
 script = ExtResource("2_216it")
 items = Dictionary[String, ExtResource("1_86lrn")]({
 "dirt": SubResource("Resource_svh26"),
 "log": SubResource("Resource_pnd04"),
+"plank_floor": SubResource("Resource_nnws5"),
 "planks": SubResource("Resource_w5gng"),
+"stone": SubResource("Resource_x5t3b"),
+"stone_wall": SubResource("Resource_yrton"),
 "wooden_axe": SubResource("Resource_vqtxk"),
 "wooden_door": SubResource("Resource_qoymp"),
 "wooden_shovel": SubResource("Resource_pde2t"),
