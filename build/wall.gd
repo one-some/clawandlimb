@@ -1,6 +1,6 @@
 extends Constructable
 
-const Plank = preload("res://tex/tiles/plank.png")
+const Plank = preload("res://tex/tiles/7_plank.png")
 const WALL_HEIGHT = 3.0
 
 @onready var box = $Wall/CSGBox3D

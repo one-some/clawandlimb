@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=29 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
 [ext_resource type="PackedScene" uid="uid://bjkfgco15fjsp" path="res://mdl/Axe.gltf" id="6_4c57u"]
 [ext_resource type="Script" uid="uid://b55h5ok8v2s5s" path="res://hand.gd" id="6_efxa6"]
-[ext_resource type="Texture2D" uid="uid://bi25cosltg6pl" path="res://tex/fist.png" id="8_vivmo"]
 [ext_resource type="Script" uid="uid://c7imyrbfwguwo" path="res://equipable_item.gd" id="8_w48qg"]
 [ext_resource type="PackedScene" uid="uid://0fc3n5w2os8h" path="res://ui.tscn" id="12_dg77c"]
 [ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
@@ -78,37 +77,6 @@ tracks/1/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_vivmo"]
-resource_name = "Punch"
-length = 0.7
-step = 0.0333
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Hand/Fist:rotation")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, 2.09357, 0), Vector3(0, 0, 0)]
-}
-tracks/1/type = "method"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Hand")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.25),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"_at_mid_swing"
-}]
-}
-
 [sub_resource type="Animation" id="Animation_efxa6"]
 length = 0.001
 tracks/0/type = "value"
@@ -123,23 +91,10 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector3(0, 0, 0)]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Hand/Fist:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
-}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_efxa6"]
 _data = {
 &"AxeChop": SubResource("Animation_4c57u"),
-&"Punch": SubResource("Animation_vivmo"),
 &"RESET": SubResource("Animation_efxa6")
 }
 
@@ -227,16 +182,6 @@ item_id = "wooden_axe"
 metadata/_custom_type_script = "uid://c7imyrbfwguwo"
 
 [node name="Model" parent="Player/Hand/WoodenAxe" instance=ExtResource("6_4c57u")]
-
-[node name="Fist" type="Node3D" parent="Player/Hand"]
-script = ExtResource("8_w48qg")
-metadata/_custom_type_script = "uid://c7imyrbfwguwo"
-
-[node name="Sprite3D" type="Sprite3D" parent="Player/Hand/Fist"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.558056, 0, 0)
-pixel_size = 0.004
-billboard = 2
-texture = ExtResource("8_vivmo")
 
 [node name="World" type="Node3D" parent="."]
 

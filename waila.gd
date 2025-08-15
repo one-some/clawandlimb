@@ -7,6 +7,7 @@ const FADE_TIMER_MAX = 4.0
 var fade_timer = 0.0
 
 func _ready() -> void:
+	self.visible = true
 	Signals.change_entity_health.connect(_on_change_entity_health)
 
 func _physics_process(delta: float) -> void:

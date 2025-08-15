@@ -167,7 +167,6 @@ func on_click() -> void:
 				set_build_mode(State.BuildMode.REMOVE_TERRAIN)
 				return
 		_:
-			var build_mode = State.build_mode
 			active_constructable.finalize()
 			active_constructable = null
 			_change_active_hotbar_slot()

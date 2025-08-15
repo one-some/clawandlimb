@@ -22,23 +22,35 @@ func change_equipped_model() -> void:
 	equipped_model = null
 	
 	for item: EquippableItem in get_children():
-		var real_deal = equipped and item.item_id == ItemRegistry.key_from_data(equipped.item_data)
-		item.visible = real_deal
+		var real_deal = (not equipped and not item.item_id) or (equipped and item.item_id == ItemRegistry.key_from_data(equipped.item_data))
+		item.visible = real_deal and equipped
 		if real_deal: equipped_model = item
 
 func swing() -> void:
 	if swing_state: return
 	if not equipped_model: return
 	
+	var animation = {
+		$WoodenAxe: "AxeChop",
+	}.get(equipped_model, "Punch")
+	
+	if animation == "Punch":
+		$Fist.visible = true
+	
 	swing_state = SwingState.FORWARDS
-	anim_player.play("AxeChop")
+	anim_player.play(animation)
 	await anim_player.animation_finished
 	
-	swing_state = SwingState.BACKWARDS
-	anim_player.play_backwards("AxeChop")
-	await anim_player.animation_finished
+	if animation == "AxeChop":
+		# HACK!!!
+		swing_state = SwingState.BACKWARDS
+		anim_player.play_backwards(animation)
+		await anim_player.animation_finished
 	
 	swing_state = SwingState.NONE
+	
+	if animation == "Punch":
+		$Fist.visible = false
 	
 	if swing_hold:
 		# If we're still holding mouse1 or whatever, try to swing again
@@ -49,8 +61,16 @@ func _at_mid_swing():
 	
 	for i in range(interact_cast.get_collision_count()):
 		var collider = interact_cast.get_collider(i)
+		
+		if "combat" in collider.get_parent():
+			collider = collider.get_parent()
 		if "combat" not in collider: continue
-		collider.combat.take_damage(CombatRecipient.DamageOrigin.PLAYER, 2.0)
+		
+		var damage = {
+			$WoodenAxe: 4.0,
+		}.get(equipped_model, 2.0)
+		
+		collider.combat.take_damage(CombatRecipient.DamageOrigin.PLAYER, damage)
 		break
 
 func _input(event: InputEvent) -> void:

@@ -4,6 +4,7 @@ extends Control
 @onready var crafting_ui = $Cont/Crafting
 
 func _ready() -> void:
+	self.visible = true
 	set_inventory_open(false)
 
 func _input(event: InputEvent) -> void:

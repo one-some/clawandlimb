@@ -136,6 +136,8 @@ func do_interactable_stuff() -> void:
 	# THIS IS ALL VERY UGLY BUT BEAR :teddy_bear: WITH ME!!!
 	var cast_data = cast_from_camera()
 	var interactable = (cast_data if cast_data else {}).get("collider")
+	if interactable and "_interact" in interactable.get_parent():
+		interactable = interactable.get_parent()
 	
 	if not interactable or "_interact" not in interactable:
 		if last_hovered_interactable:

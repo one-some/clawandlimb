@@ -65,11 +65,22 @@ func gen_nav() -> void:
 func load_tiles() -> void:
 	var path = "res://tex/tiles/"
 	var dir = DirAccess.open(path)
+	var file_names = []
 	
-	for file in dir.get_files():
-		if not file.ends_with(".png"): continue
-		var image = ResourceLoader.load(path + file).get_image()
-		State._hack_tile_images.append(image)
+	for file_name in dir.get_files():
+		file_name = file_name.replace(".import", "")
+		if file_name in file_names: continue
+		if not file_name.ends_with(".png"): continue
+		file_names.append(file_name)
+		
+	file_names.sort()
+	print(file_names)
+	
+	var t2d_arr = Texture2DArray.new()
+	t2d_arr.create_from_images(file_names.map(func(file_name):
+		return ResourceLoader.load(path + file_name).get_image()
+	))
+	State._hack_t2d = t2d_arr
 
 func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	var chunk_origin = get_chunk_pos_from_global_pos(global_origin)
@@ -114,9 +125,8 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 
 func _ready() -> void:
 	# Does this suck. Let me know.
-	State.chunk_manager = self
-	
 	load_tiles()
+	State.chunk_manager = self
 	
 	generate_around(Vector3.ZERO, 6)
 

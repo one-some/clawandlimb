@@ -26,10 +26,7 @@ func lazy_load_hack() -> void:
 	
 	var shader_mat: ShaderMaterial = material_override
 	if not shader_mat.get_shader_parameter("textures"):
-		var t2d_arr = Texture2DArray.new()
-		print(State._hack_tile_images.map(func(x: Image): return x.get_format()))
-		t2d_arr.create_from_images(State._hack_tile_images)
-		shader_mat.set_shader_parameter("textures", t2d_arr)
+		shader_mat.set_shader_parameter("textures", State._hack_t2d)
 
 func snip_middle(n: float, middle: float) -> float:
 	if abs(n) < middle:

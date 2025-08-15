@@ -17,6 +17,6 @@ enum BuildMode {
 }
 var build_mode: BuildMode = BuildMode.NONE
 
-@warning_ignore("unused_private_class_variable")
-var _hack_tile_images: Array[Image] = []
 var chunk_manager: ChunkManager
+@warning_ignore("unused_private_class_variable")
+var _hack_t2d: Texture2DArray

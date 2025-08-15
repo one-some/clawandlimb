@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://tbx2gvjwcyyv"]
 
-[ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/plank.png" id="1_p3mkq"]
+[ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/7_plank.png" id="1_p3mkq"]
 [ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="2_571oj"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_571oj"]
