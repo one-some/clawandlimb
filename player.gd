@@ -91,7 +91,7 @@ func _physics_process(delta: float) -> void:
 	
 	self.velocity.x = move_dir.x * 6.0
 	self.velocity.z = move_dir.z * 6.0
-	self.velocity.y -= 14.0 * delta
+	self.velocity.y -= State.gravity * delta
 	
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		self.velocity.y += 6.0

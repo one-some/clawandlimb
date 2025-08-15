@@ -1,5 +1,7 @@
 extends Node
 
+const gravity = 14.0
+
 enum ActiveUI {
 	NONE = 0,
 	INVENTORY,

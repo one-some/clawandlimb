@@ -41,27 +41,6 @@ func set_density_global(pos: Vector3, density: float) -> Array:
 	
 	return modified
 
-func gen_nav() -> void:
-	# Nav stuff
-	var nav_mesh = NavigationMesh.new()
-	nav_region.navigation_mesh = nav_mesh
-	
-	nav_mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
-	# TODO: Change source mode for performance...?
-	
-	var aabb_size = Vector3(ChunkData.CHUNK_SIZE, ChunkData.CHUNK_SIZE, ChunkData.CHUNK_SIZE)
-	var aabb_pos = self.global_position# - Vector3(0, aabb_size.y / 2.0, 0)
-	var baking_aabb = AABB(aabb_pos, aabb_size)
-	baking_aabb = baking_aabb.grow(1.0)
-	nav_mesh.filter_baking_aabb = baking_aabb
-	
-	nav_mesh.geometry_source_geometry_mode = NavigationMesh.SOURCE_GEOMETRY_GROUPS_WITH_CHILDREN
-	nav_mesh.geometry_source_group_name = "NavigationObstacle"
-	nav_mesh.border_size = 1.0
-	
-	nav_region.bake_navigation_mesh()
-	await nav_region.bake_finished
-
 func load_tiles() -> void:
 	var path = "res://tex/tiles/"
 	var dir = DirAccess.open(path)
@@ -100,9 +79,9 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	chunks_left = positions.size()
 	print("Generating %s chunks :3" % chunks_left)
 	
-	# FIXME: Does doing this multiple times break navigation
-	var first_pos = positions[0] * ChunkData.CHUNK_SIZE
-	world_aabb = AABB(first_pos, Vector3.ZERO)
+	if not world_aabb:
+		var first_pos = positions[0] * ChunkData.CHUNK_SIZE
+		world_aabb = AABB(first_pos, Vector3.ZERO)
 	
 	for pos in positions:
 		var chunk = Chunk.instantiate()
@@ -128,7 +107,7 @@ func _ready() -> void:
 	load_tiles()
 	State.chunk_manager = self
 	
-	generate_around(Vector3.ZERO, 6)
+	generate_around(Vector3.ZERO, 3)
 
 func _on_chunk_mesh_generated(chunk: MeshInstance3D) -> void:
 	var task_id = chunk_threads[chunk]
