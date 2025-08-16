@@ -1,5 +1,6 @@
 extends Constructable
 
+const DigSound = preload("res://aud/dig.mp3")
 @onready var box: BoxMesh = $TerrainDestroyer.mesh
 
 func _ready() -> void:
@@ -18,6 +19,13 @@ func set_end(pos: Vector3) -> void:
 	self.global_position = (end_pos + start_pos) / 2.0
 
 func finalize() -> void:
+	var player = AudioStreamPlayer.new()
+	player.pitch_scale += (randf() - 0.5) * 0.2
+	player.stream = DigSound
+	player.autoplay = true
+	get_tree().get_root().add_child(player)
+	player.finished.connect(player.queue_free)
+	
 	var start = start_pos.min(end_pos)
 	var size = (end_pos - start_pos).abs()
 	

@@ -73,24 +73,6 @@ func set_build_mode(build_mode: State.BuildMode, constructable: Constructable, s
 		active_constructable = null
 	
 	active_constructable = constructable
-	#match State.build_mode:
-		#State.BuildMode.PLACE_MODEL:
-			#active_constructable = TestModel.instantiate()
-		#State.BuildMode.PLACE_WALL:
-			#active_constructable = Wall.instantiate()
-			#var key = Inventory.active_item().key()
-			#active_constructable.wall_type = {
-				#"wooden_wall": "wood",
-				#"stone_wall": "stone"
-			#}[key]
-		#State.BuildMode.PLACE_DOOR:
-			#active_constructable = Door.instantiate()
-		#State.BuildMode.PLACE_TILE:
-			#active_constructable = Tile.instantiate()
-		#State.BuildMode.REMOVE_TERRAIN:
-			#active_constructable = TerrainDestroyer.instantiate()
-		#_:
-			#return
 	
 	if start_pos:
 		# If u wanna continue girl.
@@ -140,6 +122,9 @@ func on_left_up() -> void:
 		) else null
 		down_click_pos = null
 		
+		if active_constructable.end_pos == null:
+			active_constructable.set_end(threed_cursor.position)
+		
 		active_constructable.finalize()
 		active_constructable = null
 		
@@ -155,7 +140,8 @@ func on_left_up() -> void:
 		down_click_tap = true
 		return
 	
-	assert(false, "How did we get here")
+	# DISCOVERY: Clicking down on another tool and up on us gets us here
+	#assert(false, "How did we get here")
 	
 
 func on_mouse_left(down: bool) -> void:

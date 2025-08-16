@@ -22,6 +22,9 @@ func key() -> String:
 
 @warning_ignore("shadowed_variable")
 static func from_name(name: String, count: int = 1) -> ItemInstance:
+	assert(count >= 0)
+	if not count: return null
+	
 	var data = ItemRegistry.get_item_data(name)
 	# Holy moly why can't I just call the constructor. Ok i get it but still
 	var instance = load("res://items/item_instance.gd").new(data, count)

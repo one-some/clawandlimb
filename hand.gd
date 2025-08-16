@@ -3,11 +3,17 @@ extends Node3D
 @onready var fist = $Fist
 @onready var interact_cast = $"../ShapeCast3D"
 @onready var anim_player: AnimationPlayer = $"../AnimationPlayer"
+@onready var audio_player: AudioStreamPlayer3D = $AudioStreamPlayer3D
 
 enum SwingState {
 	NONE,
 	FORWARDS,
 	BACKWARDS
+}
+
+const Sounds = {
+	"WoodenAxe": preload("res://aud/axe.mp3"),
+	"Fist": preload("res://aud/punch.wav"),
 }
 
 var swing_state = SwingState.NONE
@@ -22,7 +28,8 @@ func change_equipped_model() -> void:
 	var equipped = Inventory.inventory[Inventory.active_hotbar_index]
 	equipped_model = null
 	
-	for item: EquippableItem in get_children():
+	for item in get_children():
+		if item is not EquippableItem: continue
 		var real_deal = equipped and item.item_id == ItemRegistry.key_from_data(equipped.item_data)
 		item.visible = real_deal and equipped
 		if real_deal: equipped_model = item
@@ -40,7 +47,7 @@ func swing() -> void:
 	
 	var speed = {
 		$WoodenAxe: 2.0
-	}.get(equipped_model, 1.0)
+	}.get(equipped_model, 0.75)
 	
 	if animation == "Punch":
 		fist.visible = true
@@ -64,22 +71,34 @@ func swing() -> void:
 		# If we're still holding mouse1 or whatever, try to swing again
 		swing()
 
-func _at_mid_swing():
-	if swing_state != SwingState.FORWARDS: return
-	
+func get_combat_recipient() -> CombatRecipient:
 	for i in range(interact_cast.get_collision_count()):
 		var collider = interact_cast.get_collider(i)
 		
 		if "combat" in collider.get_parent():
 			collider = collider.get_parent()
 		if "combat" not in collider: continue
-		
-		var damage = {
-			$WoodenAxe: 4.0,
-		}.get(equipped_model, 1.5)
-		
-		collider.combat.take_damage(CombatRecipient.DamageOrigin.PLAYER, damage)
-		break
+		return collider.combat
+	return null
+
+func _swing_sound():
+	if swing_state != SwingState.FORWARDS: return
+	if not get_combat_recipient(): return
+	
+	audio_player.stream = Sounds.get(equipped_model.name, Sounds["Fist"])
+	audio_player.pitch_scale = 1.0 + ((randf() - 0.5) * 0.2)
+	audio_player.play()
+
+func _at_mid_swing():
+	if swing_state != SwingState.FORWARDS: return
+	
+	var combat = get_combat_recipient()
+	if not combat: return
+	
+	var damage = {
+		$WoodenAxe: 4.0,
+	}.get(equipped_model, 1.5)
+	combat.take_damage(CombatRecipient.DamageOrigin.PLAYER, damage)
 
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
