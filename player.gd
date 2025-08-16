@@ -14,6 +14,7 @@ func _ready() -> void:
 	# Propagate stuff first
 	combat.take_damage(CombatRecipient.DamageOrigin.GOD, 0.0)
 	
+	Signals.tp_player.connect(func(pos): self.global_position = pos)
 	Signals.player_respawn_requested.connect(respawn)
 
 func respawn() -> void:

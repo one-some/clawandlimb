@@ -8,6 +8,7 @@ var world_aabb = AABB()
 var chunks_left = 0
 var chunks = {}
 var chunk_threads = {}
+var first_chunk_generated = false
 
 func get_chunk_pos_from_global_pos(pos: Vector3) -> Vector3:
 	return (pos / ChunkData.CHUNK_SIZE).floor()
@@ -113,8 +114,15 @@ func _on_chunk_mesh_generated(chunk: MeshInstance3D) -> void:
 	var task_id = chunk_threads[chunk]
 	WorkerThreadPool.wait_for_task_completion(task_id)
 	
+	if not first_chunk_generated:
+		var faces = chunk.mesh.get_faces()
+		if faces:
+			print("LOL")
+			first_chunk_generated = true
+			Signals.tp_player.emit(faces[0] + Vector3(0, 30.0, 0))
+	
 	chunks_left -= 1
-	print("%s chunks left" % chunks_left)
+	#print("%s chunks left" % chunks_left)
 	
 	if not chunks_left:
 		bake_world_nav(world_aabb.grow(1.0))

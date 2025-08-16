@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://vtgna0fhhvj"]
+[gd_scene load_steps=10 format=3 uid="uid://vtgna0fhhvj"]
 
 [ext_resource type="Script" uid="uid://ddfwd4jhwcs3o" path="res://worldren/chunk.gd" id="1_mayh1"]
 [ext_resource type="Shader" uid="uid://7s1o2xowoyi3" path="res://worldren/texture.gdshader" id="1_wy6vs"]
@@ -8,19 +8,26 @@ render_priority = 0
 shader = ExtResource("1_wy6vs")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_wy6vs"]
-frequency = 0.001
-fractal_octaves = 2
+fractal_lacunarity = 4.0
+fractal_gain = 1.0
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_44007"]
-cellular_distance_function = 1
+fractal_octaves = 3
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_apcqt"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_cvda3"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_e4bda"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_egh7q"]
-frequency = 0.1
-fractal_octaves = 7
 
 [node name="Chunk" type="MeshInstance3D"]
 material_override = SubResource("ShaderMaterial_44007")
 script = ExtResource("1_mayh1")
 low_noise = SubResource("FastNoiseLite_wy6vs")
 high_noise = SubResource("FastNoiseLite_44007")
+mountain_noise = SubResource("FastNoiseLite_apcqt")
+detail_noise = SubResource("FastNoiseLite_cvda3")
+cave_noise = SubResource("FastNoiseLite_e4bda")
 rough_noise = SubResource("FastNoiseLite_egh7q")
