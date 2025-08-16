@@ -12,6 +12,7 @@ material = SubResource("StandardMaterial3D_g2xcb")
 
 [node name="TerrainDestroyer" type="Node3D"]
 script = ExtResource("1_g2xcb")
+build_mode = 6
 metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
 
 [node name="TerrainDestroyer" type="MeshInstance3D" parent="."]

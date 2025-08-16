@@ -5,6 +5,7 @@ extends Constructable
 func _ready() -> void:
 	self.allow_freehand = true
 	combat.name = "Tile"
+	super()
 
 func set_end(pos: Vector3) -> void:
 	if not start_pos:

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemDBResource" load_steps=31 format=3 uid="uid://bj4bibmitv8ra"]
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=41 format=3 uid="uid://bj4bibmitv8ra"]
 
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
 [ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
@@ -6,11 +6,19 @@
 [ext_resource type="Texture2D" uid="uid://dyrry2pibnelp" path="res://tex/tiles/6_log.png" id="4_doynf"]
 [ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="4_qoymp"]
 [ext_resource type="Texture2D" uid="uid://bawjvdcsmpdir" path="res://tex/axe.png" id="5_bknbh"]
+[ext_resource type="PackedScene" uid="uid://vaa8tn7hfgr7" path="res://tile.tscn" id="5_bvmxi"]
 [ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/7_plank.png" id="5_iky56"]
+[ext_resource type="Texture2D" uid="uid://1e1c481suymf" path="res://tex/dbg.png" id="5_uuhee"]
 [ext_resource type="Texture2D" uid="uid://cgj7bpwgj6jxm" path="res://tex/door.png" id="6_pnd04"]
 [ext_resource type="Texture2D" uid="uid://dv0bdvhcurmd4" path="res://tex/crafting.png" id="7_w5gng"]
 [ext_resource type="Texture2D" uid="uid://w0v44gvw746x" path="res://tex/shovel.png" id="8_vqtxk"]
+[ext_resource type="PackedScene" uid="uid://dgtl0uhhhhrf7" path="res://build/stone_wall.tscn" id="9_0unfh"]
+[ext_resource type="PackedScene" uid="uid://coeoip6mkmjyu" path="res://build/wall.tscn" id="9_x5t3b"]
 [ext_resource type="Texture2D" uid="uid://cxsr2d8qmr12t" path="res://tex/tiles/2_stone.png" id="10_doynf"]
+[ext_resource type="PackedScene" uid="uid://b560fl14oimxg" path="res://build/door.tscn" id="11_0unfh"]
+[ext_resource type="PackedScene" uid="uid://c0k6d144n3ion" path="res://post.tscn" id="12_uuhee"]
+[ext_resource type="PackedScene" uid="uid://8bpcdrrs154v" path="res://build/terrain_destroyer.tscn" id="13_yrton"]
+[ext_resource type="PackedScene" uid="uid://cl8bddj0k8pn5" path="res://build/workbench.tscn" id="15_bdpfg"]
 
 [sub_resource type="Resource" id="Resource_svh26"]
 script = ExtResource("1_86lrn")
@@ -42,9 +50,10 @@ metadata/_custom_type_script = "uid://8mocn31chcqv"
 script = ExtResource("1_86lrn")
 item_name = "Wooden Plank Floor"
 description = "Watch for splinters!"
-texture = ExtResource("5_iky56")
+texture = ExtResource("5_uuhee")
 max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_bdpfg")])
+item_constructable = ExtResource("5_bvmxi")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_iky56"]
@@ -85,9 +94,10 @@ metadata/_custom_type_script = "uid://8mocn31chcqv"
 script = ExtResource("1_86lrn")
 item_name = "Stone Wall"
 description = "Looks stronger. Is it? Find out soon!"
-texture = ExtResource("10_doynf")
+texture = ExtResource("5_uuhee")
 max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_0unfh")])
+item_constructable = ExtResource("9_0unfh")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_bvmxi"]
@@ -122,6 +132,7 @@ description = "A critical component of any enterable and or exitable home."
 texture = ExtResource("6_pnd04")
 max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_uuhee")])
+item_constructable = ExtResource("11_0unfh")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_17pv3"]
@@ -139,6 +150,7 @@ description = "Flatten an area to build on! Erode the world around you!"
 texture = ExtResource("8_vqtxk")
 max_stack = 1
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_17pv3")])
+item_constructable = ExtResource("13_yrton")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_u6jay"]
@@ -153,9 +165,10 @@ metadata/_custom_type_script = "uid://8mocn31chcqv"
 script = ExtResource("1_86lrn")
 item_name = "Wooden Wall"
 description = "Use this to defend yourself from monsters! Press 'B' to enter Build Mode!"
-texture = ExtResource("5_iky56")
+texture = ExtResource("5_uuhee")
 max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_u6jay")])
+item_constructable = ExtResource("9_x5t3b")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_f2qmd"]
@@ -174,6 +187,25 @@ description = "Craft bro"
 texture = ExtResource("7_w5gng")
 max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_f2qmd")])
+item_constructable = ExtResource("15_bdpfg")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
+[sub_resource type="Resource" id="Resource_kw43t"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"log": 2
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[sub_resource type="Resource" id="Resource_0swrr"]
+script = ExtResource("1_86lrn")
+item_name = "Wooden Post"
+description = "Check out my new post"
+texture = ExtResource("5_uuhee")
+max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_kw43t")])
+item_constructable = ExtResource("12_uuhee")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [resource]
@@ -187,6 +219,7 @@ items = Dictionary[String, ExtResource("1_86lrn")]({
 "stone_wall": SubResource("Resource_yrton"),
 "wooden_axe": SubResource("Resource_vqtxk"),
 "wooden_door": SubResource("Resource_qoymp"),
+"wooden_post": SubResource("Resource_0swrr"),
 "wooden_shovel": SubResource("Resource_pde2t"),
 "wooden_wall": SubResource("Resource_bknbh"),
 "workbench": SubResource("Resource_doynf")

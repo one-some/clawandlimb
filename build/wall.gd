@@ -1,27 +1,15 @@
 extends Constructable
 
-const TEXTURES = {
-	"wood": preload("res://tex/tiles/7_plank.png"),
-	"stone": preload("res://tex/tiles/2_stone.png"),
-}
-
 const WALL_HEIGHT = 3.0
 
 @onready var box = $Wall/CSGBox3D
-
-var wall_type = "plank"
-var material = StandardMaterial3D.new()
+@export var material = StandardMaterial3D.new()
 
 func _ready() -> void:
 	self.visible = false
 	combat.name = "Wall"
-	
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.albedo_color = Color(Color.WHITE, 0.5)
-	material.albedo_texture = TEXTURES[wall_type]
-	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	material.texture_repeat = true
 	box.material = material
+	super()
 
 func set_start(pos: Vector3) -> void:
 	start_pos = pos

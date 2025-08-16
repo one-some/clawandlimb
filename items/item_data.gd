@@ -6,6 +6,7 @@ class_name ItemData extends Resource
 @export var texture: Texture2D
 @export var max_stack: int = 64
 @export var recipes: Array[ItemRecipe] = []
+@export var item_constructable: PackedScene = null
 
 func equals(other: ItemData) -> bool:
 	# Wish this was an operator override!

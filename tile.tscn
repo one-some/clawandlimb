@@ -9,6 +9,7 @@ texture_filter = 0
 
 [node name="Tile" type="Node3D"]
 script = ExtResource("1_vx4y2")
+build_mode = 5
 metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]

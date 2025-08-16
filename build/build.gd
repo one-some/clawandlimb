@@ -4,41 +4,34 @@ extends Node3D
 @onready var threed_cursor: MeshInstance3D = %"3DCursor"
 @onready var build_grid: MeshInstance3D = %BuildGrid
 
-const Wall = preload("res://build/wall.tscn")
-const TestModel = preload("res://build/workbench.tscn")
-const Door = preload("res://build/door.tscn")
-const TerrainDestroyer = preload("res://build/terrain_destroyer.tscn")
-const Tile = preload("res://tile.tscn")
-
 var down_click_tap = false
 var down_click_pos = null
 var active_constructable: Constructable = null
 
 func _ready() -> void:
-	set_build_mode(State.build_mode)
+	set_build_mode(State.build_mode, null)
 	Signals.change_active_hotbar_slot.connect(_change_active_hotbar_slot)
 	Signals.update_3d_cursor_pos.connect(_on_3d_cursor_pos_update)
 
-func _change_active_hotbar_slot() -> void:
+func instantiate_selected_constructable() -> Constructable:
 	var item = Inventory.active_item()
-	
 	if not item:
-		set_build_mode(State.BuildMode.NONE)
-		return
+		return null
 	
-	var key = item.key()
-	if key in ["wooden_wall", "stone_wall"]:
-		set_build_mode(State.BuildMode.PLACE_WALL)
-	elif key == "workbench":
-		set_build_mode(State.BuildMode.PLACE_MODEL)
-	elif key == "wooden_door":
-		set_build_mode(State.BuildMode.PLACE_DOOR)
-	elif key == "wooden_shovel":
-		set_build_mode(State.BuildMode.REMOVE_TERRAIN)
-	elif key == "plank_floor":
-		set_build_mode(State.BuildMode.PLACE_TILE)
-	else:
-		set_build_mode(State.BuildMode.NONE)
+	var constructable_scene = item.item_data.item_constructable
+	if not constructable_scene:
+		print("No constructable")
+		set_build_mode(State.BuildMode.NONE, null)
+		return null
+	
+	return constructable_scene.instantiate()
+
+func _change_active_hotbar_slot() -> void:
+	var constructable = instantiate_selected_constructable()
+	if not constructable: 
+		set_build_mode(State.BuildMode.NONE, null)
+		return
+	set_build_mode(constructable.build_mode, constructable)
 	
 func snapped_cursor_position() -> Vector3:
 	var pos = threed_cursor.position
@@ -57,7 +50,7 @@ func snapped_cursor_position() -> Vector3:
 	return pos
 
 # TODO: Optional start_pos
-func set_build_mode(build_mode: State.BuildMode, start_pos: Variant = null) -> void:
+func set_build_mode(build_mode: State.BuildMode, constructable: Constructable, start_pos: Variant = null) -> void:
 	print("Setting build mode to ", build_mode)
 	if build_mode == 1:
 		breakpoint
@@ -79,24 +72,25 @@ func set_build_mode(build_mode: State.BuildMode, start_pos: Variant = null) -> v
 		#active_constructable.queue_free()
 		active_constructable = null
 	
-	match State.build_mode:
-		State.BuildMode.PLACE_MODEL:
-			active_constructable = TestModel.instantiate()
-		State.BuildMode.PLACE_WALL:
-			active_constructable = Wall.instantiate()
-			var key = Inventory.active_item().key()
-			active_constructable.wall_type = {
-				"wooden_wall": "wood",
-				"stone_wall": "stone"
-			}[key]
-		State.BuildMode.PLACE_DOOR:
-			active_constructable = Door.instantiate()
-		State.BuildMode.PLACE_TILE:
-			active_constructable = Tile.instantiate()
-		State.BuildMode.REMOVE_TERRAIN:
-			active_constructable = TerrainDestroyer.instantiate()
-		_:
-			return
+	active_constructable = constructable
+	#match State.build_mode:
+		#State.BuildMode.PLACE_MODEL:
+			#active_constructable = TestModel.instantiate()
+		#State.BuildMode.PLACE_WALL:
+			#active_constructable = Wall.instantiate()
+			#var key = Inventory.active_item().key()
+			#active_constructable.wall_type = {
+				#"wooden_wall": "wood",
+				#"stone_wall": "stone"
+			#}[key]
+		#State.BuildMode.PLACE_DOOR:
+			#active_constructable = Door.instantiate()
+		#State.BuildMode.PLACE_TILE:
+			#active_constructable = Tile.instantiate()
+		#State.BuildMode.REMOVE_TERRAIN:
+			#active_constructable = TerrainDestroyer.instantiate()
+		#_:
+			#return
 	
 	if start_pos:
 		# If u wanna continue girl.
@@ -117,24 +111,21 @@ func _on_3d_cursor_pos_update(pos: Vector3) -> void:
 	update_building()
 	
 	if down_click_pos:
-		print("OMG DRAMA")
 		# We have just started MOVING in between a mouse down and a mouse up. DRAMA!!!
 		active_constructable.set_start(down_click_pos)
 		down_click_pos = null
 	
 
 func on_left_down() -> void:
-	if active_constructable.one_and_done: return
+	if active_constructable.is_one_and_done(): return
 	if active_constructable.start_pos: return
 	
-	print("Left down")
 	# Will the left up event remain faithful? Or will he move on...?
 	down_click_pos = threed_cursor.position
 	down_click_tap = false 
 
 func on_left_up() -> void:
-	print("up")
-	if active_constructable.one_and_done:
+	if active_constructable.is_one_and_done():
 		active_constructable.finalize()
 		active_constructable = null
 		_change_active_hotbar_slot()
@@ -151,7 +142,9 @@ func on_left_up() -> void:
 		
 		active_constructable.finalize()
 		active_constructable = null
-		set_build_mode(State.build_mode, new_start)
+		
+		var new_constructable = instantiate_selected_constructable()
+		set_build_mode(State.build_mode, new_constructable, new_start)
 		return
 	
 	if down_click_pos:
@@ -175,28 +168,6 @@ func on_mouse_left(down: bool) -> void:
 		on_left_up()
 	
 	return
-	
-	if down:
-		print("We're down")
-		down_click_pos = threed_cursor.position 
-		return
-		
-	print("We're up")
-	# Going up
-	if down_click_pos == threed_cursor.position:
-		print("Old way")
-		# We are doing a "click once start, click once end" deal. No dragging.
-		if active_constructable.start_pos == null and not active_constructable.one_and_done:
-			
-			print("[click] No start pos. Setting.")
-			return
-	else:
-		# Dragging
-		active_constructable.set_start(down_click_pos)
-		print("Drag end. From ", down_click_pos, " to ", threed_cursor.position)
-	
-	
-	
 
 
 func _input(event: InputEvent) -> void:

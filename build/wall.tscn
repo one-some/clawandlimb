@@ -1,9 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://coeoip6mkmjyu"]
+[gd_scene load_steps=4 format=3 uid="uid://coeoip6mkmjyu"]
 
 [ext_resource type="Script" uid="uid://cju28phb0fkt" path="res://build/wall.gd" id="1_xgcxa"]
+[ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/7_plank.png" id="2_th28y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1d1oh"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.498039)
+albedo_texture = ExtResource("2_th28y")
+texture_filter = 0
 
 [node name="Wall" type="Node3D"]
 script = ExtResource("1_xgcxa")
+material = SubResource("StandardMaterial3D_1d1oh")
+build_mode = 2
 metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
 
 [node name="Wall" type="CSGCombiner3D" parent="."]

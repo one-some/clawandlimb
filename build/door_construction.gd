@@ -5,8 +5,8 @@ extends Constructable
 @onready var csg = $Door/CSGBox3D
 
 func _ready() -> void:
-	one_and_done = true
 	combat.name = "Door"
+	super()
 
 func set_end(pos: Vector3) -> void:
 	self.global_position = pos

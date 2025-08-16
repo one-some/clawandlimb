@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://dgtl0uhhhhrf7"]
+
+[ext_resource type="PackedScene" uid="uid://coeoip6mkmjyu" path="res://build/wall.tscn" id="1_vedol"]
+[ext_resource type="Texture2D" uid="uid://cxsr2d8qmr12t" path="res://tex/tiles/2_stone.png" id="2_h6qmc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w8axg"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.498039)
+albedo_texture = ExtResource("2_h6qmc")
+texture_filter = 0
+
+[node name="StoneWall" instance=ExtResource("1_vedol")]
+material = SubResource("StandardMaterial3D_w8axg")

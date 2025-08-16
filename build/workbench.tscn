@@ -8,6 +8,7 @@ size = Vector3(2, 1, 1)
 
 [node name="Workbench" type="Node3D"]
 script = ExtResource("1_k6ouk")
+build_mode = 3
 metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
 
 [node name="Workbench" type="StaticBody3D" parent="."]

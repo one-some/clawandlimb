@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://c0k6d144n3ion"]
+
+[ext_resource type="Script" uid="uid://bnrsjwk4v727t" path="res://post.gd" id="1_3bjc2"]
+[ext_resource type="Texture2D" uid="uid://dyrry2pibnelp" path="res://tex/tiles/6_log.png" id="2_kwisn"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qdpgs"]
+albedo_texture = ExtResource("2_kwisn")
+uv1_scale = Vector3(1, 50, 1)
+texture_filter = 0
+
+[sub_resource type="BoxMesh" id="BoxMesh_kwisn"]
+material = SubResource("StandardMaterial3D_qdpgs")
+size = Vector3(0.1, 3, 0.1)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_kwisn"]
+data = PackedVector3Array(-0.05, 1.5, 0.05, 0.05, 1.5, 0.05, -0.05, -1.5, 0.05, 0.05, 1.5, 0.05, 0.05, -1.5, 0.05, -0.05, -1.5, 0.05, 0.05, 1.5, -0.05, -0.05, 1.5, -0.05, 0.05, -1.5, -0.05, -0.05, 1.5, -0.05, -0.05, -1.5, -0.05, 0.05, -1.5, -0.05, 0.05, 1.5, 0.05, 0.05, 1.5, -0.05, 0.05, -1.5, 0.05, 0.05, 1.5, -0.05, 0.05, -1.5, -0.05, 0.05, -1.5, 0.05, -0.05, 1.5, -0.05, -0.05, 1.5, 0.05, -0.05, -1.5, -0.05, -0.05, 1.5, 0.05, -0.05, -1.5, 0.05, -0.05, -1.5, -0.05, 0.05, 1.5, 0.05, -0.05, 1.5, 0.05, 0.05, 1.5, -0.05, -0.05, 1.5, 0.05, -0.05, 1.5, -0.05, 0.05, 1.5, -0.05, -0.05, -1.5, 0.05, 0.05, -1.5, 0.05, -0.05, -1.5, -0.05, 0.05, -1.5, 0.05, 0.05, -1.5, -0.05, -0.05, -1.5, -0.05)
+
+[node name="Post" type="Node3D"]
+script = ExtResource("1_3bjc2")
+build_mode = 3
+metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+mesh = SubResource("BoxMesh_kwisn")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("ConcavePolygonShape3D_kwisn")

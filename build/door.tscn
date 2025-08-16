@@ -16,6 +16,7 @@ size = Vector3(1, 2, 1)
 
 [node name="Door" type="Node3D"]
 script = ExtResource("1_ap4h7")
+build_mode = 4
 metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
 
 [node name="Door" type="StaticBody3D" parent="."]

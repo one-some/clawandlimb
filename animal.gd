@@ -33,7 +33,7 @@ func _on_died() -> void:
 	await tween.finished
 	
 	Signals.drop_item.emit(
-		ItemInstance.from_name("ham", randi_range(0, 2)),
+		ItemInstance.from_name("log", randi_range(0, 2)),
 		self.global_position + Vector3(0, 1, 0)
 	)
 	
