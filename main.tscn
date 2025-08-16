@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=32 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://b55h5ok8v2s5s" path="res://hand.gd" id="6_efxa6"]
 [ext_resource type="Texture2D" uid="uid://bi25cosltg6pl" path="res://tex/fist.png" id="8_vivmo"]
 [ext_resource type="Script" uid="uid://c7imyrbfwguwo" path="res://equipable_item.gd" id="8_w48qg"]
+[ext_resource type="PackedScene" uid="uid://ci2u3k48nih11" path="res://entity_shadow.tscn" id="9_yaehf"]
 [ext_resource type="PackedScene" uid="uid://0fc3n5w2os8h" path="res://ui.tscn" id="12_dg77c"]
 [ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
 [ext_resource type="Shader" uid="uid://deusiyboy5f8r" path="res://grid.gdshader" id="14_vivmo"]
@@ -242,6 +243,8 @@ texture = ExtResource("8_vivmo")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Player/Hand"]
 max_db = -2.0
+
+[node name="EntityShadow" parent="Player" instance=ExtResource("9_yaehf")]
 
 [node name="World" type="Node3D" parent="."]
 

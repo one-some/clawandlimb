@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://bqha05wdb4hvk"]
+[gd_scene load_steps=7 format=3 uid="uid://bqha05wdb4hvk"]
 
 [ext_resource type="Script" uid="uid://dntu4avlviyif" path="res://enemy.gd" id="1_uiaus"]
 [ext_resource type="Texture2D" uid="uid://b2ghkb0an3l84" path="res://tex/zombie.png" id="2_roy8y"]
 [ext_resource type="Script" uid="uid://rv3c6nwyo3qf" path="res://enemy_pathing.gd" id="3_jmu02"]
+[ext_resource type="PackedScene" uid="uid://ci2u3k48nih11" path="res://entity_shadow.tscn" id="4_eseir"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_roy8y"]
 radius = 0.3
@@ -41,6 +42,8 @@ script = ExtResource("3_jmu02")
 autostart = true
 
 [node name="AttackCooldownTimer" type="Timer" parent="."]
+
+[node name="EntityShadow" parent="." instance=ExtResource("4_eseir")]
 
 [connection signal="velocity_computed" from="NavigationAgent3D" to="NavigationAgent3D" method="_on_velocity_computed"]
 [connection signal="timeout" from="AttackCooldownTimer" to="." method="_on_attack_cooldown_timer_timeout"]

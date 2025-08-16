@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://ci2u3k48nih11"]
+
+[ext_resource type="Texture2D" uid="uid://cn430qxfve0dd" path="res://tex/shadow.png" id="1_djxth"]
+
+[node name="EntityShadow" type="SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+collision_mask = 16
+spring_length = 4.0
+
+[node name="Decal" type="Decal" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+size = Vector3(1, 0.05, 1)
+texture_albedo = ExtResource("1_djxth")
