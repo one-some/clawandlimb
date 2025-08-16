@@ -103,6 +103,18 @@ func snip_middle(n: float, middle: float) -> float:
 func _ready() -> void:
 	lazy_load_hack()
 
+#func get_normal(pos: Vector3) -> Vector3s:
+	#pass
+
+func in_padded(pos: Vector3) -> bool:
+	if pos.x < 0: return false
+	if pos.y < 0: return false
+	if pos.z < 0: return false
+	if pos.x >= ChunkData.PADDED_SIZE: return false
+	if pos.y >= ChunkData.PADDED_SIZE: return false
+	if pos.z >= ChunkData.PADDED_SIZE: return false
+	return true
+
 @warning_ignore("shadowed_variable")
 func generate(chunk_pos: Vector3) -> void:
 	self.chunk_pos = chunk_pos
@@ -129,11 +141,30 @@ func generate(chunk_pos: Vector3) -> void:
 					mat = 0 # Stone
 				data.material[idx] = mat
 				
-				if mat == 1 and density < 0.05 and density > -0.01 and randf() < 0.1:
-					var tree_cell = (global_pos / 4.0).round()
-					if not tree_cell in tree_grid:
-						tree_grid[tree_cell] = true
-						candidate_tree_positions.append(global_pos)
+				var voxel_above = local_pos + Vector3(0, 1, 0)
+				
+				if (
+					mat == 1
+					and randf() < 0.02
+					and density > 0.0
+					and in_padded(voxel_above)
+				):
+					var above_idx = data.get_index(voxel_above)
+					var above_density = data.density[above_idx]
+					
+					if above_density <= 0.0:
+						# SO MUCH INDENTATION AND ITS MY FAULT
+						var d0 = density
+						var d1 = above_density
+						var t = 0.0
+						if (d0 - d1) != 0.0:
+							t = clamp(d0 / (d0 - d1), 0.0, 1.0)
+						var pos = local_pos + Vector3(0.0, t - 1.0, 0.0)
+						var tree_cell = ((chunk_pos * ChunkData.CHUNK_SIZE) + pos) / 4.0
+						tree_cell = tree_cell.round()
+						if not tree_cell in tree_grid:
+							tree_grid[tree_cell] = true
+							candidate_tree_positions.append(pos)
 
 	
 	for pos in candidate_tree_positions:

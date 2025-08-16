@@ -119,7 +119,7 @@ func _on_chunk_mesh_generated(chunk: MeshInstance3D) -> void:
 		if faces:
 			print("LOL")
 			first_chunk_generated = true
-			Signals.tp_player.emit(faces[0] + Vector3(0, 30.0, 0))
+			Signals.tp_player.emit(faces[0] + Vector3(0, 40.0, 0))
 	
 	chunks_left -= 1
 	#print("%s chunks left" % chunks_left)

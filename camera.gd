@@ -30,7 +30,7 @@ func update_camera() -> void:
 	
 	var dream_pos = Vector3(
 		target_pole.x + (personal_space * cos(angle_around_point)),
-		height,
+		target_pole.y + height,
 		target_pole.z + (personal_space * sin(angle_around_point))
 	)
 	

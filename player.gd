@@ -5,6 +5,7 @@ extends CharacterBody3D
 const ITEM_MAX_RANGE = 2.0
 
 var combat = CombatRecipient.new("Claire", 100.0)
+var frozen = true
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -14,7 +15,10 @@ func _ready() -> void:
 	# Propagate stuff first
 	combat.take_damage(CombatRecipient.DamageOrigin.GOD, 0.0)
 	
-	Signals.tp_player.connect(func(pos): self.global_position = pos)
+	Signals.tp_player.connect(func(pos):
+		frozen = false
+		self.global_position = pos
+	)
 	Signals.player_respawn_requested.connect(respawn)
 
 func respawn() -> void:
@@ -70,6 +74,7 @@ func attract_items() -> void:
 		item3d.linear_velocity.z = new_vel.z
 
 func _physics_process(delta: float) -> void:
+	if frozen: return
 	attract_items()
 	
 	if self.global_position.y < -50.0:
