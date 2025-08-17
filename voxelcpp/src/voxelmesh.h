@@ -1,9 +1,11 @@
-#ifndef GDEXAMPLE_H
-#define GDEXAMPLE_H
+#ifndef VOXELMESH_H
+#define VOXELMESH_H
 
 #include "noisemanager.h"
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
 
 namespace godot {
 
@@ -16,6 +18,7 @@ class VoxelMesh : public MeshInstance3D {
 private:
     NoiseManager noise;
     Vector3 chunk_pos;
+    PackedVector3Array resource_position_candidates;
 
     uint16_t material[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0 };
     float density[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0.0 };
@@ -25,16 +28,22 @@ protected:
         ClassDB::bind_method(D_METHOD("generate_chunk_data"), &VoxelMesh::generate_chunk_data);
         ClassDB::bind_method(D_METHOD("generate_mesh"), &VoxelMesh::generate_mesh);
         ClassDB::bind_method(D_METHOD("set_pos", "pos"), &VoxelMesh::set_pos);
+        ClassDB::bind_method(D_METHOD("get_resource_position_candidates"), &VoxelMesh::get_resource_position_candidates);
+
+        ADD_SIGNAL(MethodInfo("finished_mesh_generation"));
     }
 
 public:
     VoxelMesh() { }
     ~VoxelMesh() = default;
 
+    PackedVector3Array get_resource_position_candidates() {
+        return resource_position_candidates;
+    }
+
     void set_pos(const Vector3 &pos) {
         chunk_pos = pos;
         set_global_position(pos * CHUNK_SIZE);
-        UtilityFunctions::print("VoxelChunk: initialized at " + pos);
     }
 
     inline size_t get_index(int x, int y, int z) {

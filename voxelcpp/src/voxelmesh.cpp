@@ -5,16 +5,30 @@
 #include <godot_cpp/classes/surface_tool.hpp>
 #include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/core/math.hpp>
+#include <godot_cpp/templates/hash_set.hpp>
 #include <unordered_map>
 #include <vector>
 
 using namespace godot;
 
+bool in_padded(const Vector3& pos) {
+	if (pos.x < 0) return false;
+	if (pos.y < 0) return false;
+	if (pos.z < 0) return false;
+	if (pos.x >= PADDED_SIZE) return false;
+	if (pos.y >= PADDED_SIZE) return false;
+	if (pos.z >= PADDED_SIZE) return false;
+	return true;
+}
+
 void VoxelMesh::generate_chunk_data() {
     const Vector3 global_base = chunk_pos * (real_t)CHUNK_SIZE;
+    HashSet<Vector3> resource_cells;
+    resource_position_candidates.clear();
 
     for (int x = 0; x < PADDED_SIZE; x++) {
         for (int y = 0; y < PADDED_SIZE; y++) {
@@ -33,6 +47,36 @@ void VoxelMesh::generate_chunk_data() {
 					mat = 0;
                 }
                 material[idx] = mat;
+
+                auto voxel_above = local_pos + Vector3(0, 1, 0);
+                if (
+                    mat == 1
+                    && den > 0.0f
+                    && in_padded(voxel_above)
+                    && UtilityFunctions::randf() < 0.02
+                ) {
+                    size_t above_idx = get_index(voxel_above);
+                    // FIXME: Do we need to iterate backwards!?!
+                    float above_density = density[above_idx];
+
+                    if (above_density <= 0.0) {
+                        float d0 = den;
+                        float d1 = above_density;
+                        float t = 0.0f;
+                        float bottom = d0 - d1;
+
+                        if (!Math::is_equal_approx(bottom, 0.0f)) {
+                            t = Math::clamp(d0 / bottom, 0.0f, 1.0f);
+                        }
+
+                        auto pos = local_pos + Vector3(0.0, t - 1.0, 0.0);
+                        auto cell = ((chunk_pos * CHUNK_SIZE) + pos).round();
+                        if (!resource_cells.has(cell)) {
+                            resource_cells.insert(cell);
+                            resource_position_candidates.push_back(pos);
+                        }
+                    }
+                }
 
                 // TODO: TREES
             }
@@ -189,4 +233,6 @@ void VoxelMesh::generate_mesh() {
     st->index();
     Ref<ArrayMesh> mesh = st->commit();
     set_mesh(mesh);
+
+    emit_signal("finished_mesh_generation");
 }
