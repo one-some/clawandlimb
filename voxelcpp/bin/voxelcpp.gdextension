@@ -7,4 +7,4 @@ reloadable = true
 [libraries]
 
 windows.debug.x86_64 = "res://voxelcpp/bin/libvoxelmesh.windows.template_debug.dev.x86_64.dll"
-linux.debug.x86_64 = "res://voxelcpp/bin/libvoxelmesh.linux.template_debug.x86_64.so"
+linux.debug.x86_64 = "res://voxelcpp/bin/libvoxelmesh.linux.template_debug.dev.x86_64.so"
