@@ -334,7 +334,7 @@ func generate_mesh() -> void:
 		self.add_child(body)
 		
 		var collision_shape = CollisionShape3D.new()
-		collision_shape.shape = self.mesh.create_trimesh_shape()
+		collision_shape.shape = self.mesh.create_convex_shape()
 		body.add_child(collision_shape)
 		
 		body.name = "ChunkCollider"

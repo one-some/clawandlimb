@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bo27tc8n1dl0"]
+
+[ext_resource type="Shader" uid="uid://7s1o2xowoyi3" path="res://worldren/texture.gdshader" id="1_plmqs"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_plmqs")

@@ -1,6 +1,9 @@
 class_name ChunkManager extends Node3D
 
-#const Chunk = preload("res://worldren/chunk.tscn")
+const ChunkMaterial = preload("res://worldren/chunk_material.tres")
+const TreeRes = preload("res://tree.tscn")
+const RockRes = preload("res://rock.tscn")
+
 @onready var nav_region = $NavigationRegion3D
 var ids = []
 var world_aabb = AABB()
@@ -87,9 +90,13 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	for pos in positions:
 		var chunk = VoxelMesh.new()
 		self.add_child(chunk)
+		
+		chunk.material_override = ChunkMaterial
+		chunk.material_override.set_shader_parameter("textures", State._hack_t2d)
+		
 		chunk.set_pos(pos)
 		chunks[pos] = chunk
-		#chunk.mesh_generated.connect(_on_chunk_mesh_generated.bind(chunk))
+		chunk.finished_mesh_generation.connect(_on_chunk_mesh_generated.bind(chunk))
 		
 		world_aabb = world_aabb.merge(AABB(
 			pos * ChunkData.CHUNK_SIZE,
@@ -100,35 +107,64 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 			)
 		))
 		
-		#chunk.generate_chunk_data()
-		#chunk.generate_mesh()
 		var task_id = WorkerThreadPool.add_task(func():
 			chunk.generate_chunk_data()
-			chunk.generate_mesh()
+			(func():
+				chunk.generate_mesh()
+				
+				for thing_pos in chunk.get_resource_position_candidates():
+					var thing: Node3D
+					if randf() < 0.3:
+						thing = RockRes.instantiate()
+					else:
+						thing = TreeRes.instantiate()
+					print(thing)
+					thing.position = thing_pos - Vector3(0, 1, 0)
+					thing.rotation.y = randf() * PI * 2
+					chunk.add_child(thing)
+				
+			).call_deferred()
 		)
 		chunk_threads[chunk] = task_id
 	
-
+	
 func _ready() -> void:
 	# Does this suck. Let me know.
 	load_tiles()
 	State.chunk_manager = self
 	
-	generate_around(Vector3.ZERO, 12)
+	generate_around(Vector3.ZERO, 4)
 
 func _on_chunk_mesh_generated(chunk: MeshInstance3D) -> void:
 	var task_id = chunk_threads[chunk]
 	WorkerThreadPool.wait_for_task_completion(task_id)
 	
+	for child in chunk.get_children():
+		if child is not StaticBody3D: continue
+		child.queue_free()
+		
+	var body = StaticBody3D.new()
+	chunk.add_child(body)
+	
+	var collision_shape = CollisionShape3D.new()
+	collision_shape.shape = chunk.mesh.create_trimesh_shape()
+	body.add_child(collision_shape)
+
+	body.name = "ChunkCollider"
+	body.add_to_group("NavigationObstacle")
+	body.set_collision_layer_value(5, true)
+	assert(body)
+	
+	
 	if not first_chunk_generated:
 		var faces = chunk.mesh.get_faces()
 		if faces:
-			print("LOL")
+			print("LOL Teleporting")
 			first_chunk_generated = true
 			Signals.tp_player.emit(faces[0] + Vector3(0, 40.0, 0))
 	
 	chunks_left -= 1
-	#print("%s chunks left" % chunks_left)
+	#print("%s chunk5s left" % chunks_left)
 	
 	if not chunks_left:
 		bake_world_nav(world_aabb.grow(1.0))

@@ -1,11 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://vtgna0fhhvj"]
+[gd_scene load_steps=9 format=3 uid="uid://vtgna0fhhvj"]
 
 [ext_resource type="Script" uid="uid://ddfwd4jhwcs3o" path="res://worldren/chunk.gd" id="1_mayh1"]
-[ext_resource type="Shader" uid="uid://7s1o2xowoyi3" path="res://worldren/texture.gdshader" id="1_wy6vs"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_44007"]
-render_priority = 0
-shader = ExtResource("1_wy6vs")
+[ext_resource type="Material" uid="uid://bo27tc8n1dl0" path="res://worldren/chunk_material.tres" id="1_wy6vs"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_wy6vs"]
 fractal_lacunarity = 4.0
@@ -23,7 +19,7 @@ fractal_octaves = 3
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_egh7q"]
 
 [node name="Chunk" type="MeshInstance3D"]
-material_override = SubResource("ShaderMaterial_44007")
+material_override = ExtResource("1_wy6vs")
 script = ExtResource("1_mayh1")
 low_noise = SubResource("FastNoiseLite_wy6vs")
 high_noise = SubResource("FastNoiseLite_44007")

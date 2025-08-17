@@ -8,18 +8,19 @@ var combat = CombatRecipient.new("Claire", 100.0)
 var frozen = true
 
 func _ready() -> void:
-	await get_tree().process_frame
-	
-	combat.died.connect(die)
-	combat.took_damage.connect(func(_dmg): Signals.change_player_health.emit(combat))
-	# Propagate stuff first
-	combat.take_damage(CombatRecipient.DamageOrigin.GOD, 0.0)
-	
 	Signals.tp_player.connect(func(pos):
 		frozen = false
 		self.global_position = pos
 	)
 	Signals.player_respawn_requested.connect(respawn)
+	combat.died.connect(die)
+	combat.took_damage.connect(func(_dmg): Signals.change_player_health.emit(combat))
+	
+	# HACK: For some UI stuff
+	await get_tree().process_frame
+
+	# Propagate stuff first
+	combat.take_damage(CombatRecipient.DamageOrigin.GOD, 0.0)
 
 func respawn() -> void:
 	combat.reset()
