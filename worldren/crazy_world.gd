@@ -1,6 +1,6 @@
 class_name ChunkManager extends Node3D
 
-const Chunk = preload("res://worldren/chunk.tscn")
+#const Chunk = preload("res://worldren/chunk.tscn")
 @onready var nav_region = $NavigationRegion3D
 var ids = []
 var world_aabb = AABB()
@@ -85,9 +85,23 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		world_aabb = AABB(first_pos, Vector3.ZERO)
 	
 	for pos in positions:
-		var chunk = Chunk.instantiate()
+		var chunk = VoxelMesh.new()
+		
+		# This always crashes
+		chunk.set_sampler(func(x):
+			print(x)
+			return randf() - 0.5
+		)
+		
+		# This never crashes
+		#chunk.set_sampler(func(x): return randf())
+		
+		# This never crashes
+		#chunk.set_sampler(func(x): return -randf())
+		
+		#chunk.set_sampler(func(x): return WorldGen.sample_noise(x))
 		chunks[pos] = chunk
-		chunk.mesh_generated.connect(_on_chunk_mesh_generated.bind(chunk))
+		#chunk.mesh_generated.connect(_on_chunk_mesh_generated.bind(chunk))
 		self.add_child(chunk)
 		
 		world_aabb = world_aabb.merge(AABB(
@@ -99,8 +113,13 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 			)
 		))
 		
-		var task_id = WorkerThreadPool.add_task(chunk.generate.bind(pos))
-		chunk_threads[chunk] = task_id
+		print("Doing data")
+		chunk.generate_chunk_data()
+		print("Data done. Now mesh")
+		chunk.generate_mesh()
+		print("Done")
+		#var task_id = WorkerThreadPool.add_task(chunk.generate.bind(pos))
+		#chunk_threads[chunk] = task_id
 	
 
 func _ready() -> void:

@@ -23,6 +23,7 @@ State="*res://state.gd"
 ItemRegistry="*res://items/item_registry.gd"
 Inventory="*res://inventory.gd"
 Save="*res://save.gd"
+WorldGen="*res://worldren/worldgen.gd"
 
 [debug]
 
@@ -168,6 +169,10 @@ move_stack={
 
 3d_physics/layer_2="NPC"
 3d_physics/layer_3="Wall"
+
+[network]
+
+limits/debugger/max_chars_per_second=1000000
 
 [physics]
 
