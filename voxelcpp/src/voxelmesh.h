@@ -1,6 +1,7 @@
 #ifndef GDEXAMPLE_H
 #define GDEXAMPLE_H
 
+#include "noisemanager.h"
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
 
@@ -13,7 +14,7 @@ class VoxelMesh : public MeshInstance3D {
 	GDCLASS(VoxelMesh, MeshInstance3D)
 
 private:
-	Callable sample_noise;
+    NoiseManager noise;
     Vector3 chunk_pos;
 
     uint16_t material[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0 };
@@ -21,22 +22,19 @@ private:
 
 protected:
     static void _bind_methods() {
-        ClassDB::bind_method(D_METHOD("set_sampler", "sampler"), &VoxelMesh::set_sampler);
         ClassDB::bind_method(D_METHOD("generate_chunk_data"), &VoxelMesh::generate_chunk_data);
         ClassDB::bind_method(D_METHOD("generate_mesh"), &VoxelMesh::generate_mesh);
+        ClassDB::bind_method(D_METHOD("set_pos", "pos"), &VoxelMesh::set_pos);
     }
 
 public:
     VoxelMesh() { }
-    explicit VoxelMesh(const Vector3& p_chunk_pos) {
-        chunk_pos = p_chunk_pos;
-        set_global_position(p_chunk_pos * CHUNK_SIZE);
-    }
-
     ~VoxelMesh() = default;
 
-    void set_sampler(const Callable& p_sample_noise) {
-        sample_noise = p_sample_noise;
+    void set_pos(const Vector3 &pos) {
+        chunk_pos = pos;
+        set_global_position(pos * CHUNK_SIZE);
+        UtilityFunctions::print("VoxelChunk: initialized at " + pos);
     }
 
     inline size_t get_index(int x, int y, int z) {

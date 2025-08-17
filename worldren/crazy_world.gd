@@ -86,23 +86,10 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	
 	for pos in positions:
 		var chunk = VoxelMesh.new()
-		
-		# This always crashes
-		chunk.set_sampler(func(x):
-			print(x)
-			return randf() - 0.5
-		)
-		
-		# This never crashes
-		#chunk.set_sampler(func(x): return randf())
-		
-		# This never crashes
-		#chunk.set_sampler(func(x): return -randf())
-		
-		#chunk.set_sampler(func(x): return WorldGen.sample_noise(x))
+		self.add_child(chunk)
+		chunk.set_pos(pos)
 		chunks[pos] = chunk
 		#chunk.mesh_generated.connect(_on_chunk_mesh_generated.bind(chunk))
-		self.add_child(chunk)
 		
 		world_aabb = world_aabb.merge(AABB(
 			pos * ChunkData.CHUNK_SIZE,
@@ -113,13 +100,13 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 			)
 		))
 		
-		print("Doing data")
-		chunk.generate_chunk_data()
-		print("Data done. Now mesh")
-		chunk.generate_mesh()
-		print("Done")
-		#var task_id = WorkerThreadPool.add_task(chunk.generate.bind(pos))
-		#chunk_threads[chunk] = task_id
+		#chunk.generate_chunk_data()
+		#chunk.generate_mesh()
+		var task_id = WorkerThreadPool.add_task(func():
+			chunk.generate_chunk_data()
+			chunk.generate_mesh()
+		)
+		chunk_threads[chunk] = task_id
 	
 
 func _ready() -> void:
@@ -127,7 +114,7 @@ func _ready() -> void:
 	load_tiles()
 	State.chunk_manager = self
 	
-	generate_around(Vector3.ZERO, 3)
+	generate_around(Vector3.ZERO, 12)
 
 func _on_chunk_mesh_generated(chunk: MeshInstance3D) -> void:
 	var task_id = chunk_threads[chunk]

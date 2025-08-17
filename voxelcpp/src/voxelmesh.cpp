@@ -1,5 +1,6 @@
 #include "voxelmesh.h"
 #include "march_data.h"
+#include "noisemanager.h"
 
 #include <godot_cpp/classes/surface_tool.hpp>
 #include <godot_cpp/classes/array_mesh.hpp>
@@ -13,11 +14,6 @@
 using namespace godot;
 
 void VoxelMesh::generate_chunk_data() {
-    if (!sample_noise.is_valid()) {
-        UtilityFunctions::printerr("Callback invalid :-(");
-        return;
-    }
-
     const Vector3 global_base = chunk_pos * (real_t)CHUNK_SIZE;
 
     for (int x = 0; x < PADDED_SIZE; x++) {
@@ -25,34 +21,24 @@ void VoxelMesh::generate_chunk_data() {
             for (int z = 0; z < PADDED_SIZE; z++) {
                 auto local_pos = Vector3(x, y, z);
                 auto global_pos = global_base + local_pos;
-
-
-                UtilityFunctions::print("Before call ", global_pos);
-                // THE CRASH OCCURS AT THIS LINE AFTER SEVERAL LOOPS. We never see the "After call" message.
-                Variant ret = sample_noise.callv(Array::make(global_pos));
-                UtilityFunctions::print("After call");
-
-                if (ret.get_type() != Variant::FLOAT) {
-                    UtilityFunctions::printerr("Bad ret type for noise : ", Variant::get_type_name(ret.get_type()));
-                    return;
-                }
-
-                // TODO: Assert type
-                float den = ret;
+                float den = noise.get_noise_3d(global_pos);
 
                 size_t idx = get_index(local_pos);
                 density[idx] = den;
-                // TODO: Mat through callback
-                material[idx] = 1;
 
-                UtilityFunctions::print("Looping...");
+                int16_t mat = 2;
+				if (den < 0.4f) {
+					mat = 1;
+                } else if (den < 1.8f) {
+					mat = 0;
+                }
+                material[idx] = mat;
+
                 // TODO: TREES
             }
         }
 
     }
-
-    // We NEVER reach the end of generate_chunk_data, for even one chunk. I can confirm the crash is indeed in this function.
 }
 
 void VoxelMesh::generate_mesh() {
@@ -62,14 +48,10 @@ void VoxelMesh::generate_mesh() {
     st->begin(Mesh::PRIMITIVE_TRIANGLES);
 
     st->set_custom_format(0, SurfaceTool::CUSTOM_RGBA_FLOAT);
-    UtilityFunctions::print("Start");
-
     
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int y = 0; y < CHUNK_SIZE; y++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
-                UtilityFunctions::print("Loop");
-
                 int cx[8] = { x, x+1, x+1, x, x, x+1, x+1, x };
                 int cy[8] = { y, y, y, y, y+1, y+1, y+1, y+1 };
                 int cz[8] = { z, z, z+1, z+1, z, z, z+1, z+1 };
@@ -77,7 +59,7 @@ void VoxelMesh::generate_mesh() {
                 float corner_densities[8];
                 float corner_materials[8];
 
-                char edge_table_index = 0x00;
+                unsigned char edge_table_index = 0x00;
 
                 for (int i = 0; i < 8; i++) {
                     size_t idx = get_index(cx[i], cy[i], cz[i]);
@@ -89,10 +71,8 @@ void VoxelMesh::generate_mesh() {
 
                 if (edge_table_index == 0x00 || edge_table_index == 0xFF) {
                     // All surface / air. No need to draw
-                    UtilityFunctions::print("All surface / air lol");
                     continue;
                 }
-                UtilityFunctions::print("Shits real");
 
                 uint16_t edge_mask = EDGES[edge_table_index];
                 Vector3 edge_verts[12] = {};
