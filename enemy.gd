@@ -20,7 +20,7 @@ func _on_change_daylight_landmark(is_day: bool) -> void:
 
 func _physics_process(delta: float) -> void:
 	if not self.is_on_floor():
-		self.velocity.y -= 14.0 * delta
+		self.velocity += get_gravity() * delta
 	self.move_and_slide()
 	
 	try_attack()

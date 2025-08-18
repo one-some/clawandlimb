@@ -101,10 +101,10 @@ func _physics_process(delta: float) -> void:
 	
 	self.velocity.x = move_dir.x * 6.0
 	self.velocity.z = move_dir.z * 6.0
-	self.velocity.y -= State.gravity * delta
+	self.velocity += get_gravity() * delta
 	
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		self.velocity.y += 6.0
+	if Input.is_action_pressed("jump") and is_on_floor():
+		self.velocity.y += 8.0
 	
 	if move_dir and not first_person_cam.current:
 		self.rotation.y = lerp_angle(self.rotation.y, Vector2(move_dir.z, move_dir.x).angle(), 0.4)

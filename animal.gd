@@ -71,7 +71,7 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	if not self.is_on_floor():
-		self.velocity.y -= State.gravity * delta
+		self.velocity += get_gravity() * delta
 	
 	self.velocity.x = 0.0
 	self.velocity.z = 0.0
