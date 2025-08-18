@@ -5,7 +5,16 @@ var handlers = {}
 
 func _ready() -> void:
 	await get_viewport().ready
+	await get_tree().process_frame
 	load_save()
+
+func vec_to_array(vec: Vector3) -> Variant:
+	if not vec: return null
+	return [vec.x, vec.y, vec.z]
+
+func array_to_vec(array: Array) -> Vector3:
+	assert(array.size() == 3)
+	return Vector3(array[0], array[1], array[2])
 
 func register_handler(id: String, to_json: Callable, from_json: Callable) -> void:
 	assert(id not in handlers)

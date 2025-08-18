@@ -14,6 +14,23 @@ func is_one_and_done() -> bool:
 		State.BuildMode.PLACE_DOOR,
 	]
 
+func to_json() -> Dictionary:
+	assert(self.scene_file_path)
+	
+	return {
+		"scene_path": self.scene_file_path,
+		"position": Save.vec_to_array(self.global_position),
+		"start_pos": Save.vec_to_array(start_pos),
+		"end_pos": Save.vec_to_array(end_pos),
+	}
+
+func from_json(data: Dictionary) -> void:
+	print("LOADING FROM JSON ", data)
+	self.global_position = Save.array_to_vec(data["position"])
+	self.set_start(Save.array_to_vec(data["start_pos"]))
+	self.set_end(Save.array_to_vec(data["end_pos"]))
+	self.finalize()
+
 func _ready() -> void:
 	assert(build_mode)
 	combat.died.connect(func(): self.queue_free())

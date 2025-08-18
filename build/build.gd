@@ -9,9 +9,29 @@ var down_click_pos = null
 var active_constructable: Constructable = null
 
 func _ready() -> void:
+	Save.register_handler("build", to_json, from_json)
+	
 	set_build_mode(State.build_mode, null)
 	Signals.change_active_hotbar_slot.connect(_change_active_hotbar_slot)
 	Signals.update_3d_cursor_pos.connect(_on_3d_cursor_pos_update)
+
+func to_json() -> Array:
+	var out = []
+	
+	for constructable: Constructable in self.get_children():
+		assert(constructable.scene_file_path)
+		out.append(constructable.to_json())
+	
+	return out
+
+func from_json(data: Array) -> void:
+	for construction_data in data:
+		print("DDD", construction_data)
+		var instance: Node3D = load(construction_data["scene_path"]).instantiate()
+		self.add_child(instance)
+		#await instance.ready
+		print("Ready")
+		instance.from_json(construction_data)
 
 func instantiate_selected_constructable() -> Constructable:
 	var item = Inventory.active_item()

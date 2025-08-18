@@ -170,8 +170,10 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		))
 		
 		var task_id = WorkerThreadPool.add_task(func():
+			if not chunk: return
 			chunk.generate_chunk_data()
 			(func():
+				if not chunk: return
 				chunk.generate_mesh()
 				
 				for thing_pos in chunk.get_resource_position_candidates():
