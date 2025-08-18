@@ -31,21 +31,11 @@ func finalize() -> void:
 	
 	# Shift up one (HACK)
 	size.y += 2
-	start.y += 1
-	
-	var end = start + size
+	#start.y += 1
 	
 	var affected_chunks = []
-	for x in range(start.x, end.x):
-		for y in range(start.y, end.y):
-			for z in range(start.z, end.z):
-				var pos = Vector3(x, y, z)
-				
-				var modified = State.chunk_manager.set_density_global(pos, -1.0)
-				
-				for chunk_pos in modified:
-					if chunk_pos in affected_chunks: continue
-					affected_chunks.append(chunk_pos)
+	
+	State.chunk_manager.delete_area(AABB(start, size))
 	
 	#for chunk_pos in affected_chunks.duplicate():
 		#for dx in [-1, 0, 1]:

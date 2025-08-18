@@ -3,6 +3,7 @@ class_name ChunkManager extends Node3D
 const ChunkMaterial = preload("res://worldren/chunk_material.tres")
 const TreeRes = preload("res://tree.tscn")
 const RockRes = preload("res://rock.tscn")
+const CopperRes = preload("res://copper_rock.tscn")
 
 @onready var nav_region = $NavigationRegion3D
 var ids = []
@@ -15,6 +16,65 @@ var first_chunk_generated = false
 
 func get_chunk_pos_from_global_pos(pos: Vector3) -> Vector3:
 	return (pos / ChunkData.CHUNK_SIZE).floor()
+
+func delete_area(area: AABB) -> void:
+	print(area)
+	
+	var start = area.position
+	var end = start + area.size
+	
+	var start_chunk = (start / ChunkData.CHUNK_SIZE).floor()
+	var end_chunk = (end / ChunkData.CHUNK_SIZE).ceil()
+	
+	for chunk_x in range(start_chunk.x, end_chunk.x + 1):
+		for chunk_y in range(start_chunk.x, end_chunk.x + 1):
+			for chunk_z in range(start_chunk.x, end_chunk.x + 1):
+				var chunk_pos = Vector3(chunk_x, chunk_y, chunk_z)
+				
+				if chunk_pos not in chunks:
+					print("TODO: Generatte")
+					continue
+				
+				var chunk = chunks[chunk_pos]
+				var chunk_origin = chunk_pos * ChunkData.CHUNK_SIZE
+				var chunk_far_bound = chunk_origin + Vector3(
+					ChunkData.CHUNK_SIZE,
+					ChunkData.CHUNK_SIZE,
+					ChunkData.CHUNK_SIZE,
+				)
+		
+				if (
+					start.x >= chunk_far_bound.x
+					or start.y >= chunk_far_bound.y
+					or start.z >= chunk_far_bound.z
+				):
+					continue
+				
+				if (
+					end.x <= chunk_origin.x
+					or end.y <= chunk_origin.y
+					or end.z <= chunk_origin.z
+				):
+					continue
+				
+				# Get the position of the start relative to the chunks global offset, and clamp it between 0 and CHUNK_SIZE
+				
+				var big_chunk_chunk_start = Vector3(
+					(start - chunk_origin).clampf(0.0, ChunkData.PADDED_SIZE)
+				)
+				
+				var big_chunk_chunk_end = Vector3(
+					(end - chunk_origin).clampf(0.0, ChunkData.PADDED_SIZE)
+				)
+				
+				var zone_aabb = AABB(big_chunk_chunk_start, big_chunk_chunk_end - big_chunk_chunk_start)
+				chunk.delete_area(zone_aabb)
+		
+		
+		
+		
+		
+	
 
 func set_density_global(pos: Vector3, density: float) -> Array:
 	var modified = []
@@ -70,7 +130,7 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	
 	var positions = []
 	for x in range(-extent, extent):
-		for y in range(-2, 2):
+		for y in range(-extent, extent):
 			for z in range(-extent, extent):
 				positions.append(chunk_origin + Vector3(x, y, z))
 	
@@ -90,6 +150,8 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	for pos in positions:
 		var chunk = VoxelMesh.new()
 		self.add_child(chunk)
+		
+		chunk.set_layer_mask_value(2, true)
 		
 		chunk.material_override = ChunkMaterial
 		chunk.material_override.set_shader_parameter("textures", State._hack_t2d)
@@ -114,11 +176,15 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 				
 				for thing_pos in chunk.get_resource_position_candidates():
 					var thing: Node3D
-					if randf() < 0.3:
+					var rand = randf()
+					
+					if rand < 0.1:
+						thing = CopperRes.instantiate()
+					elif rand < 0.3:
 						thing = RockRes.instantiate()
 					else:
 						thing = TreeRes.instantiate()
-					print(thing)
+						
 					thing.position = thing_pos - Vector3(0, 1, 0)
 					thing.rotation.y = randf() * PI * 2
 					chunk.add_child(thing)
@@ -136,25 +202,29 @@ func _ready() -> void:
 	generate_around(Vector3.ZERO, 4)
 
 func _on_chunk_mesh_generated(chunk: MeshInstance3D) -> void:
-	var task_id = chunk_threads[chunk]
-	WorkerThreadPool.wait_for_task_completion(task_id)
+	if chunk in chunk_threads:
+		var task_id = chunk_threads[chunk]
+		WorkerThreadPool.wait_for_task_completion(task_id)
+		chunk_threads.erase(chunk)
 	
+	var body: StaticBody3D
 	for child in chunk.get_children():
-		if child is not StaticBody3D: continue
-		child.queue_free()
-		
-	var body = StaticBody3D.new()
-	chunk.add_child(body)
+		if child.name != "ChunkCollider": continue
+		body = child
+		break
 	
-	var collision_shape = CollisionShape3D.new()
-	collision_shape.shape = chunk.mesh.create_trimesh_shape()
-	body.add_child(collision_shape)
-
-	body.name = "ChunkCollider"
-	body.add_to_group("NavigationObstacle")
-	body.set_collision_layer_value(5, true)
+	if not body:
+		body = StaticBody3D.new()
+		body.name = "ChunkCollider"
+		body.add_to_group("NavigationObstacle")
+		body.set_collision_layer_value(5, true)
+		chunk.add_child(body)
+		body.add_child(CollisionShape3D.new())
+	
 	assert(body)
 	
+	var collision_shape: CollisionShape3D = body.get_child(0)
+	collision_shape.shape = chunk.mesh.create_trimesh_shape()
 	
 	if not first_chunk_generated:
 		var faces = chunk.mesh.get_faces()
@@ -181,7 +251,7 @@ func bake_world_nav(aabb: AABB) -> void:
 	nav_mesh.filter_baking_aabb = world_aabb
 	nav_region.navigation_mesh = nav_mesh
 		
-	nav_region.bake_navigation_mesh(false) 
+	nav_region.bake_navigation_mesh() 
 		
 	await nav_region.bake_finished
 	print("World navigation bake finished!")

@@ -1,7 +1,8 @@
 extends CharacterBody3D
 
 @onready var og_transform = self.global_transform
-@onready var cam = $"../Camera3D"
+@onready var third_person_cam = $"../Camera3D"
+@onready var first_person_cam = $FirstPersonCamera
 const ITEM_MAX_RANGE = 2.0
 
 var combat = CombatRecipient.new("Claire", 100.0)
@@ -86,6 +87,8 @@ func _physics_process(delta: float) -> void:
 	
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
 	
+	var cam = first_person_cam if first_person_cam.current else third_person_cam
+	
 	var forward = -cam.global_transform.basis.z
 	var right = cam.global_transform.basis.x
 	
@@ -103,7 +106,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		self.velocity.y += 6.0
 	
-	if move_dir:
+	if move_dir and not first_person_cam.current:
 		self.rotation.y = lerp_angle(self.rotation.y, Vector2(move_dir.z, move_dir.x).angle(), 0.4)
 	
 	self.move_and_slide()

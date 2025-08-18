@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemDBResource" load_steps=39 format=3 uid="uid://bj4bibmitv8ra"]
+[gd_resource type="Resource" script_class="ItemDBResource" load_steps=41 format=3 uid="uid://bj4bibmitv8ra"]
 
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="1_86lrn"]
 [ext_resource type="Script" uid="uid://bstmf2q2vsph2" path="res://items/item_db.gd" id="2_216it"]
@@ -17,6 +17,16 @@
 [ext_resource type="PackedScene" uid="uid://c0k6d144n3ion" path="res://post.tscn" id="12_uuhee"]
 [ext_resource type="PackedScene" uid="uid://8bpcdrrs154v" path="res://build/terrain_destroyer.tscn" id="13_yrton"]
 [ext_resource type="PackedScene" uid="uid://cl8bddj0k8pn5" path="res://build/workbench.tscn" id="15_bdpfg"]
+[ext_resource type="Texture2D" uid="uid://jhwh50vcrgoy" path="res://tex/pig.png" id="17_bvmxi"]
+
+[sub_resource type="Resource" id="Resource_vvgel"]
+script = ExtResource("1_86lrn")
+item_name = "Copper Ore"
+description = "Has a faint orange luster."
+texture = ExtResource("17_bvmxi")
+max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [sub_resource type="Resource" id="Resource_svh26"]
 script = ExtResource("1_86lrn")
@@ -207,6 +217,7 @@ metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 [resource]
 script = ExtResource("2_216it")
 items = Dictionary[String, ExtResource("1_86lrn")]({
+"copper_ore": SubResource("Resource_vvgel"),
 "dirt": SubResource("Resource_svh26"),
 "log": SubResource("Resource_pnd04"),
 "plank_floor": SubResource("Resource_nnws5"),

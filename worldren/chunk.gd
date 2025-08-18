@@ -165,7 +165,7 @@ func generate(chunk_pos: Vector3) -> void:
 						if not tree_cell in tree_grid:
 							tree_grid[tree_cell] = true
 							candidate_tree_positions.append(pos)
-
+	
 	
 	for pos in candidate_tree_positions:
 		var thing: Node3D

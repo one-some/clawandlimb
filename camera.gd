@@ -1,6 +1,9 @@
 extends Camera3D
 
 @onready var player = $"../Player"
+@onready var player_cam = $"../Player/FirstPersonCamera"
+@onready var player_pole = $"../Player/ThirdPersonPole"
+
 @onready var threed_cursor = %"3DCursor"
 @onready var build_grid = %BuildGrid
 @onready var spring_cast = $SpringCast
@@ -22,7 +25,7 @@ func _ready() -> void:
 	Signals.camera_shake.connect(_on_camera_shake)
 
 func _on_camera_shake(strength: float, origin: Vector3) -> void:
-	camera_shake_strength = strength / max(1.0, 2.0 * log(player.global_position.distance_to(origin) + 1))
+	camera_shake_strength = strength / max(1.0, 2.0 * log(player_pole.global_position.distance_to(origin) + 1))
 
 func update_camera() -> void:
 	var height = distance_from_pole * sin(angle_up_down)
@@ -38,7 +41,8 @@ func update_camera() -> void:
 	spring_cast.target_position = dream_pos - spring_cast.position
 	
 	if not State.build_mode and spring_cast.is_colliding():
-		self.position = spring_cast.get_collision_point()
+		# HACK?
+		self.position = spring_cast.get_collision_point() + (spring_cast.get_collision_normal() / 10.0)
 	else:
 		self.position = dream_pos
 	
@@ -57,7 +61,7 @@ func _physics_process(delta: float) -> void:
 	if cam_key_input_dir:
 		set_camera_angle(
 			angle_around_point + (cam_key_input_dir.x / 25.0),
-			angle_up_down + (cam_key_input_dir.y / 40.0)
+			angle_up_down + (-cam_key_input_dir.y / 40.0)
 		)
 	
 	#camera_shake_strength = max(0.0, camera_shake_strength - 0.1)
@@ -73,11 +77,13 @@ func _physics_process(delta: float) -> void:
 	update_camera()
 
 func cast_from_camera(collision_mask: int = 0xFFFFFFFF) -> Dictionary:
+	var cam = self if self.current else player_cam
+	
 	var space_state = get_world_3d().direct_space_state
 
 	var mouse_pos = get_viewport().get_mouse_position()
-	var ray_origin = self.project_ray_origin(mouse_pos)
-	var ray_direction = self.project_ray_normal(mouse_pos)
+	var ray_origin = cam.project_ray_origin(mouse_pos)
+	var ray_direction = cam.project_ray_normal(mouse_pos)
 
 	var ray_end = ray_origin + ray_direction * 1000
 	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
@@ -153,7 +159,7 @@ func do_interactable_stuff() -> void:
 		last_hovered_interactable = interactable
 
 func do_player_cam_process(delta: float) -> void:
-	target_pole = target_pole.lerp(player.global_position, 0.4)
+	target_pole = target_pole.lerp(player_pole.global_position, 0.4)
 	
 	do_interactable_stuff()
 
@@ -188,6 +194,7 @@ func process_mouse_button_event_for_right_click(event: InputEventMouseButton) ->
 		_on_right_click()
 
 func process_mouse_move(event: InputEventMouseMotion) -> void:
+	if not self.current: return
 	if not Input.is_action_pressed("rotate"): return
 	
 	var mouse_pos = get_viewport().get_mouse_position()
@@ -221,7 +228,13 @@ func _input(event: InputEvent) -> void:
 			MOUSE_BUTTON_WHEEL_UP: -1,
 			MOUSE_BUTTON_WHEEL_DOWN: 1,
 		}.get(event.button_index, 0) * 0.5
-		distance_from_pole = clampf(distance_from_pole, 2.0, 40.0)
+		distance_from_pole = clampf(distance_from_pole, 1.0, 40.0)
+		
+		var player_cam_active = distance_from_pole < 1.5
+		player_cam.set_active(player_cam_active)
+		
+		if not player_cam_active:
+			self.current = true
 		
 		process_mouse_button_event_for_right_click(event)
 	else:

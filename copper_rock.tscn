@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://hsd43avjrdlx"]
+
+[ext_resource type="PackedScene" uid="uid://bhmmb2vl3pirl" path="res://rock.tscn" id="1_iheh6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iheh6"]
+transparency = 1
+albedo_color = Color(1, 0.745098, 0.470588, 0.121569)
+
+[node name="CopperRock" instance=ExtResource("1_iheh6")]
+item_drop = "copper_ore"
+combat_name = "Copper Rock"
+
+[node name="sphere" parent="blockbench_export/Node" index="0"]
+material_overlay = SubResource("StandardMaterial3D_iheh6")
+
+[editable path="blockbench_export"]

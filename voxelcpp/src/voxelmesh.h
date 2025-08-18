@@ -29,6 +29,7 @@ protected:
         ClassDB::bind_method(D_METHOD("generate_mesh"), &VoxelMesh::generate_mesh);
         ClassDB::bind_method(D_METHOD("set_pos", "pos"), &VoxelMesh::set_pos);
         ClassDB::bind_method(D_METHOD("get_resource_position_candidates"), &VoxelMesh::get_resource_position_candidates);
+        ClassDB::bind_method(D_METHOD("delete_area", "area"), &VoxelMesh::delete_area);
 
         ADD_SIGNAL(MethodInfo("finished_mesh_generation"));
     }
@@ -65,6 +66,8 @@ public:
 
     void generate_chunk_data();
     void generate_mesh();
+
+    void delete_area(const AABB& area);
 };
 
 }

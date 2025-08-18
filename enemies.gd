@@ -39,7 +39,7 @@ func position_within_range_of_nodes_in_array(pos: Vector3, nodes: Array, node_ra
 	return false
 
 func try_spawn() -> void:
-	if not root.is_night():
+	if root.is_day:
 		return
 	
 	var enemies = get_enemies()

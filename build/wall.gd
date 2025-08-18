@@ -12,10 +12,12 @@ func _ready() -> void:
 	super()
 
 func set_start(pos: Vector3) -> void:
+	print("Start: ", pos)
 	start_pos = pos
 	update_points()
 
 func set_end(pos: Vector3) -> void:
+	print("End: ", pos)
 	end_pos = pos
 	update_points()
 
@@ -34,7 +36,7 @@ func update_points() -> void:
 	if not self.global_position.is_equal_approx(end_pos):
 		self.look_at(end_pos)
 	
-	self.position.y = (WALL_HEIGHT / 2.0)
+	self.position.y += (WALL_HEIGHT / 2.0)
 
 func vec_floor_div(v: Vector2i, div: int) -> Vector2i:
 	# FIXME: Do we need this?? Feels duped from somewhere else

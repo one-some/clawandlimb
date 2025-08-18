@@ -20,10 +20,9 @@ func instantiate_selected_constructable() -> Constructable:
 	
 	var constructable_scene = item.item_data.item_constructable
 	if not constructable_scene:
-		print("No constructable")
+		#print("No constructable")
 		set_build_mode(State.BuildMode.NONE, null)
 		return null
-	
 	return constructable_scene.instantiate()
 
 func _change_active_hotbar_slot() -> void:
@@ -51,7 +50,7 @@ func snapped_cursor_position() -> Vector3:
 
 # TODO: Optional start_pos
 func set_build_mode(build_mode: State.BuildMode, constructable: Constructable, start_pos: Variant = null) -> void:
-	print("Setting build mode to ", build_mode)
+	#print("Setting build mode to ", build_mode)
 	if build_mode == 1:
 		breakpoint
 	

@@ -25,6 +25,18 @@ bool in_padded(const Vector3& pos) {
 	return true;
 }
 
+void VoxelMesh::delete_area(const AABB& area) {
+    for (int x = area.position.x; x < area.position.x + area.size.x; x++) {
+        for (int y = area.position.y; y < area.position.y + area.size.y; y++) {
+            for (int z = area.position.z; z < area.position.z + area.size.z; z++) {
+                // FIXME: There's totally a bug where density is inverted....
+                density[get_index(x, y, z)] = 1.0f;
+            }
+        }
+    }
+    generate_mesh();
+}
+
 void VoxelMesh::generate_chunk_data() {
     const Vector3 global_base = chunk_pos * (real_t)CHUNK_SIZE;
     HashSet<Vector3> resource_cells;
