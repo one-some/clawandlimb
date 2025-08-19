@@ -141,7 +141,8 @@ public:
         //    cave_fbm
         //) * 18.0;
 
-        float density = (pos.y - base_height) - detail;//- cave_depth;
+        //float density = (pos.y - base_height) - detail;//- cave_depth;
+        float density = (base_height - pos.y) + detail;//- cave_depth;
         return density;
     }
 };

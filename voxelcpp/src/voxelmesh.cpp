@@ -5,7 +5,6 @@
 #include <godot_cpp/classes/surface_tool.hpp>
 #include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
-#include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/core/math.hpp>
@@ -54,7 +53,7 @@ void VoxelMesh::generate_chunk_data() {
                 int16_t mat = 2;
 				if (den < 0.4f) {
 					mat = 1;
-                } else if (den > 1.0f) {
+                } else if (den < 1.8f) {
 					mat = 0;
                 }
                 material[idx] = mat;
@@ -168,7 +167,7 @@ void VoxelMesh::generate_mesh() {
                     int e1 = tri[ti+1];
                     int e2 = tri[ti+2];
 
-                    Vector3 P[3] = { edge_verts[e0], edge_verts[e1], edge_verts[e2] };
+                    Vector3 P[3] = { edge_verts[e0], edge_verts[e2], edge_verts[e1] };
 
                     for (int v = 0; v < 3; v++) {
                         Vector3 p = P[v];
