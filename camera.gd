@@ -117,7 +117,7 @@ func set_threed_cursor_pos(pos: Vector3) -> void:
 
 func do_freecam_process(delta: float):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
-	if input_dir:
+	if input_dir and self.current:
 		var forward = -self.global_transform.basis.z
 		var right = self.global_transform.basis.x
 		

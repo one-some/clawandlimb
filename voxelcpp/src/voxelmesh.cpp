@@ -51,9 +51,9 @@ void VoxelMesh::generate_chunk_data() {
                 density[idx] = den;
 
                 int16_t mat = 2;
-				if (den < 0.4f) {
+				if (den < 1.4f) {
 					mat = 1;
-                } else if (den < 1.8f) {
+                } else if (den < 2.8f) {
 					mat = 0;
                 }
                 material[idx] = mat;

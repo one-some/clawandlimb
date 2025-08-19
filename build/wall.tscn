@@ -7,6 +7,7 @@
 transparency = 1
 albedo_color = Color(1, 1, 1, 0.498039)
 albedo_texture = ExtResource("2_th28y")
+uv1_triplanar = true
 texture_filter = 0
 
 [node name="Wall" type="Node3D"]
@@ -20,3 +21,4 @@ use_collision = true
 collision_layer = 5
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Wall"]
+material = SubResource("StandardMaterial3D_1d1oh")

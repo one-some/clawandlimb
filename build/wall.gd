@@ -12,12 +12,10 @@ func _ready() -> void:
 	super()
 
 func set_start(pos: Vector3) -> void:
-	print("Start: ", pos)
 	start_pos = pos
 	update_points()
 
 func set_end(pos: Vector3) -> void:
-	print("End: ", pos)
 	end_pos = pos
 	update_points()
 
@@ -28,8 +26,6 @@ func update_points() -> void:
 	self.visible = true
 	
 	box.size = Vector3(0.3, WALL_HEIGHT, start_pos.distance_to(end_pos))
-	material.uv1_scale = Vector3(box.size.z, box.size.y, 1) * 3.0
-	#material.uv1_scale = Vector3(box.size.x, 1, 1) * 3.0
 	
 	#collision_shape.shape.size = mesh.size
 	self.position = (end_pos + start_pos) / 2.0

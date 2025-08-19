@@ -5,6 +5,7 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vx4y2"]
 albedo_texture = ExtResource("2_a2t34")
+uv1_triplanar = true
 texture_filter = 0
 
 [node name="Tile" type="Node3D"]

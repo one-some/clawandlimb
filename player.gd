@@ -83,7 +83,7 @@ func _physics_process(delta: float) -> void:
 		combat.die()
 	
 	if State.active_ui: return
-	if State.build_mode: return
+	if State.build_mode and third_person_cam.current: return
 	
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
 	
