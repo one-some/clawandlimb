@@ -1,8 +1,10 @@
-[gd_scene load_steps=41 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=45 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
+[ext_resource type="Texture2D" uid="uid://cbe6ggfrfopgn" path="res://tex/moon.png" id="2_82xsv"]
+[ext_resource type="Texture2D" uid="uid://dsekkq0dm5eo" path="res://tex/sun.png" id="3_getpj"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
 [ext_resource type="Script" uid="uid://0jcpwcfyx785" path="res://first_person_camera.gd" id="4_074og"]
 [ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
@@ -172,6 +174,18 @@ tracks/9/keys = {
 "method": &"set_day"
 }]
 }
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("CelestialBodyHandle:rotation")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 12, 24),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-3.14159, 0, 0), Vector3(-6.28319, 0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_074og"]
 length = 0.001
@@ -283,12 +297,46 @@ tracks/8/keys = {
 "update": 0,
 "values": [Color(1, 0.989258, 0.875, 1)]
 }
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("CelestialBodyHandle:rotation")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(3.14159, 0, 0)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_cegan"]
 _data = {
 &"Cycle": SubResource("Animation_yaehf"),
 &"RESET": SubResource("Animation_074og")
 }
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_getpj"]
+transparency = 1
+shading_mode = 0
+disable_fog = true
+albedo_texture = ExtResource("2_82xsv")
+texture_filter = 0
+disable_receive_shadows = true
+billboard_mode = 1
+billboard_keep_scale = true
+fixed_size = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ryguw"]
+transparency = 1
+shading_mode = 0
+disable_fog = true
+albedo_texture = ExtResource("3_getpj")
+texture_filter = 0
+disable_receive_shadows = true
+billboard_mode = 1
+billboard_keep_scale = true
+fixed_size = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vivmo"]
 transparency = 1
@@ -457,6 +505,32 @@ libraries = {
 transform = Transform3D(1, 0, 0, 0, -3.61999e-06, 1, 0, -1, -3.61999e-06, 0, 0, 0)
 light_color = Color(1, 0.989258, 0.875, 1)
 shadow_enabled = true
+sky_mode = 1
+
+[node name="CelestialBodyHandle" type="Node3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0)
+
+[node name="Moon" type="Sprite3D" parent="WorldEnvironment/CelestialBodyHandle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3000, 0)
+material_override = SubResource("StandardMaterial3D_getpj")
+cast_shadow = 0
+custom_aabb = AABB(-10000, -10000, -10000, 20000, 20000, 20000)
+pixel_size = 0.007
+transparent = false
+double_sided = false
+texture_filter = 0
+texture = ExtResource("2_82xsv")
+
+[node name="Sun" type="Sprite3D" parent="WorldEnvironment/CelestialBodyHandle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3000, 0)
+material_override = SubResource("StandardMaterial3D_ryguw")
+cast_shadow = 0
+custom_aabb = AABB(-10000, -10000, -10000, 20000, 20000, 20000)
+pixel_size = 0.007
+transparent = false
+double_sided = false
+texture_filter = 0
+texture = ExtResource("3_getpj")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 unique_name_in_owner = true
