@@ -8,11 +8,12 @@ func _ready() -> void:
 	await get_tree().process_frame
 	load_save()
 
-func vec_to_array(vec: Vector3) -> Variant:
+func vec_to_array(vec) -> Variant:
 	if not vec: return null
 	return [vec.x, vec.y, vec.z]
 
-func array_to_vec(array: Array) -> Vector3:
+func array_to_vec(array) -> Variant:
+	if array == null: return null
 	assert(array.size() == 3)
 	return Vector3(array[0], array[1], array[2])
 

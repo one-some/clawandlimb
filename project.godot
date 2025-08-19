@@ -167,6 +167,7 @@ move_stack={
 
 [layer_names]
 
+3d_render/layer_3="ItemSpecialty"
 3d_physics/layer_2="NPC"
 3d_physics/layer_3="Wall"
 

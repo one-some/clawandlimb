@@ -27,8 +27,15 @@ func to_json() -> Dictionary:
 func from_json(data: Dictionary) -> void:
 	print("LOADING FROM JSON ", data)
 	self.global_position = Save.array_to_vec(data["position"])
-	self.set_start(Save.array_to_vec(data["start_pos"]))
-	self.set_end(Save.array_to_vec(data["end_pos"]))
+	
+	# UGHHH
+	
+	var start = Save.array_to_vec(data["start_pos"])
+	var end = Save.array_to_vec(data["end_pos"])
+	
+	if start != null: self.set_start(start)
+	if end != null: self.set_end(end)
+	
 	self.finalize()
 
 func _ready() -> void:

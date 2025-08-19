@@ -1,0 +1,79 @@
+[gd_scene load_steps=11 format=3 uid="uid://ca3tci3v8d8ug"]
+
+[ext_resource type="Script" uid="uid://cjackugu1xmwj" path="res://build/construction_model.gd" id="1_s1444"]
+[ext_resource type="PackedScene" uid="uid://dv88nuhl7t7ti" path="res://mdl/Torch.gltf" id="2_s1444"]
+[ext_resource type="Texture2D" uid="uid://ck6kk8t0lj3aj" path="res://tex/tiles/4_snow.png" id="3_w3qnr"]
+
+[sub_resource type="Curve" id="Curve_w3qnr"]
+_data = [Vector2(0.589928, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_kx7w4"]
+curve = SubResource("Curve_w3qnr")
+
+[sub_resource type="Gradient" id="Gradient_72pgl"]
+colors = PackedColorArray(0.695313, 0.0787659, 0.0787659, 1, 1, 0.929169, 0.175781, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_wfdi7"]
+gradient = SubResource("Gradient_72pgl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kx7w4"]
+angle_min = -428.4
+angle_max = 496.7
+direction = Vector3(0, 1, 0)
+spread = 20.0
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
+angular_velocity_min = 100.0
+angular_velocity_max = 100.0
+gravity = Vector3(0, 0, 0)
+attractor_interaction_enabled = false
+color_ramp = SubResource("GradientTexture1D_wfdi7")
+alpha_curve = SubResource("CurveTexture_kx7w4")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_72pgl"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 1, 1, 0.803922)
+albedo_texture = ExtResource("3_w3qnr")
+texture_filter = 0
+disable_receive_shadows = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_wfdi7"]
+material = SubResource("StandardMaterial3D_72pgl")
+size = Vector2(0.1, 0.1)
+orientation = 2
+
+[node name="Torch" type="Node3D"]
+script = ExtResource("1_s1444")
+build_mode = 3
+metadata/_custom_type_script = "uid://cgwbtcw5kvtfd"
+
+[node name="blockbench_export" parent="." instance=ExtResource("2_s1444")]
+
+[node name="cube" parent="blockbench_export/Node" index="0"]
+layers = 4
+
+[node name="cube2" parent="blockbench_export/Node" index="1"]
+layers = 4
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+amount = 10
+process_material = SubResource("ParticleProcessMaterial_kx7w4")
+draw_pass_1 = SubResource("PlaneMesh_wfdi7")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.778112, 0)
+light_color = Color(0.984375, 0.647258, 0.288391, 1)
+light_cull_mask = 4294967291
+shadow_enabled = true
+shadow_caster_mask = 4294967291
+omni_range = 10.0
+
+[editable path="blockbench_export"]

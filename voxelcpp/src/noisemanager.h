@@ -68,6 +68,7 @@ inline float terrace(
 }
 
 class NoiseManager {
+public:
     FastNoiseLite low_noise;
     FastNoiseLite high_noise;
     FastNoiseLite mountain_noise;
@@ -75,7 +76,6 @@ class NoiseManager {
     FastNoiseLite cave_noise;
     FastNoiseLite rough_noise;
 
-public:
     NoiseManager() {
         for (const auto noise : {
             &low_noise,

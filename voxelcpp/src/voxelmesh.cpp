@@ -57,7 +57,8 @@ void VoxelMesh::generate_chunk_data() {
 					mat = 0;
                 }
 
-                if (global_pos.y < sea_level + 0.75f - (UtilityFunctions::randf() * 0.5)) {
+                //float beach_threshold = noise.get_noise(noise.high_noise, Vector2(global_pos.x, global_pos.z) * 0.001) + 1.0f;
+                if (global_pos.y < sea_level + 2.0f) {
                     // Sand!
                     mat = 3;
                 }

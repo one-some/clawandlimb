@@ -1,7 +1,7 @@
 extends Constructable
 
 func _ready() -> void:
-	combat.name = "Doodad"
+	combat.name = self.name
 	super()
 
 func set_start(pos: Vector3) -> void:
