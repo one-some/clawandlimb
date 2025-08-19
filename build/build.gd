@@ -27,6 +27,7 @@ func to_json() -> Array:
 func from_json(data: Array) -> void:
 	for construction_data in data:
 		print("DDD", construction_data)
+		if not construction_data: continue
 		var instance: Node3D = load(construction_data["scene_path"]).instantiate()
 		self.add_child(instance)
 		#await instance.ready
