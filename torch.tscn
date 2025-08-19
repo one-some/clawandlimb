@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ca3tci3v8d8ug"]
+[gd_scene load_steps=12 format=3 uid="uid://ca3tci3v8d8ug"]
 
 [ext_resource type="Script" uid="uid://cjackugu1xmwj" path="res://build/construction_model.gd" id="1_s1444"]
 [ext_resource type="PackedScene" uid="uid://dv88nuhl7t7ti" path="res://mdl/Torch.gltf" id="2_s1444"]
@@ -49,6 +49,9 @@ material = SubResource("StandardMaterial3D_72pgl")
 size = Vector2(0.1, 0.1)
 orientation = 2
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_w3qnr"]
+size = Vector3(0.2, 1, 0.2)
+
 [node name="Torch" type="Node3D"]
 script = ExtResource("1_s1444")
 build_mode = 3
@@ -75,5 +78,11 @@ light_cull_mask = 4294967291
 shadow_enabled = true
 shadow_caster_mask = 4294967291
 omni_range = 10.0
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_w3qnr")
 
 [editable path="blockbench_export"]
