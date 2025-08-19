@@ -5,7 +5,12 @@ const TreeRes = preload("res://tree.tscn")
 const RockRes = preload("res://rock.tscn")
 const CopperRes = preload("res://copper_rock.tscn")
 
+const SEA_LEVEL = 19.0
+
 @onready var nav_region = $NavigationRegion3D
+
+var seed = randi() * 09142008 * 1000
+
 var ids = []
 var world_aabb = AABB()
 
@@ -69,12 +74,6 @@ func delete_area(area: AABB) -> void:
 				
 				var zone_aabb = AABB(big_chunk_chunk_start, big_chunk_chunk_end - big_chunk_chunk_start)
 				chunk.delete_area(zone_aabb)
-		
-		
-		
-		
-		
-	
 
 func set_density_global(pos: Vector3, density: float) -> Array:
 	var modified = []
@@ -156,7 +155,10 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		chunk.material_override = ChunkMaterial
 		chunk.material_override.set_shader_parameter("textures", State._hack_t2d)
 		
+		chunk.set_seed(seed)
 		chunk.set_pos(pos)
+		chunk.set_sea_level(SEA_LEVEL)
+		
 		chunks[pos] = chunk
 		chunk.finished_mesh_generation.connect(_on_chunk_mesh_generated.bind(chunk))
 		
@@ -177,9 +179,12 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 				chunk.generate_mesh()
 				
 				for thing_pos in chunk.get_resource_position_candidates():
+					thing_pos.y -= 1
+					
+					if thing_pos.y + chunk.global_position.y < SEA_LEVEL + 0.75: continue
+					
 					var thing: Node3D
 					var rand = randf()
-					
 					if rand < 0.1:
 						thing = CopperRes.instantiate()
 					elif rand < 0.3:
@@ -187,7 +192,7 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 					else:
 						thing = TreeRes.instantiate()
 						
-					thing.position = thing_pos - Vector3(0, 1, 0)
+					thing.position = thing_pos
 					thing.rotation.y = randf() * PI * 2
 					chunk.add_child(thing)
 				
@@ -200,6 +205,8 @@ func _ready() -> void:
 	# Does this suck. Let me know.
 	load_tiles()
 	State.chunk_manager = self
+	
+	$/root/Main/Water.position.y = SEA_LEVEL
 	
 	generate_around(Vector3.ZERO, 4)
 

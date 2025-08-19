@@ -77,7 +77,7 @@ class NoiseManager {
 
 public:
     NoiseManager() {
-        for (const auto& noise : {
+        for (const auto noise : {
             &low_noise,
             &high_noise,
             &mountain_noise,
@@ -97,6 +97,19 @@ public:
 
         high_noise.SetFractalOctaves(3);
         //low_noise.SetSeed(1337);
+    }
+
+    void set_seed(int seed) {
+        for (const auto noise : {
+            &low_noise,
+            &high_noise,
+            &mountain_noise,
+            &detail_noise,
+            &cave_noise,
+            &rough_noise
+        }) {
+            noise->SetSeed(seed);
+        }
     }
 
     inline float get_noise(FastNoiseLite &noise, const godot::Vector2 &pos) {

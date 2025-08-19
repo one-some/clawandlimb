@@ -1,8 +1,11 @@
 extends CharacterBody3D
 
 @onready var og_transform = self.global_transform
-@onready var third_person_cam = $"../Camera3D"
-@onready var first_person_cam = $FirstPersonCamera
+@onready var third_person_cam: Camera3D = $"../Camera3D"
+@onready var first_person_cam: Camera3D = $FirstPersonCamera
+@onready var naru_freaking_toe: Sprite3D = $Naruto
+@onready var naruto_width_scalar = naru_freaking_toe.pixel_size / naru_freaking_toe.texture.get_width()
+
 const ITEM_MAX_RANGE = 2.0
 
 var combat = CombatRecipient.new("Claire", 100.0)
@@ -14,6 +17,7 @@ func _ready() -> void:
 		self.global_position = pos
 	)
 	Signals.player_respawn_requested.connect(respawn)
+	Signals.change_player_skin.connect(change_player_skin)
 	combat.died.connect(die)
 	combat.took_damage.connect(func(_dmg): Signals.change_player_health.emit(combat))
 	
@@ -22,6 +26,11 @@ func _ready() -> void:
 
 	# Propagate stuff first
 	combat.take_damage(CombatRecipient.DamageOrigin.GOD, 0.0)
+
+func change_player_skin(skin: Texture) -> void:
+	naru_freaking_toe.texture = skin
+	# This didn't work ROFL
+	naru_freaking_toe.pixel_size = naruto_width_scalar * skin.get_width()
 
 func respawn() -> void:
 	combat.reset()

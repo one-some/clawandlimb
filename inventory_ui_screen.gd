@@ -2,6 +2,7 @@ extends Control
 
 @onready var inventory_grid = $Cont/Inv/Inventory
 @onready var crafting_ui = $Cont/Crafting
+@onready var player_ui = $Cont/Inv/PlayerPreview
 
 func _ready() -> void:
 	self.visible = true
@@ -24,6 +25,7 @@ func _input(event: InputEvent) -> void:
 
 func set_inventory_open(open: bool) -> void:
 	crafting_ui.visible = open
+	player_ui.visible = open
 	
 	var i = 0
 	for c in inventory_grid.get_children():

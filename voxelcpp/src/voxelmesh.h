@@ -18,6 +18,7 @@ class VoxelMesh : public MeshInstance3D {
 private:
     NoiseManager noise;
     Vector3 chunk_pos;
+    float sea_level = 0.0f;
     PackedVector3Array resource_position_candidates;
 
     uint16_t material[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0 };
@@ -30,6 +31,8 @@ protected:
         ClassDB::bind_method(D_METHOD("set_pos", "pos"), &VoxelMesh::set_pos);
         ClassDB::bind_method(D_METHOD("get_resource_position_candidates"), &VoxelMesh::get_resource_position_candidates);
         ClassDB::bind_method(D_METHOD("delete_area", "area"), &VoxelMesh::delete_area);
+        ClassDB::bind_method(D_METHOD("set_seed", "seed"), &VoxelMesh::set_seed);
+        ClassDB::bind_method(D_METHOD("set_sea_level", "sea_level"), &VoxelMesh::set_sea_level);
 
         ADD_SIGNAL(MethodInfo("finished_mesh_generation"));
     }
@@ -37,6 +40,12 @@ protected:
 public:
     VoxelMesh() { }
     ~VoxelMesh() = default;
+
+    void set_seed(int seed) {
+        noise.set_seed(seed);
+    }
+
+    void set_sea_level(float p_sea_level) { sea_level = p_sea_level; }
 
     PackedVector3Array get_resource_position_candidates() {
         return resource_position_candidates;

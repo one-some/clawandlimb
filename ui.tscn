@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=47 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
@@ -9,6 +9,8 @@
 [ext_resource type="Script" uid="uid://blnanm6qmbjfj" path="res://item_tooltip.gd" id="5_ibotj"]
 [ext_resource type="PackedScene" uid="uid://tbx2gvjwcyyv" path="res://crafting_entry.tscn" id="6_n5rqp"]
 [ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="6_y4yjw"]
+[ext_resource type="Script" uid="uid://cm6pxahfidr0c" path="res://player_preview.gd" id="7_b2p7n"]
+[ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="7_os5c7"]
 [ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="7_waa4j"]
 [ext_resource type="Script" uid="uid://q7g2r04wynfy" path="res://crafting.gd" id="8_7rqds"]
 [ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
@@ -206,9 +208,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 584.0
-offset_right = -1152.0
-offset_bottom = -64.0
+offset_left = -4.0
+offset_top = 608.0
+offset_right = -1156.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_m6e0p")
@@ -297,7 +300,6 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_nltto")
 script = ExtResource("1_nltto")
 
 [node name="InventoryUIScreen" type="MarginContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -317,6 +319,35 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 0
 alignment = 2
+
+[node name="PlayerPreview" type="Control" parent="InventoryUIScreen/Cont/Inv"]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("7_b2p7n")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InventoryUIScreen/Cont/Inv/PlayerPreview"]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SkinPreview" type="TextureRect" parent="InventoryUIScreen/Cont/Inv/PlayerPreview/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("7_os5c7")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="MenuButton" type="MenuButton" parent="InventoryUIScreen/Cont/Inv/PlayerPreview/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 20
+text = "Change Character"
 
 [node name="Inventory" type="GridContainer" parent="InventoryUIScreen/Cont/Inv"]
 custom_minimum_size = Vector2(432, 0)

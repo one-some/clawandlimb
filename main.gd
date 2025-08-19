@@ -3,7 +3,7 @@ extends Node3D
 @onready var anim_player: AnimationPlayer = $WorldEnvironment/AnimationPlayer
 
 const DAY_LENGTH_SECONDS = 60 * 10
-var time_normalized = 0.25
+var time_normalized = 0.4
 var is_day = false
 
 func set_day(p_is_day: bool) -> void:

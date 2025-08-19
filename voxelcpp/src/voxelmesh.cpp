@@ -56,6 +56,13 @@ void VoxelMesh::generate_chunk_data() {
                 } else if (den < 2.8f) {
 					mat = 0;
                 }
+
+                if (global_pos.y < sea_level + 0.75f - (UtilityFunctions::randf() * 0.5)) {
+                    // Sand!
+                    mat = 3;
+                }
+
+
                 material[idx] = mat;
 
                 auto voxel_above = local_pos + Vector3(0, 1, 0);
@@ -79,7 +86,7 @@ void VoxelMesh::generate_chunk_data() {
                             t = Math::clamp(d0 / bottom, 0.0f, 1.0f);
                         }
 
-                        auto pos = local_pos + Vector3(0.0, t - 1.0, 0.0);
+                        auto pos = local_pos + Vector3(0.0, t, 0.0);
                         auto cell = ((chunk_pos * CHUNK_SIZE) + pos).round();
                         if (!resource_cells.has(cell)) {
                             resource_cells.insert(cell);
