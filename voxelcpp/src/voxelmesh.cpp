@@ -29,8 +29,7 @@ void VoxelMesh::delete_area(const AABB& area) {
     for (int x = area.position.x; x < area.position.x + area.size.x; x++) {
         for (int y = area.position.y; y < area.position.y + area.size.y; y++) {
             for (int z = area.position.z; z < area.position.z + area.size.z; z++) {
-                // FIXME: There's totally a bug where density is inverted....
-                density[get_index(x, y, z)] = 1.0f;
+                density[get_index(x, y, z)] = -1.0f;
             }
         }
     }
@@ -55,7 +54,7 @@ void VoxelMesh::generate_chunk_data() {
                 int16_t mat = 2;
 				if (den < 0.4f) {
 					mat = 1;
-                } else if (den < 1.8f) {
+                } else if (den > 1.0f) {
 					mat = 0;
                 }
                 material[idx] = mat;
