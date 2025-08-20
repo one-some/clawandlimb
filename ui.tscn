@@ -1,7 +1,8 @@
-[gd_scene load_steps=47 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=49 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
+[ext_resource type="Script" uid="uid://dfxrlbxic7li6" path="res://water_overlay.gd" id="1_vkygq"]
 [ext_resource type="FontFile" uid="uid://dq2o1ux1rufks" path="res://Cavalhatriz.ttf" id="2_27fn8"]
 [ext_resource type="Script" uid="uid://vthan8fooxnk" path="res://inventory_ui.gd" id="3_27fn8"]
 [ext_resource type="Script" uid="uid://dnqn4e4idg1ce" path="res://waila.gd" id="3_gs482"]
@@ -19,6 +20,9 @@
 [ext_resource type="LabelSettings" uid="uid://d1gp74yg17uxo" path="res://generic_labelsettings_20px.tres" id="11_nvb2n"]
 [ext_resource type="Script" uid="uid://dsmi4iviuvgnt" path="res://dead.gd" id="14_cxd00"]
 [ext_resource type="StyleBox" uid="uid://c3rj870jxqmdi" path="res://deadly_box_who_wants_it.tres" id="15_etlur"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sosvr"]
+bg_color = Color(0, 0.15, 0.5, 0.431373)
 
 [sub_resource type="LabelSettings" id="LabelSettings_b2p7n"]
 font = ExtResource("7_waa4j")
@@ -176,6 +180,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="WaterOverlay" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_sosvr")
+script = ExtResource("1_vkygq")
 
 [node name="BuildControls" type="Label" parent="."]
 layout_mode = 1

@@ -111,6 +111,24 @@ recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_0unfh")])
 item_constructable = ExtResource("9_0unfh")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
+[sub_resource type="Resource" id="Resource_jvxqj"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"planks": 2
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[sub_resource type="Resource" id="Resource_08wb0"]
+script = ExtResource("1_86lrn")
+item_name = "Torch"
+description = "You light up my life."
+texture = ExtResource("19_0unfh")
+max_stack = 64
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_jvxqj")])
+item_constructable = ExtResource("19_yrton")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
 [sub_resource type="Resource" id="Resource_bvmxi"]
 script = ExtResource("4_qoymp")
 ingredients = Dictionary[String, int]({
@@ -217,24 +235,6 @@ texture = ExtResource("7_w5gng")
 max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_f2qmd")])
 item_constructable = ExtResource("15_bdpfg")
-metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
-
-[sub_resource type="Resource" id="Resource_jvxqj"]
-script = ExtResource("4_qoymp")
-ingredients = Dictionary[String, int]({
-"planks": 2
-})
-output_count = 1
-metadata/_custom_type_script = "uid://8mocn31chcqv"
-
-[sub_resource type="Resource" id="Resource_08wb0"]
-script = ExtResource("1_86lrn")
-item_name = "Torch"
-description = "You light up my life."
-texture = ExtResource("19_0unfh")
-max_stack = 64
-recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_jvxqj")])
-item_constructable = ExtResource("19_yrton")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [resource]
