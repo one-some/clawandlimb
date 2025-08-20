@@ -26,7 +26,8 @@ func to_json() -> Dictionary:
 
 func from_json(data: Dictionary) -> void:
 	print("LOADING FROM JSON ", data)
-	self.global_position = Save.array_to_vec(data["position"])
+	if data["position"]:
+		self.global_position = Save.array_to_vec(data["position"])
 	
 	# UGHHH
 	

@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=47 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://bi25cosltg6pl" path="res://tex/fist.png" id="8_vivmo"]
 [ext_resource type="Script" uid="uid://c7imyrbfwguwo" path="res://equipable_item.gd" id="8_w48qg"]
 [ext_resource type="PackedScene" uid="uid://ci2u3k48nih11" path="res://entity_shadow.tscn" id="9_yaehf"]
+[ext_resource type="Script" uid="uid://54a8q3ymeaoa" path="res://wooden_pickaxe.gd" id="11_ryguw"]
 [ext_resource type="PackedScene" uid="uid://0fc3n5w2os8h" path="res://ui.tscn" id="12_dg77c"]
 [ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
 [ext_resource type="Shader" uid="uid://deusiyboy5f8r" path="res://grid.gdshader" id="14_vivmo"]
@@ -450,6 +451,10 @@ _data = {
 &"RESET": SubResource("Animation_efxa6")
 }
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d13ii"]
+transparency = 1
+albedo_color = Color(1, 0, 0, 0.552941)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2cqfq"]
 render_priority = 0
 shader = ExtResource("14_vivmo")
@@ -592,6 +597,16 @@ item_id = "wooden_axe"
 metadata/_custom_type_script = "uid://c7imyrbfwguwo"
 
 [node name="Model" parent="Player/Hand/WoodenAxe" instance=ExtResource("6_4c57u")]
+
+[node name="WoodenPickaxe" type="Node3D" parent="Player/Hand"]
+script = ExtResource("11_ryguw")
+break_material = SubResource("StandardMaterial3D_d13ii")
+item_id = "wooden_pickaxe"
+click_behavior = 1
+metadata/_custom_type_script = "uid://c7imyrbfwguwo"
+
+[node name="Model" parent="Player/Hand/WoodenPickaxe" instance=ExtResource("6_4c57u")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
 [node name="Fist" type="Node3D" parent="Player/Hand"]
 script = ExtResource("8_w48qg")

@@ -17,7 +17,7 @@ const Sounds = {
 }
 
 var swing_state = SwingState.NONE
-var equipped_model = null
+var equipped_model: EquippableItem = null
 var swing_hold = false
 
 func _ready() -> void:
@@ -41,8 +41,11 @@ func swing() -> void:
 	if swing_state: return
 	if not equipped_model: return
 	
+	equipped_model._on_click()
+	
 	var animation = {
 		$WoodenAxe: "AxeChop",
+		$WoodenPickaxe: "AxeChop",
 	}.get(equipped_model, "Punch")
 	
 	var speed = {
@@ -91,6 +94,11 @@ func _swing_sound():
 
 func _at_mid_swing():
 	if swing_state != SwingState.FORWARDS: return
+	if not equipped_model: return
+	
+	if equipped_model.click_behavior == equipped_model.ClickBehavior.CUSTOM:
+		equipped_model._on_use()
+		return
 	
 	var combat = get_combat_recipient()
 	if not combat: return
