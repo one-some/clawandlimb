@@ -10,6 +10,7 @@
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/templates/hash_set.hpp>
+#include <godot_cpp/templates/vector.hpp>
 
 // Kill it
 #include <unordered_map>
@@ -17,85 +18,43 @@
 using namespace godot;
 
 static const Vector3i FACE_DIRS[6] = {
-    { 1, 0, 0 },
-    { -1, 0, 0 },
-    { 0, 1, 0 },
-    { 0, -1, 0 },
-    { 0, 0, 1 },
-    { 0, 0, -1 }
-};
+    {1, 0, 0},
+    {-1, 0, 0},
+    {0, 1, 0},
+    {0, -1, 0},
+    {0, 0, 1},
+    {0, 0, -1}};
 
-bool in_padded(const Vector3& pos) {
-	if (pos.x < 0) return false;
-	if (pos.y < 0) return false;
-	if (pos.z < 0) return false;
-	if (pos.x >= PADDED_SIZE) return false;
-	if (pos.y >= PADDED_SIZE) return false;
-	if (pos.z >= PADDED_SIZE) return false;
-	return true;
+bool in_padded(const Vector3 &pos)
+{
+    if (pos.x < 0)
+        return false;
+    if (pos.y < 0)
+        return false;
+    if (pos.z < 0)
+        return false;
+    if (pos.x >= PADDED_SIZE)
+        return false;
+    if (pos.y >= PADDED_SIZE)
+        return false;
+    if (pos.z >= PADDED_SIZE)
+        return false;
+    return true;
 }
 
-void add_face(Ref<SurfaceTool> &st, const Vector3 &base, const Vector3 &normal, int dir_index) {
-    Vector3 size = Vector3(1, 1, 1);
-    Vector3 p1, p2, p3, p4;
-
-    switch (dir_index) {
-        case 0: // +X
-            p1 = base + Vector3(1, 0, 0);
-            p2 = base + Vector3(1, 1, 0);
-            p3 = base + Vector3(1, 1, 1);
-            p4 = base + Vector3(1, 0, 1);
-            break;
-        case 1: // -X
-            p1 = base + Vector3(0, 0, 0);
-            p2 = base + Vector3(0, 0, 1);
-            p3 = base + Vector3(0, 1, 1);
-            p4 = base + Vector3(0, 1, 0);
-            break;
-        case 2: // +Y
-            p1 = base + Vector3(0, 1, 0);
-            p2 = base + Vector3(0, 1, 1);
-            p3 = base + Vector3(1, 1, 1);
-            p4 = base + Vector3(1, 1, 0);
-            break;
-        case 3: // -Y
-            p1 = base + Vector3(0, 0, 0);
-            p2 = base + Vector3(1, 0, 0);
-            p3 = base + Vector3(1, 0, 1);
-            p4 = base + Vector3(0, 0, 1);
-            break;
-        case 4: // +Z
-            p1 = base + Vector3(0, 0, 1);
-            p2 = base + Vector3(1, 0, 1);
-            p3 = base + Vector3(1, 1, 1);
-            p4 = base + Vector3(0, 1, 1);
-            break;
-        case 5: // -Z
-            p1 = base + Vector3(0, 0, 0);
-            p2 = base + Vector3(0, 1, 0);
-            p3 = base + Vector3(1, 1, 0);
-            p4 = base + Vector3(1, 0, 0);
-            break;
-    }
-
-    st->set_normal(normal);
-    st->add_vertex(p1);
-    st->add_vertex(p2);
-    st->add_vertex(p3);
-
-    st->add_vertex(p1);
-    st->add_vertex(p3);
-    st->add_vertex(p4);
-}
-
-void VoxelMesh::delete_area(const AABB& area) {
-    for (int x = area.position.x; x < area.position.x + area.size.x; x++) {
-        for (int y = area.position.y; y < area.position.y + area.size.y; y++) {
-            for (int z = area.position.z; z < area.position.z + area.size.z; z++) {
+void VoxelMesh::delete_area(const AABB &area)
+{
+    for (int x = area.position.x; x < area.position.x + area.size.x; x++)
+    {
+        for (int y = area.position.y; y < area.position.y + area.size.y; y++)
+        {
+            for (int z = area.position.z; z < area.position.z + area.size.z; z++)
+            {
                 Vector3i pos = Vector3i(x, y, z);
-                if (destroyed_voxels.has(pos)) return;
+                if (destroyed_voxels.has(pos))
+                    continue;
 
-                density[get_index(x, y, z)] = -999.0f;
+                // density[get_index(x, y, z)] = -999.0f;
                 destroyed_voxels.insert(pos);
             }
         }
@@ -103,14 +62,18 @@ void VoxelMesh::delete_area(const AABB& area) {
     generate_mesh();
 }
 
-void VoxelMesh::generate_chunk_data() {
+void VoxelMesh::generate_chunk_data()
+{
     const Vector3 global_base = chunk_pos * (real_t)CHUNK_SIZE;
     HashSet<Vector3> resource_cells;
     resource_position_candidates.clear();
 
-    for (int x = 0; x < PADDED_SIZE; x++) {
-        for (int y = 0; y < PADDED_SIZE; y++) {
-            for (int z = 0; z < PADDED_SIZE; z++) {
+    for (int x = 0; x < PADDED_SIZE; x++)
+    {
+        for (int y = 0; y < PADDED_SIZE; y++)
+        {
+            for (int z = 0; z < PADDED_SIZE; z++)
+            {
                 auto local_pos = Vector3(x, y, z);
                 auto global_pos = global_base + local_pos;
                 float den = noise.get_noise_3d(global_pos);
@@ -119,45 +82,48 @@ void VoxelMesh::generate_chunk_data() {
                 density[idx] = den;
 
                 int16_t mat = 2;
-				if (den < 1.4f) {
-					mat = 1;
-                } else if (den < 2.8f) {
-					mat = 0;
+                if (den < 1.4f)
+                {
+                    mat = 1;
+                }
+                else if (den < 2.8f)
+                {
+                    mat = 0;
                 }
 
-                //float beach_threshold = noise.get_noise(noise.high_noise, Vector2(global_pos.x, global_pos.z) * 0.001) + 1.0f;
-                if (global_pos.y < sea_level + 2.0f) {
+                // float beach_threshold = noise.get_noise(noise.high_noise, Vector2(global_pos.x, global_pos.z) * 0.001) + 1.0f;
+                if (global_pos.y < sea_level + 2.0f)
+                {
                     // Sand!
                     mat = 3;
                 }
-
 
                 material[idx] = mat;
 
                 auto voxel_above = local_pos + Vector3(0, 1, 0);
                 if (
-                    mat == 1
-                    && den > 0.0f
-                    && in_padded(voxel_above)
-                    && UtilityFunctions::randf() < 0.02
-                ) {
+                    mat == 1 && den > 0.0f && in_padded(voxel_above) && UtilityFunctions::randf() < 0.02)
+                {
                     size_t above_idx = get_index(voxel_above);
                     // FIXME: Do we need to iterate backwards!?!
                     float above_density = density[above_idx];
 
-                    if (above_density <= 0.0) {
+                    if (above_density <= 0.0)
+                    {
                         float d0 = den;
                         float d1 = above_density;
                         float t = 0.0f;
                         float bottom = d0 - d1;
 
-                        if (!Math::is_equal_approx(bottom, 0.0f)) {
+                        if (!Math::is_equal_approx(bottom, 0.0f))
+                        {
                             t = Math::clamp(d0 / bottom, 0.0f, 1.0f);
                         }
 
                         auto pos = local_pos + Vector3(0.0, t, 0.0);
                         auto cell = ((chunk_pos * CHUNK_SIZE) + pos).round();
-                        if (!resource_cells.has(cell)) {
+                        if (!resource_cells.has(cell))
+                        {
                             resource_cells.insert(cell);
                             resource_position_candidates.push_back(pos);
                         }
@@ -167,39 +133,46 @@ void VoxelMesh::generate_chunk_data() {
                 // TODO: TREES
             }
         }
-
     }
 }
 
-void VoxelMesh::generate_mesh() {
+void VoxelMesh::generate_mesh()
+{
     using ST = SurfaceTool;
     Ref<SurfaceTool> st;
     st.instantiate();
     st->begin(Mesh::PRIMITIVE_TRIANGLES);
 
     st->set_custom_format(0, SurfaceTool::CUSTOM_RGBA_FLOAT);
-    
-    for (int x = 0; x < CHUNK_SIZE; x++) {
-        for (int y = 0; y < CHUNK_SIZE; y++) {
-            for (int z = 0; z < CHUNK_SIZE; z++) {
-                int cx[8] = { x, x+1, x+1, x, x, x+1, x+1, x };
-                int cy[8] = { y, y, y, y, y+1, y+1, y+1, y+1 };
-                int cz[8] = { z, z, z+1, z+1, z, z, z+1, z+1 };
+
+    for (int x = 0; x < CHUNK_SIZE; x++)
+    {
+        for (int y = 0; y < CHUNK_SIZE; y++)
+        {
+            for (int z = 0; z < CHUNK_SIZE; z++)
+            {
+
+                int cx[8] = {x, x + 1, x + 1, x, x, x + 1, x + 1, x};
+                int cy[8] = {y, y, y, y, y + 1, y + 1, y + 1, y + 1};
+                int cz[8] = {z, z, z + 1, z + 1, z, z, z + 1, z + 1};
 
                 float corner_densities[8];
                 float corner_materials[8];
 
                 unsigned char edge_table_index = 0x00;
 
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < 8; i++)
+                {
                     size_t idx = get_index(cx[i], cy[i], cz[i]);
                     corner_densities[i] = density[idx];
                     corner_materials[i] = material[idx];
 
-                    if (corner_densities[i] > 0.0) edge_table_index |= 1 << i;
+                    if (corner_densities[i] > 0.0)
+                        edge_table_index |= 1 << i;
                 }
 
-                if (edge_table_index == 0x00 || edge_table_index == 0xFF) {
+                if (edge_table_index == 0x00 || edge_table_index == 0xFF)
+                {
                     // All surface / air. No need to draw
                     continue;
                 }
@@ -207,30 +180,31 @@ void VoxelMesh::generate_mesh() {
                 uint16_t edge_mask = EDGES[edge_table_index];
                 Vector3 edge_verts[12] = {};
 
-                for (int e = 0; e < 12; e++) {
-                    if (!(edge_mask & (1 << e))) continue;
+                for (int e = 0; e < 12; e++)
+                {
+                    if (!(edge_mask & (1 << e)))
+                        continue;
 
                     const int idx_0 = EDGE_TO_CORNERS[e][0];
                     const int idx_1 = EDGE_TO_CORNERS[e][1];
 
                     Vector3 p0 = Vector3(
-                        (real_t) cx[idx_0],
-                        (real_t) cy[idx_0],
-                        (real_t) cz[idx_0]
-                    );
+                        (real_t)cx[idx_0],
+                        (real_t)cy[idx_0],
+                        (real_t)cz[idx_0]);
 
                     Vector3 p1 = Vector3(
-                        (real_t) cx[idx_1],
-                        (real_t) cy[idx_1],
-                        (real_t) cz[idx_1]
-                    );
+                        (real_t)cx[idx_1],
+                        (real_t)cy[idx_1],
+                        (real_t)cz[idx_1]);
 
                     float d0 = corner_densities[idx_0];
                     float d1 = corner_densities[idx_1];
 
                     float t = 0.5f;
                     float bottom = d1 - d0;
-                    if (!Math::is_equal_approx(bottom, 0.0f)) {
+                    if (!Math::is_equal_approx(bottom, 0.0f))
+                    {
                         t = Math::clamp(-d0 / bottom, 0.0f, 1.0f);
                     }
 
@@ -238,54 +212,92 @@ void VoxelMesh::generate_mesh() {
                 }
 
                 const int *tri = TRI_TABLE[edge_table_index];
-                for (int ti = 0; tri[ti] != -1; ti += 3) {
-                    Vector3 v0 = edge_verts[tri[ti+0]];
-                    Vector3 v1 = edge_verts[tri[ti+2]];
-                    Vector3 v2 = edge_verts[tri[ti+1]];
 
-                    Vector3 tri_min_v(
-                        Math::min(v0.x, Math::min(v1.x, v2.x)),
-                        Math::min(v0.y, Math::min(v1.y, v2.y)),
-                        Math::min(v0.z, Math::min(v1.z, v2.z))
-                    );
-                    Vector3 tri_max_v(
-                        Math::max(v0.x, Math::max(v1.x, v2.x)),
-                        Math::max(v0.y, Math::max(v1.y, v2.y)),
-                        Math::max(v0.z, Math::max(v1.z, v2.z))
-                    );
+                Vector3i voxel = Vector3i(x, y, z);
+                if (destroyed_voxels.has(voxel))
+                {
+                    // This has been destroyed. Render with rigid borders.
 
-                    // expand a tiny epsilon to catch edge-touching triangles
-                    const real_t EPS = 1e-4f;
-                    tri_min_v -= Vector3(EPS, EPS, EPS);
-                    tri_max_v += Vector3(EPS, EPS, EPS);
+                    for (int f = 0; f < 6; f++)
+                    {
+                        Vector3i neighbor_pos = voxel + FACE_DIRS[f];
 
-                    // convert to voxel indices (floor)
-                    Vector3i tri_min = tri_min_v.floor();
-                    Vector3i tri_max = tri_max_v.floor();
+                        if (destroyed_voxels.has(neighbor_pos))
+                        {
+                            continue;
+                        }
 
-                    // clamp if you want to ensure within chunk/padded bounds (optional)
-                    // tri_min.x = clamp(tri_min.x, 0, PADDED_SIZE-1); // if destroyed voxels are in padded coords
+                        Vector3 face_corners_pos[4];
+                        float face_corners_den[4];
+                        unsigned char square_edge_index = 0;
 
-                    bool intersects_deleted = false;
-                    for (int xi = tri_min.x; xi <= tri_max.x && !intersects_deleted; xi++) {
-                        for (int yi = tri_min.y; yi <= tri_max.y && !intersects_deleted; yi++) {
-                            for (int zi = tri_min.z; zi <= tri_max.z && !intersects_deleted; zi++) {
-                                Vector3i test_voxel = Vector3i(xi, yi, zi);
-                                if (destroyed_voxels.has(test_voxel)) {
-                                    intersects_deleted = true;
-                                    break;
-                                }
+                        for (int i = 0; i < 4; i++)
+                        {
+                            int corner_idx = FACE_CORNERS[f][i];
+                            face_corners_pos[i] = Vector3(
+                                cx[corner_idx],
+                                cy[corner_idx],
+                                cz[corner_idx]);
+                            face_corners_den[i] = corner_densities[corner_idx];
+                            if (face_corners_den[i] > 0.0)
+                                square_edge_index |= (1 << i);
+                        }
+
+                        if (square_edge_index == 0 || square_edge_index == 15)
+                            continue;
+
+                        Vector3 rim_verts[4];
+                        for (int i = 0; i < 4; i++)
+                        {
+                            const int c0_idx = i;
+                            const int c1_idx = (i + 1) % 4;
+
+                            const Vector3 &p0 = face_corners_pos[c0_idx];
+                            const Vector3 &p1 = face_corners_pos[c1_idx];
+                            const float d0 = face_corners_den[c0_idx];
+                            const float d1 = face_corners_den[c1_idx];
+
+                            float t = 0.5f;
+                            float bottom_den = d1 - d0;
+                            if (!Math::is_equal_approx(bottom_den, 0.0f))
+                            {
+                                t = Math::clamp(-d0 / bottom_den, 0.0f, 1.0f);
                             }
+                            rim_verts[i] = p0.lerp(p1, t);
+                        }
+
+                        const int *edges = SQUARES_EDGES[square_edge_index];
+                        for (int i = 0; edges[i] != -1; i += 2)
+                        {
+                            Vector3 v0_top = rim_verts[edges[i]];
+                            Vector3 v1_top = rim_verts[edges[i + 1]];
+
+                            Vector3 v0_bot = v0_top - Vector3(0, 1, 0);
+                            Vector3 v1_bot = v1_top - Vector3(0, 1, 0);
+
+                            st->add_vertex(v0_top);
+                            st->add_vertex(v1_bot);
+                            st->add_vertex(v1_top);
+
+                            st->add_vertex(v0_top);
+                            st->add_vertex(v0_bot);
+                            st->add_vertex(v1_bot);
                         }
                     }
 
-                    if (intersects_deleted) {
-                        continue; // skip this triangle
-                    }
+                    continue;
+                }
 
-                    Vector3 P[3] = { v0, v1, v2 };
+                for (int ti = 0; tri[ti] != -1; ti += 3)
+                {
+                    Vector3 v0 = edge_verts[tri[ti + 0]];
+                    Vector3 v1 = edge_verts[tri[ti + 2]];
+                    Vector3 v2 = edge_verts[tri[ti + 1]];
 
-                    for (int v = 0; v < 3; v++) {
+                    Vector3 P[3] = {v0, v1, v2};
+
+                    for (int v = 0; v < 3; v++)
+                    {
                         Vector3 p = P[v];
                         Vector3 rel = p - Vector3(x, y, z);
 
@@ -294,49 +306,55 @@ void VoxelMesh::generate_mesh() {
                         float rz = rel.z;
 
                         float corner_weights[8] = {
-                            (1-rx) * (1-ry) * (1-rz),
-                            (rx) * (1-ry) * (1-rz),
-                            (rx) * (1-ry) * (rz),
-                            (1-rx) * (1-ry) * (rz),
-                            (1-rx) * (ry) * (1-rz),
-                            (rx) * (ry) * (1-rz),
+                            (1 - rx) * (1 - ry) * (1 - rz),
+                            (rx) * (1 - ry) * (1 - rz),
+                            (rx) * (1 - ry) * (rz),
+                            (1 - rx) * (1 - ry) * (rz),
+                            (1 - rx) * (ry) * (1 - rz),
+                            (rx) * (ry) * (1 - rz),
                             (rx) * (ry) * (rz),
-                            (1-rx) * (ry) * (rz)
-                        };
+                            (1 - rx) * (ry) * (rz)};
 
                         std::unordered_map<int, float> accum;
-                        for (int c = 0; c < 8; c++) {
+                        for (int c = 0; c < 8; c++)
+                        {
                             accum[corner_materials[c]] += corner_weights[c];
                         }
 
-                        struct MatW {
+                        struct MatW
+                        {
                             int id;
                             float w;
                         };
 
                         MatW top[4] = {
-                            { -1, 0},
-                            { -1, 0},
-                            { -1, 0},
-                            { -1, 0},
+                            {-1, 0},
+                            {-1, 0},
+                            {-1, 0},
+                            {-1, 0},
                         };
 
-                        for (const auto& kv : accum) {
+                        for (const auto &kv : accum)
+                        {
                             int id = kv.first;
                             float w = kv.second;
 
-                            for (int k = 0; k < 4; k++) {
-                                if (w <= top[k].w) continue;
-                                for (int j = 3; j > k; j--) {
+                            for (int k = 0; k < 4; k++)
+                            {
+                                if (w <= top[k].w)
+                                    continue;
+                                for (int j = 3; j > k; j--)
+                                {
                                     top[j] = top[j - 1];
                                 }
-                                top[k] = { id, w };
+                                top[k] = {id, w};
                                 break;
                             }
                         }
 
                         float weight_sum = top[0].w + top[1].w + top[2].w + top[3].w;
-                        if (weight_sum > 0.0) {
+                        if (weight_sum > 0.0)
+                        {
                             top[0].w /= weight_sum;
                             top[1].w /= weight_sum;
                             top[2].w /= weight_sum;
@@ -348,21 +366,10 @@ void VoxelMesh::generate_mesh() {
 
                         st->add_vertex(p);
                     }
-
                 }
             }
         }
     }
-
-    // for (const Vector3i &voxel : destroyed_voxels) {
-    //     for (int i = 0; i < 6; i++) {
-    //         Vector3i neighbor = voxel + FACE_DIRS[i];
-    //         if (destroyed_voxels.has(neighbor)) continue;
-
-    //         Vector3 voxel_pos = (Vector3)voxel - Vector3(0.5, 1.0, 0.5);
-    //         add_face(st, voxel_pos, FACE_DIRS[i], i);
-    //     }
-    // }
 
     st->generate_normals();
     st->index();

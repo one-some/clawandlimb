@@ -13,10 +13,19 @@ func set_day(p_is_day: bool) -> void:
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey: return
 	if not Input.is_action_just_pressed("debug"): return
-	Inventory.add(ItemInstance.from_name("wooden_wall", 11))
-	Inventory.add(ItemInstance.from_name("wooden_door", 2))
-	Inventory.add(ItemInstance.from_name("workbench", 2))
-
+	
+	var viewport = get_viewport()
+	
+	var debugs = [
+		Viewport.DEBUG_DRAW_DISABLED,
+		Viewport.DEBUG_DRAW_WIREFRAME,
+		Viewport.DEBUG_DRAW_OVERDRAW,
+	]
+	
+	var target = debugs.find(viewport.debug_draw) + 1
+	if target >= debugs.size(): target = 0
+	viewport.debug_draw = debugs[target]
+	
 func get_day_hour() -> float:
 	return time_normalized * 24.0
 

@@ -17,7 +17,7 @@ func _process(delta: float) -> void:
 	if not cast: return
 	
 	var pos: Vector3 = cast["position"]
-	pos = pos.round()
+	pos = pos.round() + Vector3(0.5, 0.5, 0.5)
 	#pos = (pos / ChunkData.CHUNK_SIZE).ceil() * ChunkData.CHUNK_SIZE
 	mesh.position = pos
 
