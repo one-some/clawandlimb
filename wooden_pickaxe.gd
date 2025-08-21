@@ -28,7 +28,7 @@ func _on_click() -> void:
 	
 	chunk.delete_area(AABB(
 		block_pos.posmod(ChunkData.CHUNK_SIZE),
-		Vector3(1, 1, 1) * 2
+		Vector3(1, 1, 1) * 1
 	))
 	print(chunk)
 	

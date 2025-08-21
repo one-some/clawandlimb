@@ -165,6 +165,23 @@ recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_uuhee")])
 item_constructable = ExtResource("11_0unfh")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
+[sub_resource type="Resource" id="Resource_povol"]
+script = ExtResource("4_qoymp")
+ingredients = Dictionary[String, int]({
+"planks": 3
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[sub_resource type="Resource" id="Resource_w4flb"]
+script = ExtResource("1_86lrn")
+item_name = "Wooden Pickaxe"
+description = "Hollow yourself a little hole in the earth."
+texture = ExtResource("21_bdpfg")
+max_stack = 1
+recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_povol")])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
+
 [sub_resource type="Resource" id="Resource_kw43t"]
 script = ExtResource("4_qoymp")
 ingredients = Dictionary[String, int]({
@@ -236,23 +253,6 @@ texture = ExtResource("7_w5gng")
 max_stack = 64
 recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_f2qmd")])
 item_constructable = ExtResource("15_bdpfg")
-metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
-
-[sub_resource type="Resource" id="Resource_povol"]
-script = ExtResource("4_qoymp")
-ingredients = Dictionary[String, int]({
-"planks": 3
-})
-output_count = 1
-metadata/_custom_type_script = "uid://8mocn31chcqv"
-
-[sub_resource type="Resource" id="Resource_w4flb"]
-script = ExtResource("1_86lrn")
-item_name = "Wooden Pickaxe"
-description = "Hollow yourself a little hole in the earth."
-texture = ExtResource("21_bdpfg")
-max_stack = 1
-recipes = Array[ExtResource("4_qoymp")]([SubResource("Resource_povol")])
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
 
 [resource]

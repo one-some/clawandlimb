@@ -6,6 +6,7 @@
 #include <godot_cpp/classes/mesh_instance3d.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
+#include <godot_cpp/templates/hash_set.hpp>
 
 namespace godot {
 
@@ -20,6 +21,7 @@ private:
     Vector3 chunk_pos;
     float sea_level = 0.0f;
     PackedVector3Array resource_position_candidates;
+    HashSet<Vector3i> destroyed_voxels;
 
     uint16_t material[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0 };
     float density[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0.0 };

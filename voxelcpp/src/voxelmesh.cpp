@@ -1,6 +1,7 @@
 #include "voxelmesh.h"
 #include "march_data.h"
 #include "noisemanager.h"
+#include <godot_cpp/variant/vector3i.hpp>
 
 #include <godot_cpp/classes/surface_tool.hpp>
 #include <godot_cpp/classes/array_mesh.hpp>
@@ -9,10 +10,20 @@
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/templates/hash_set.hpp>
+
+// Kill it
 #include <unordered_map>
-#include <vector>
 
 using namespace godot;
+
+static const Vector3i FACE_DIRS[6] = {
+    { 1, 0, 0 },
+    { -1, 0, 0 },
+    { 0, 1, 0 },
+    { 0, -1, 0 },
+    { 0, 0, 1 },
+    { 0, 0, -1 }
+};
 
 bool in_padded(const Vector3& pos) {
 	if (pos.x < 0) return false;
@@ -24,11 +35,68 @@ bool in_padded(const Vector3& pos) {
 	return true;
 }
 
+void add_face(Ref<SurfaceTool> &st, const Vector3 &base, const Vector3 &normal, int dir_index) {
+    Vector3 size = Vector3(1, 1, 1);
+    Vector3 p1, p2, p3, p4;
+
+    switch (dir_index) {
+        case 0: // +X
+            p1 = base + Vector3(1, 0, 0);
+            p2 = base + Vector3(1, 1, 0);
+            p3 = base + Vector3(1, 1, 1);
+            p4 = base + Vector3(1, 0, 1);
+            break;
+        case 1: // -X
+            p1 = base + Vector3(0, 0, 0);
+            p2 = base + Vector3(0, 0, 1);
+            p3 = base + Vector3(0, 1, 1);
+            p4 = base + Vector3(0, 1, 0);
+            break;
+        case 2: // +Y
+            p1 = base + Vector3(0, 1, 0);
+            p2 = base + Vector3(0, 1, 1);
+            p3 = base + Vector3(1, 1, 1);
+            p4 = base + Vector3(1, 1, 0);
+            break;
+        case 3: // -Y
+            p1 = base + Vector3(0, 0, 0);
+            p2 = base + Vector3(1, 0, 0);
+            p3 = base + Vector3(1, 0, 1);
+            p4 = base + Vector3(0, 0, 1);
+            break;
+        case 4: // +Z
+            p1 = base + Vector3(0, 0, 1);
+            p2 = base + Vector3(1, 0, 1);
+            p3 = base + Vector3(1, 1, 1);
+            p4 = base + Vector3(0, 1, 1);
+            break;
+        case 5: // -Z
+            p1 = base + Vector3(0, 0, 0);
+            p2 = base + Vector3(0, 1, 0);
+            p3 = base + Vector3(1, 1, 0);
+            p4 = base + Vector3(1, 0, 0);
+            break;
+    }
+
+    st->set_normal(normal);
+    st->add_vertex(p1);
+    st->add_vertex(p2);
+    st->add_vertex(p3);
+
+    st->add_vertex(p1);
+    st->add_vertex(p3);
+    st->add_vertex(p4);
+}
+
 void VoxelMesh::delete_area(const AABB& area) {
     for (int x = area.position.x; x < area.position.x + area.size.x; x++) {
         for (int y = area.position.y; y < area.position.y + area.size.y; y++) {
             for (int z = area.position.z; z < area.position.z + area.size.z; z++) {
-                density[get_index(x, y, z)] = -1.0f;
+                Vector3i pos = Vector3i(x, y, z);
+                if (destroyed_voxels.has(pos)) return;
+
+                density[get_index(x, y, z)] = -999.0f;
+                destroyed_voxels.insert(pos);
             }
         }
     }
@@ -171,11 +239,51 @@ void VoxelMesh::generate_mesh() {
 
                 const int *tri = TRI_TABLE[edge_table_index];
                 for (int ti = 0; tri[ti] != -1; ti += 3) {
-                    int e0 = tri[ti+0];
-                    int e1 = tri[ti+1];
-                    int e2 = tri[ti+2];
+                    Vector3 v0 = edge_verts[tri[ti+0]];
+                    Vector3 v1 = edge_verts[tri[ti+2]];
+                    Vector3 v2 = edge_verts[tri[ti+1]];
 
-                    Vector3 P[3] = { edge_verts[e0], edge_verts[e2], edge_verts[e1] };
+                    Vector3 tri_min_v(
+                        Math::min(v0.x, Math::min(v1.x, v2.x)),
+                        Math::min(v0.y, Math::min(v1.y, v2.y)),
+                        Math::min(v0.z, Math::min(v1.z, v2.z))
+                    );
+                    Vector3 tri_max_v(
+                        Math::max(v0.x, Math::max(v1.x, v2.x)),
+                        Math::max(v0.y, Math::max(v1.y, v2.y)),
+                        Math::max(v0.z, Math::max(v1.z, v2.z))
+                    );
+
+                    // expand a tiny epsilon to catch edge-touching triangles
+                    const real_t EPS = 1e-4f;
+                    tri_min_v -= Vector3(EPS, EPS, EPS);
+                    tri_max_v += Vector3(EPS, EPS, EPS);
+
+                    // convert to voxel indices (floor)
+                    Vector3i tri_min = tri_min_v.floor();
+                    Vector3i tri_max = tri_max_v.floor();
+
+                    // clamp if you want to ensure within chunk/padded bounds (optional)
+                    // tri_min.x = clamp(tri_min.x, 0, PADDED_SIZE-1); // if destroyed voxels are in padded coords
+
+                    bool intersects_deleted = false;
+                    for (int xi = tri_min.x; xi <= tri_max.x && !intersects_deleted; xi++) {
+                        for (int yi = tri_min.y; yi <= tri_max.y && !intersects_deleted; yi++) {
+                            for (int zi = tri_min.z; zi <= tri_max.z && !intersects_deleted; zi++) {
+                                Vector3i test_voxel = Vector3i(xi, yi, zi);
+                                if (destroyed_voxels.has(test_voxel)) {
+                                    intersects_deleted = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (intersects_deleted) {
+                        continue; // skip this triangle
+                    }
+
+                    Vector3 P[3] = { v0, v1, v2 };
 
                     for (int v = 0; v < 3; v++) {
                         Vector3 p = P[v];
@@ -239,13 +347,22 @@ void VoxelMesh::generate_mesh() {
                         st->set_custom(0, Color(top[0].id, top[1].id, top[2].id, top[3].id));
 
                         st->add_vertex(p);
-
                     }
 
                 }
             }
         }
     }
+
+    // for (const Vector3i &voxel : destroyed_voxels) {
+    //     for (int i = 0; i < 6; i++) {
+    //         Vector3i neighbor = voxel + FACE_DIRS[i];
+    //         if (destroyed_voxels.has(neighbor)) continue;
+
+    //         Vector3 voxel_pos = (Vector3)voxel - Vector3(0.5, 1.0, 0.5);
+    //         add_face(st, voxel_pos, FACE_DIRS[i], i);
+    //     }
+    // }
 
     st->generate_normals();
     st->index();
