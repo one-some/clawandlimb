@@ -26,6 +26,9 @@ func finalize() -> void:
 	get_tree().get_root().add_child(player)
 	player.finished.connect(player.queue_free)
 	
+	if not start_pos:
+		return
+	
 	var start = start_pos.min(end_pos)
 	var size = (end_pos - start_pos).abs()
 	

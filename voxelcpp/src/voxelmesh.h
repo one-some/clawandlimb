@@ -17,14 +17,36 @@ class VoxelMesh : public MeshInstance3D {
 	GDCLASS(VoxelMesh, MeshInstance3D)
 
 private:
+    enum class Biome {
+        GRASS,
+        DESERT,
+        TUNDRA
+    };
+
+    // c++ knowledge: enum class won't allow implicit casts to underlying type
+    enum Materials : uint16_t {
+        DIRT = 0,
+        GRASS = 1,
+        STONE = 2,
+        SAND = 3,
+        SNOW = 4,
+        LEAVES = 5,
+        LOG = 6,
+        PLANK = 7,
+        WATER = 8
+    };
+
     NoiseManager noise;
     Vector3 chunk_pos;
     float sea_level = 0.0f;
     PackedVector3Array resource_position_candidates;
     HashSet<Vector3i> destroyed_voxels;
 
-    uint16_t material[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0 };
-    float density[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0.0 };
+    uint16_t voxel_materials[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0 };
+    float voxel_densities[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0.0 };
+
+    Biome get_biome(const Vector2 &pos);
+    uint16_t get_material(const Vector3 &pos, float density, Biome biome);
 
 protected:
     static void _bind_methods() {

@@ -62,6 +62,57 @@ void VoxelMesh::delete_area(const AABB &area)
     generate_mesh();
 }
 
+VoxelMesh::Biome VoxelMesh::get_biome(const Vector2 &pos) {
+    // TODO: Get legit noises for here..
+    const float POS_MULT = 0.005;
+
+    float humidity = noise.get_noise(noise.low_noise, pos * POS_MULT);
+    humidity = Math::clamp((humidity + 1.0f) / 2.0f, 0.0f, 1.0f);
+
+    float temperature = noise.get_noise(noise.low_noise, (pos * POS_MULT) + Vector2(120000.0, 100000.0));
+    temperature = Math::clamp((temperature + 1.0f) / 2.0f, 0.0f, 1.0f);
+
+    // If this gets expanded there better be a cleaner way to do this...
+    if (humidity > 0.5f) {
+        if (temperature > 0.5f) {
+            // TODO: JUNGLE?
+            return Biome::GRASS;
+        } else {
+            return Biome::GRASS;
+        }
+    } else {
+        if (temperature > 0.5) {
+            return Biome::DESERT;
+        } else {
+            return Biome::TUNDRA;
+        }
+    }
+}
+
+uint16_t VoxelMesh::get_material(const Vector3 &pos, float density, VoxelMesh::Biome biome) {
+    if (density > 3.0f) return Materials::STONE;
+
+    switch (biome) {
+        case Biome::GRASS:
+            if (pos.y < sea_level + 1.0f) return Materials::SAND;
+            if (density > 1.5f) return Materials::DIRT;
+
+            return Materials::GRASS;
+
+        case Biome::TUNDRA:
+            if (pos.y < sea_level + 1.0f) return Materials::DIRT;
+            if (density > 1.5f) return Materials::DIRT;
+
+            return Materials::SNOW;
+
+        case Biome::DESERT:
+            return Materials::SAND;
+    }
+
+    // SHOULDN'T HAPPEN!!!
+    return Materials::PLANK;
+}
+
 void VoxelMesh::generate_chunk_data()
 {
     const Vector3 global_base = chunk_pos * (real_t)CHUNK_SIZE;
@@ -70,47 +121,33 @@ void VoxelMesh::generate_chunk_data()
 
     for (int x = 0; x < PADDED_SIZE; x++)
     {
-        for (int y = 0; y < PADDED_SIZE; y++)
+        for (int y = PADDED_SIZE - 1; y >= 0; y--)
         {
             for (int z = 0; z < PADDED_SIZE; z++)
             {
-                auto local_pos = Vector3(x, y, z);
-                auto global_pos = global_base + local_pos;
-                float den = noise.get_noise_3d(global_pos);
+                Vector3 local_pos = Vector3(x, y, z);
+                Vector3 global_pos = global_base + local_pos;
+                Vector2 global_2d_pos = Vector2(global_pos.x, global_pos.z);
+
+                float density = noise.get_noise_3d(global_pos);
+                Biome biome = get_biome(global_2d_pos); 
 
                 size_t idx = get_index(local_pos);
-                density[idx] = den;
+                voxel_densities[idx] = density;
 
-                int16_t mat = 2;
-                if (den < 1.4f)
-                {
-                    mat = 1;
-                }
-                else if (den < 2.8f)
-                {
-                    mat = 0;
-                }
+                uint16_t material = get_material(global_pos, density, biome);
+                voxel_materials[idx] = material;
 
-                // float beach_threshold = noise.get_noise(noise.high_noise, Vector2(global_pos.x, global_pos.z) * 0.001) + 1.0f;
-                if (global_pos.y < sea_level + 2.0f)
-                {
-                    // Sand!
-                    mat = 3;
-                }
-
-                material[idx] = mat;
-
-                auto voxel_above = local_pos + Vector3(0, 1, 0);
+                Vector3 voxel_above = local_pos + Vector3(0, 1, 0);
                 if (
-                    mat == 1 && den > 0.0f && in_padded(voxel_above) && UtilityFunctions::randf() < 0.02)
+                    material == Materials::GRASS && density > 0.0f && in_padded(voxel_above) && UtilityFunctions::randf() < 0.02)
                 {
                     size_t above_idx = get_index(voxel_above);
-                    // FIXME: Do we need to iterate backwards!?!
-                    float above_density = density[above_idx];
+                    float above_density = voxel_densities[above_idx];
 
                     if (above_density <= 0.0)
                     {
-                        float d0 = den;
+                        float d0 = density;
                         float d1 = above_density;
                         float t = 0.0f;
                         float bottom = d0 - d1;
@@ -164,8 +201,8 @@ void VoxelMesh::generate_mesh()
                 for (int i = 0; i < 8; i++)
                 {
                     size_t idx = get_index(cx[i], cy[i], cz[i]);
-                    corner_densities[i] = density[idx];
-                    corner_materials[i] = material[idx];
+                    corner_densities[i] = voxel_densities[idx];
+                    corner_materials[i] = voxel_materials[idx];
 
                     if (corner_densities[i] > 0.0)
                         edge_table_index |= 1 << i;
