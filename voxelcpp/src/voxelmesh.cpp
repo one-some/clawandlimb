@@ -68,49 +68,51 @@ VoxelMesh::Biome VoxelMesh::get_biome(const Vector2 &pos) {
 
     float humidity = noise.get_noise(noise.low_noise, pos * POS_MULT);
     humidity = Math::clamp((humidity + 1.0f) / 2.0f, 0.0f, 1.0f);
+    humidity = Math::smoothstep(0.0f, 1.0f, humidity);
 
     float temperature = noise.get_noise(noise.low_noise, (pos * POS_MULT) + Vector2(120000.0, 100000.0));
     temperature = Math::clamp((temperature + 1.0f) / 2.0f, 0.0f, 1.0f);
+    temperature = Math::smoothstep(0.0f, 1.0f, temperature);
 
     // If this gets expanded there better be a cleaner way to do this...
-    if (humidity > 0.5f) {
+    if (humidity > 0.8f) {
         if (temperature > 0.5f) {
             // TODO: JUNGLE?
-            return Biome::GRASS;
+            return BIOME_GRASS;
         } else {
-            return Biome::GRASS;
+            return BIOME_GRASS;
         }
     } else {
         if (temperature > 0.5) {
-            return Biome::DESERT;
+            return BIOME_DESERT;
         } else {
-            return Biome::TUNDRA;
+            return BIOME_TUNDRA;
         }
     }
 }
 
 uint16_t VoxelMesh::get_material(const Vector3 &pos, float density, VoxelMesh::Biome biome) {
-    if (density > 3.0f) return Materials::STONE;
+    if (density > 3.0f) return MATERIAL_STONE;
 
     switch (biome) {
-        case Biome::GRASS:
-            if (pos.y < sea_level + 1.0f) return Materials::SAND;
-            if (density > 1.5f) return Materials::DIRT;
+        case BIOME_GRASS:
+            if (pos.y < sea_level + 1.0f) return MATERIAL_SAND;
+            if (density > 1.5f) return MATERIAL_DIRT;
 
-            return Materials::GRASS;
+            return MATERIAL_GRASS;
 
-        case Biome::TUNDRA:
-            if (pos.y < sea_level + 1.0f) return Materials::DIRT;
-            if (density > 1.5f) return Materials::DIRT;
+        case BIOME_TUNDRA:
+            if (pos.y < sea_level + 1.0f) return MATERIAL_DIRT;
+            if (density > 1.5f) return MATERIAL_DIRT;
 
-            return Materials::SNOW;
+            return MATERIAL_SNOW;
 
-        case Biome::DESERT:
-            return Materials::SAND;
+        case BIOME_DESERT:
+            return MATERIAL_SAND;
     }
 
     // SHOULDN'T HAPPEN!!!
-    return Materials::PLANK;
+    return MATERIAL_PLANK;
 }
 
 void VoxelMesh::generate_chunk_data()
@@ -140,7 +142,7 @@ void VoxelMesh::generate_chunk_data()
 
                 Vector3 voxel_above = local_pos + Vector3(0, 1, 0);
                 if (
-                    material == Materials::GRASS && density > 0.0f && in_padded(voxel_above) && UtilityFunctions::randf() < 0.02)
+                    density > 0.0f && in_padded(voxel_above) && UtilityFunctions::randf() < 0.02)
                 {
                     size_t above_idx = get_index(voxel_above);
                     float above_density = voxel_densities[above_idx];
