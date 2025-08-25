@@ -7,7 +7,7 @@ func _ready() -> void:
 	Signals.change_player_health.connect(_on_change_player_health)
 	Signals.change_active_hotbar_slot.connect(_on_slot_change)
 
-func _on_change_player_health(combat: CombatRecipient) -> void:
+func _on_change_player_health(combat: CombatRecipient, delta: float) -> void:
 	hp_bar.max_value = combat.max_health
 	hp_bar.value = combat.health
 

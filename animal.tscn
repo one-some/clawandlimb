@@ -7,7 +7,7 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_23vr7"]
 size = Vector3(1, 0.793701, 1)
 
-[node name="Animal" type="CharacterBody3D"]
+[node name="Animal" type="CharacterBody3D" groups=["Animal"]]
 collision_layer = 2
 collision_mask = 17
 script = ExtResource("1_stvu6")

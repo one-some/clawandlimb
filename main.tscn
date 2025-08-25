@@ -647,10 +647,11 @@ unique_name_in_owner = true
 material_override = SubResource("StandardMaterial3D_7mycd")
 mesh = SubResource("SphereMesh_272bh")
 
-[node name="Enemies" type="Node3D" parent="."]
+[node name="Critters" type="Node3D" parent="."]
 script = ExtResource("15_2cqfq")
 
-[node name="SpawnTimer" type="Timer" parent="Enemies"]
+[node name="SpawnTimer" type="Timer" parent="Critters"]
+wait_time = 7.0
 autostart = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -669,4 +670,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.077, 10, 6.361)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0)
 mesh = SubResource("PlaneMesh_getpj")
 
-[connection signal="timeout" from="Enemies/SpawnTimer" to="Enemies" method="_on_spawn_timer_timeout"]
+[connection signal="timeout" from="Critters/SpawnTimer" to="Critters" method="_on_spawn_timer_timeout"]

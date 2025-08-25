@@ -7,6 +7,9 @@ const CopperRes = preload("res://copper_rock.tscn")
 
 const SEA_LEVEL = 19.0
 
+@export var biome_humidity: Noise
+@export var biome_temperature: Noise
+
 @onready var nav_region = $NavigationRegion3D
 
 var seed = randi() * 09142008 * 1000
@@ -15,7 +18,8 @@ var ids = []
 var world_aabb = AABB()
 
 var chunks_left = 0
-var chunks = {}
+static var chunks = {}
+static var finished_chunks = []
 var chunk_threads = {}
 var first_chunk_generated = false
 
@@ -36,7 +40,7 @@ func delete_area(area: AABB) -> void:
 			for chunk_z in range(start_chunk.x, end_chunk.x + 1):
 				var chunk_pos = Vector3(chunk_x, chunk_y, chunk_z)
 				
-				if chunk_pos not in chunks:
+				if chunk_pos not in finished_chunks:
 					print("TODO: Generatte")
 					continue
 				
@@ -74,35 +78,6 @@ func delete_area(area: AABB) -> void:
 				
 				var zone_aabb = AABB(big_chunk_chunk_start, big_chunk_chunk_end - big_chunk_chunk_start)
 				chunk.delete_area(zone_aabb)
-
-func set_density_global(pos: Vector3, density: float) -> Array:
-	var modified = []
-	var main_chunk_pos = get_chunk_pos_from_global_pos(pos)
-	
-	for dx in range(0, -2, -1):
-		for dy in range(0, -2, -1):
-			for dz in range(0, -2, -1):
-				var chunk_pos = main_chunk_pos + Vector3(dx, dy, dz)
-				if chunk_pos not in chunks: continue
-				
-				var chunk = chunks[chunk_pos]
-				var data: ChunkData = chunk.data
-				var global_origin = chunk_pos * ChunkData.CHUNK_SIZE
-				var local_pos = pos - global_origin
-				
-				if local_pos.x < 0: continue
-				if local_pos.y < 0: continue
-				if local_pos.z < 0: continue
-				if local_pos.x >= ChunkData.PADDED_SIZE: continue
-				if local_pos.y >= ChunkData.PADDED_SIZE: continue
-				if local_pos.z >= ChunkData.PADDED_SIZE: continue
-				
-				data.density[data.get_index(local_pos)] = density
-				
-				if chunk_pos not in modified:
-					modified.append(chunk_pos)
-	
-	return modified
 
 func load_tiles() -> void:
 	var path = "res://tex/tiles/"
@@ -179,22 +154,35 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 				chunk.generate_mesh()
 				
 				for thing_pos in chunk.get_resource_position_candidates():
-					thing_pos.y -= 1
+					var biome = chunk.get_biome(Vector2(thing_pos.x, thing_pos.z))
+					thing_pos.y -= 0.25
 					
 					if thing_pos.y + chunk.global_position.y < SEA_LEVEL + 0.75: continue
 					
 					var thing: Node3D
 					var rand = randf()
-					if rand < 0.1:
-						thing = CopperRes.instantiate()
-					elif rand < 0.3:
-						thing = RockRes.instantiate()
-					else:
-						thing = TreeRes.instantiate()
-						
+					
+					if biome == VoxelMesh.BIOME_GRASS:
+						if rand < 0.1:
+							thing = CopperRes.instantiate()
+						elif rand < 0.3:
+							thing = RockRes.instantiate()
+						else:
+							thing = TreeRes.instantiate()
+					elif biome == VoxelMesh.BIOME_TUNDRA:
+						if rand < 0.3:
+							thing = RockRes.instantiate()
+						elif rand < 0.7:
+							thing = TreeRes.instantiate()
+					
+					if not thing: continue
+							
 					thing.position = thing_pos
 					thing.rotation.y = randf() * PI * 2
 					chunk.add_child(thing)
+				
+				finished_chunks.push_back(pos)
+				Signals.chunk_generated.emit(chunk, pos)
 				
 			).call_deferred()
 		)
@@ -210,7 +198,8 @@ func _ready() -> void:
 	
 	generate_around(Vector3.ZERO, 4)
 
-func _on_chunk_mesh_generated(chunk: MeshInstance3D) -> void:
+func _on_chunk_mesh_generated(chunk: VoxelMesh) -> void:
+	# FIXME: Why isn't this consolidated with the big call_deferred thing..?
 	if chunk in chunk_threads:
 		var task_id = chunk_threads[chunk]
 		WorkerThreadPool.wait_for_task_completion(task_id)

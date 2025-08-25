@@ -1,6 +1,5 @@
 extends CharacterBody3D
 
-@onready var og_transform = self.global_transform
 @onready var third_person_cam: Camera3D = $"../Camera3D"
 @onready var first_person_cam: Camera3D = $FirstPersonCamera
 @onready var naru_freaking_toe: Sprite3D = $Naruto
@@ -10,16 +9,26 @@ const ITEM_MAX_RANGE = 2.0
 
 var combat = CombatRecipient.new("Claire", 100.0)
 var frozen = true
+var spawn_point = Vector3.ZERO
+var waiting_for_chunk = null
 
 func _ready() -> void:
 	Signals.tp_player.connect(func(pos):
 		frozen = false
+		spawn_point = pos
 		self.global_position = pos
 	)
 	Signals.player_respawn_requested.connect(respawn)
 	Signals.change_player_skin.connect(change_player_skin)
 	combat.died.connect(die)
-	combat.took_damage.connect(func(_dmg): Signals.change_player_health.emit(combat))
+	combat.took_damage.connect(func(_dmg): Signals.change_player_health.emit(combat, -_dmg))
+	
+	Signals.chunk_generated.connect(func(chunk: VoxelMesh, chunk_pos: Vector3):
+		if chunk_pos != waiting_for_chunk: return
+		frozen = false
+		waiting_for_chunk = null
+		Signals.change_player_in_loading_chunk.emit(false)
+	)
 	
 	# HACK: For some UI stuff
 	await get_tree().process_frame
@@ -34,8 +43,8 @@ func change_player_skin(skin: Texture) -> void:
 
 func respawn() -> void:
 	combat.reset()
-	self.rotation_degrees.z = 0.0
-	self.global_transform = self.og_transform
+	self.rotation = Vector3.ZERO
+	self.global_position = spawn_point
 
 func die() -> void:
 	Signals.player_died.emit()
@@ -119,3 +128,11 @@ func _physics_process(delta: float) -> void:
 		self.rotation.y = lerp_angle(self.rotation.y, Vector2(move_dir.z, move_dir.x).angle(), 0.4)
 	
 	self.move_and_slide()
+	
+	# Make sure chunk we're in is generated...
+	
+	var chunk_pos = (self.global_position / ChunkData.CHUNK_SIZE).floor()
+	if chunk_pos not in ChunkManager.finished_chunks:
+		waiting_for_chunk = chunk_pos
+		frozen = true
+		Signals.change_player_in_loading_chunk.emit(true)
