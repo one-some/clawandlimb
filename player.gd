@@ -139,7 +139,6 @@ func _physics_process(delta: float) -> void:
 	self.velocity += gravity
 	
 	
-	
 	if move_dir and not first_person_cam.current:
 		self.rotation.y = lerp_angle(self.rotation.y, Vector2(move_dir.z, move_dir.x).angle(), 0.4)
 	
