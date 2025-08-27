@@ -35,6 +35,7 @@ private:
     float sea_level = 0.0f;
     PackedVector3Array resource_position_candidates;
     HashSet<Vector3i> destroyed_voxels;
+    bool first_time_generated = true;
 
     uint16_t voxel_materials[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0 };
     float voxel_densities[PADDED_SIZE * PADDED_SIZE * PADDED_SIZE] = { 0.0 };
@@ -45,7 +46,7 @@ protected:
         ClassDB::bind_method(D_METHOD("generate_mesh"), &VoxelMesh::generate_mesh);
         ClassDB::bind_method(D_METHOD("set_pos", "pos"), &VoxelMesh::set_pos);
         ClassDB::bind_method(D_METHOD("get_resource_position_candidates"), &VoxelMesh::get_resource_position_candidates);
-        ClassDB::bind_method(D_METHOD("delete_area", "area"), &VoxelMesh::delete_area);
+        ClassDB::bind_method(D_METHOD("delete_area", "area", "soft_delete"), &VoxelMesh::delete_area);
         ClassDB::bind_method(D_METHOD("set_seed", "seed"), &VoxelMesh::set_seed);
         ClassDB::bind_method(D_METHOD("set_sea_level", "sea_level"), &VoxelMesh::set_sea_level);
         ClassDB::bind_method(D_METHOD("get_biome", "pos"), &VoxelMesh::get_biome);
@@ -105,7 +106,7 @@ public:
     void generate_chunk_data();
     void generate_mesh();
 
-    void delete_area(const AABB& area);
+    void delete_area(const AABB &area, bool soft_delete = true);
 };
 
 }

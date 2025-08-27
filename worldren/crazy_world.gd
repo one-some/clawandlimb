@@ -5,7 +5,7 @@ const TreeRes = preload("res://tree.tscn")
 const RockRes = preload("res://rock.tscn")
 const CopperRes = preload("res://copper_rock.tscn")
 
-const SEA_LEVEL = 19.0
+const SEA_LEVEL = 16.9
 
 @export var biome_humidity: Noise
 @export var biome_temperature: Noise
@@ -26,7 +26,14 @@ var first_chunk_generated = false
 func get_chunk_pos_from_global_pos(pos: Vector3) -> Vector3:
 	return (pos / ChunkData.CHUNK_SIZE).floor()
 
-func delete_area(area: AABB) -> void:
+func clamp_vec3(v: Vector3, min_val: float, max_val: float) -> Vector3:
+	return Vector3(
+		clampf(v.x, min_val, max_val),
+		clampf(v.y, min_val, max_val),
+		clampf(v.z, min_val, max_val)
+	)
+
+func delete_area(area: AABB, soft_delete: bool) -> void:
 	print(area)
 	
 	var start = area.position
@@ -36,8 +43,8 @@ func delete_area(area: AABB) -> void:
 	var end_chunk = (end / ChunkData.CHUNK_SIZE).ceil()
 	
 	for chunk_x in range(start_chunk.x, end_chunk.x + 1):
-		for chunk_y in range(start_chunk.x, end_chunk.x + 1):
-			for chunk_z in range(start_chunk.x, end_chunk.x + 1):
+		for chunk_y in range(start_chunk.y, end_chunk.y + 1):
+			for chunk_z in range(start_chunk.z, end_chunk.z + 1):
 				var chunk_pos = Vector3(chunk_x, chunk_y, chunk_z)
 				
 				if chunk_pos not in finished_chunks:
@@ -52,32 +59,21 @@ func delete_area(area: AABB) -> void:
 					ChunkData.CHUNK_SIZE,
 				)
 		
-				if (
-					start.x >= chunk_far_bound.x
-					or start.y >= chunk_far_bound.y
-					or start.z >= chunk_far_bound.z
-				):
-					continue
-				
-				if (
-					end.x <= chunk_origin.x
-					or end.y <= chunk_origin.y
-					or end.z <= chunk_origin.z
-				):
+				var intersects = (
+					start.x < chunk_far_bound.x and end.x > chunk_origin.x and
+					start.y < chunk_far_bound.y and end.y > chunk_origin.y and
+					start.z < chunk_far_bound.z and end.z > chunk_origin.z
+				)
+				if not intersects:
 					continue
 				
 				# Get the position of the start relative to the chunks global offset, and clamp it between 0 and CHUNK_SIZE
 				
-				var big_chunk_chunk_start = Vector3(
-					(start - chunk_origin).clampf(0.0, ChunkData.PADDED_SIZE)
-				)
-				
-				var big_chunk_chunk_end = Vector3(
-					(end - chunk_origin).clampf(0.0, ChunkData.PADDED_SIZE)
-				)
+				var big_chunk_chunk_start = clamp_vec3(start - chunk_origin, 0.0, ChunkData.PADDED_SIZE)
+				var big_chunk_chunk_end = clamp_vec3(end - chunk_origin, 0.0, ChunkData.PADDED_SIZE)
 				
 				var zone_aabb = AABB(big_chunk_chunk_start, big_chunk_chunk_end - big_chunk_chunk_start)
-				chunk.delete_area(zone_aabb)
+				chunk.delete_area(zone_aabb, soft_delete)
 
 func load_tiles() -> void:
 	var path = "res://tex/tiles/"
@@ -135,7 +131,9 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		chunk.set_sea_level(SEA_LEVEL)
 		
 		chunks[pos] = chunk
-		chunk.finished_mesh_generation.connect(_on_chunk_mesh_generated.bind(chunk))
+		chunk.finished_mesh_generation.connect(func(first_time: bool):
+			_on_chunk_mesh_generated(chunk, pos, first_time)
+		)
 		
 		world_aabb = world_aabb.merge(AABB(
 			pos * ChunkData.CHUNK_SIZE,
@@ -149,42 +147,7 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		var task_id = WorkerThreadPool.add_task(func():
 			if not chunk: return
 			chunk.generate_chunk_data()
-			(func():
-				if not chunk: return
-				chunk.generate_mesh()
-				
-				for thing_pos in chunk.get_resource_position_candidates():
-					var biome = chunk.get_biome(Vector2(thing_pos.x, thing_pos.z))
-					thing_pos.y -= 0.25
-					
-					if thing_pos.y + chunk.global_position.y < SEA_LEVEL + 0.75: continue
-					
-					var thing: Node3D
-					var rand = randf()
-					
-					if biome == VoxelMesh.BIOME_GRASS:
-						if rand < 0.1:
-							thing = CopperRes.instantiate()
-						elif rand < 0.3:
-							thing = RockRes.instantiate()
-						else:
-							thing = TreeRes.instantiate()
-					elif biome == VoxelMesh.BIOME_TUNDRA:
-						if rand < 0.3:
-							thing = RockRes.instantiate()
-						elif rand < 0.7:
-							thing = TreeRes.instantiate()
-					
-					if not thing: continue
-							
-					thing.position = thing_pos
-					thing.rotation.y = randf() * PI * 2
-					chunk.add_child(thing)
-				
-				finished_chunks.push_back(pos)
-				Signals.chunk_generated.emit(chunk, pos)
-				
-			).call_deferred()
+			chunk.generate_mesh()
 		)
 		chunk_threads[chunk] = task_id
 	
@@ -198,8 +161,7 @@ func _ready() -> void:
 	
 	generate_around(Vector3.ZERO, 4)
 
-func _on_chunk_mesh_generated(chunk: VoxelMesh) -> void:
-	# FIXME: Why isn't this consolidated with the big call_deferred thing..?
+func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: bool) -> void:
 	if chunk in chunk_threads:
 		var task_id = chunk_threads[chunk]
 		WorkerThreadPool.wait_for_task_completion(task_id)
@@ -231,11 +193,45 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh) -> void:
 			first_chunk_generated = true
 			Signals.tp_player.emit(faces[0] + Vector3(0, 40.0, 0))
 	
-	chunks_left -= 1
-	#print("%s chunk5s left" % chunks_left)
+	# Place things
+	if first_time:
+		for thing_pos in chunk.get_resource_position_candidates():
+			var biome = chunk.get_biome(Vector2(thing_pos.x, thing_pos.z))
+			thing_pos.y -= 0.25
+			
+			if thing_pos.y + chunk.global_position.y < SEA_LEVEL + 0.75: continue
+			
+			var thing: Node3D
+			var rand = randf()
+			
+			if biome == VoxelMesh.BIOME_GRASS:
+				if rand < 0.1:
+					thing = CopperRes.instantiate()
+				elif rand < 0.3:
+					thing = RockRes.instantiate()
+				else:
+					thing = TreeRes.instantiate()
+			elif biome == VoxelMesh.BIOME_TUNDRA:
+				if rand < 0.3:
+					thing = RockRes.instantiate()
+				elif rand < 0.7:
+					thing = TreeRes.instantiate()
+			
+			if not thing: continue
+					
+			thing.position = thing_pos
+			thing.rotation.y = randf() * PI * 2
+			chunk.add_child(thing)
 	
-	if not chunks_left:
-		bake_world_nav(world_aabb.grow(1.0))
+		# TODO: How to interact with first_time???
+		chunks_left -= 1
+		#print("%s chunk5s left" % chunks_left)
+		
+		if not chunks_left:
+			bake_world_nav(world_aabb.grow(1.0))
+	
+	finished_chunks.push_back(chunk_pos)
+	Signals.chunk_generated.emit(chunk, chunk_pos)
 
 func bake_world_nav(aabb: AABB) -> void:
 	var nav_mesh = NavigationMesh.new()

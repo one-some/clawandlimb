@@ -42,7 +42,7 @@ bool in_padded(const Vector3 &pos)
     return true;
 }
 
-void VoxelMesh::delete_area(const AABB &area)
+void VoxelMesh::delete_area(const AABB &area, bool soft_delete)
 {
     for (int x = area.position.x; x < area.position.x + area.size.x; x++)
     {
@@ -50,19 +50,25 @@ void VoxelMesh::delete_area(const AABB &area)
         {
             for (int z = area.position.z; z < area.position.z + area.size.z; z++)
             {
+                if (soft_delete)
+                {
+                    voxel_densities[get_index(x, y, z)] = -999.0f;
+                    continue;
+                }
+
                 Vector3i pos = Vector3i(x, y, z);
                 if (destroyed_voxels.has(pos))
                     continue;
-
-                // density[get_index(x, y, z)] = -999.0f;
                 destroyed_voxels.insert(pos);
+                // voxel_densities[get_index(x, y, z)] = 0.0f;
             }
         }
     }
     generate_mesh();
 }
 
-VoxelMesh::Biome VoxelMesh::get_biome(const Vector2 &pos) {
+VoxelMesh::Biome VoxelMesh::get_biome(const Vector2 &pos)
+{
     // TODO: Get legit noises for here..
     const float POS_MULT = 0.005;
 
@@ -75,40 +81,56 @@ VoxelMesh::Biome VoxelMesh::get_biome(const Vector2 &pos) {
     temperature = Math::smoothstep(0.0f, 1.0f, temperature);
 
     // If this gets expanded there better be a cleaner way to do this...
-    if (humidity > 0.8f) {
-        if (temperature > 0.5f) {
+    if (humidity > 0.5f)
+    {
+        if (temperature > 0.5f)
+        {
             // TODO: JUNGLE?
             return BIOME_GRASS;
-        } else {
+        }
+        else
+        {
             return BIOME_GRASS;
         }
-    } else {
-        if (temperature > 0.5) {
+    }
+    else
+    {
+        if (temperature > 0.5)
+        {
             return BIOME_DESERT;
-        } else {
+        }
+        else
+        {
             return BIOME_TUNDRA;
         }
     }
 }
 
-uint16_t VoxelMesh::get_material(const Vector3 &pos, float density, VoxelMesh::Biome biome) {
-    if (density > 3.0f) return MATERIAL_STONE;
+uint16_t VoxelMesh::get_material(const Vector3 &pos, float density, VoxelMesh::Biome biome)
+{
+    if (density > 3.0f)
+        return MATERIAL_STONE;
 
-    switch (biome) {
-        case BIOME_GRASS:
-            if (pos.y < sea_level + 1.0f) return MATERIAL_SAND;
-            if (density > 1.5f) return MATERIAL_DIRT;
-
-            return MATERIAL_GRASS;
-
-        case BIOME_TUNDRA:
-            if (pos.y < sea_level + 1.0f) return MATERIAL_DIRT;
-            if (density > 1.5f) return MATERIAL_DIRT;
-
-            return MATERIAL_SNOW;
-
-        case BIOME_DESERT:
+    switch (biome)
+    {
+    case BIOME_GRASS:
+        if (pos.y < sea_level + 1.0f)
             return MATERIAL_SAND;
+        if (density > 1.5f)
+            return MATERIAL_DIRT;
+
+        return MATERIAL_GRASS;
+
+    case BIOME_TUNDRA:
+        if (pos.y < sea_level + 1.0f)
+            return MATERIAL_DIRT;
+        if (density > 1.5f)
+            return MATERIAL_DIRT;
+
+        return MATERIAL_SNOW;
+
+    case BIOME_DESERT:
+        return MATERIAL_SAND;
     }
 
     // SHOULDN'T HAPPEN!!!
@@ -132,7 +154,7 @@ void VoxelMesh::generate_chunk_data()
                 Vector2 global_2d_pos = Vector2(global_pos.x, global_pos.z);
 
                 float density = noise.get_noise_3d(global_pos);
-                Biome biome = get_biome(global_2d_pos); 
+                Biome biome = get_biome(global_2d_pos);
 
                 size_t idx = get_index(local_pos);
                 voxel_densities[idx] = density;
@@ -255,72 +277,89 @@ void VoxelMesh::generate_mesh()
                 Vector3i voxel = Vector3i(x, y, z);
                 if (destroyed_voxels.has(voxel))
                 {
-                    // This has been destroyed. Render with rigid borders.
+                    Vector3 base_corners[8];
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        base_corners[i] = Vector3(cx[i], cy[i], cz[i]);
+                    }
+
+                    Vector3 final_corners[8];
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        if (i < 4)
+                        {
+                            final_corners[i] = base_corners[i];
+                        }
+                        else
+                        {
+                            int bottom_corner_idx = i - 4;
+                            float d_bot = corner_densities[bottom_corner_idx];
+                            float d_top = corner_densities[i];
+
+                            if ((d_bot > 0.0f) == (d_top > 0.0f))
+                            {
+                                final_corners[i] = (d_top > 0.0f) ? base_corners[i] : base_corners[bottom_corner_idx];
+                            }
+                            else
+                            {
+                                float t = 0.0f;
+                                float bottom_den = d_top - d_bot;
+                                if (!Math::is_equal_approx(bottom_den, 0.0f))
+                                {
+                                    t = Math::clamp(-d_bot / bottom_den, 0.0f, 1.0f);
+                                }
+                                final_corners[i] = base_corners[bottom_corner_idx].lerp(base_corners[i], t);
+                            }
+                        }
+                    }
+
+                    const int CUBE_FACES_CW[6][4] = {
+                        {1, 5, 6, 2}, // +X face
+                        {3, 7, 4, 0}, // -X face
+                        {7, 6, 5, 4}, // +Y face (Top)
+                        {0, 1, 2, 3}, // -Y face (Bottom)
+                        {2, 6, 7, 3}, // +Z face
+                        {1, 0, 4, 5}  // -Z face
+                    };
 
                     for (int f = 0; f < 6; f++)
                     {
                         Vector3i neighbor_pos = voxel + FACE_DIRS[f];
-
                         if (destroyed_voxels.has(neighbor_pos))
                         {
                             continue;
                         }
 
-                        Vector3 face_corners_pos[4];
-                        float face_corners_den[4];
-                        unsigned char square_edge_index = 0;
-
-                        for (int i = 0; i < 4; i++)
+                        if (f == 2)
                         {
-                            int corner_idx = FACE_CORNERS[f][i];
-                            face_corners_pos[i] = Vector3(
-                                cx[corner_idx],
-                                cy[corner_idx],
-                                cz[corner_idx]);
-                            face_corners_den[i] = corner_densities[corner_idx];
-                            if (face_corners_den[i] > 0.0)
-                                square_edge_index |= (1 << i);
-                        }
-
-                        if (square_edge_index == 0 || square_edge_index == 15)
                             continue;
-
-                        Vector3 rim_verts[4];
-                        for (int i = 0; i < 4; i++)
-                        {
-                            const int c0_idx = i;
-                            const int c1_idx = (i + 1) % 4;
-
-                            const Vector3 &p0 = face_corners_pos[c0_idx];
-                            const Vector3 &p1 = face_corners_pos[c1_idx];
-                            const float d0 = face_corners_den[c0_idx];
-                            const float d1 = face_corners_den[c1_idx];
-
-                            float t = 0.5f;
-                            float bottom_den = d1 - d0;
-                            if (!Math::is_equal_approx(bottom_den, 0.0f))
-                            {
-                                t = Math::clamp(-d0 / bottom_den, 0.0f, 1.0f);
-                            }
-                            rim_verts[i] = p0.lerp(p1, t);
                         }
 
-                        const int *edges = SQUARES_EDGES[square_edge_index];
-                        for (int i = 0; edges[i] != -1; i += 2)
+                        const int *face_corner_indices = CUBE_FACES_CW[f];
+
+                        int vertex_indices[6] = {
+                            face_corner_indices[0], face_corner_indices[1], face_corner_indices[2],
+                            face_corner_indices[0], face_corner_indices[2], face_corner_indices[3]};
+
+                        for (int i = 0; i < 6; i++)
                         {
-                            Vector3 v0_top = rim_verts[edges[i]];
-                            Vector3 v1_top = rim_verts[edges[i + 1]];
+                            int corner_idx = vertex_indices[i];
+                            Vector3 vertex_pos = final_corners[corner_idx];
 
-                            Vector3 v0_bot = v0_top - Vector3(0, 1, 0);
-                            Vector3 v1_bot = v1_top - Vector3(0, 1, 0);
+                            float mat_id;
+                            if (corner_idx < 4)
+                            {
+                                mat_id = corner_materials[corner_idx];
+                            }
+                            else
+                            {
+                                float d_top = corner_densities[corner_idx];
+                                mat_id = (d_top > 0.0f) ? corner_materials[corner_idx] : corner_materials[corner_idx - 4];
+                            }
 
-                            st->add_vertex(v0_top);
-                            st->add_vertex(v1_bot);
-                            st->add_vertex(v1_top);
-
-                            st->add_vertex(v0_top);
-                            st->add_vertex(v0_bot);
-                            st->add_vertex(v1_bot);
+                            st->set_color(Color(1.0f, 0.0f, 0.0f, 0.0f));
+                            st->set_custom(0, Color(mat_id, 0, 0, 0));
+                            st->add_vertex(vertex_pos);
                         }
                     }
 
@@ -413,7 +452,9 @@ void VoxelMesh::generate_mesh()
     st->generate_normals();
     st->index();
     Ref<ArrayMesh> mesh = st->commit();
-    set_mesh(mesh);
 
-    emit_signal("finished_mesh_generation");
+    // set_mesh(mesh);
+    call_deferred("set_mesh", mesh);
+    call_deferred("emit_signal", "finished_mesh_generation", first_time_generated);
+    first_time_generated = false;
 }

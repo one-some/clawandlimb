@@ -1,7 +1,5 @@
 extends TextureRect
 
-@onready var player = get_tree().get_first_node_in_group("Player")
-
 var current_biome = null
 
 const BIOME_COLORS = {
@@ -14,10 +12,12 @@ func _ready() -> void:
 	self.modulate = Color.TRANSPARENT
 
 func _on_check_biome_timeout() -> void:
+	var cam = get_viewport().get_camera_3d()
+	
 	# Yeah its ugly whatever
 	var biome = (ChunkManager.chunks.values()[0] as VoxelMesh).get_biome(Vector2(
-		player.global_position.x,
-		player.global_position.z,
+		cam.global_position.x,
+		cam.global_position.z,
 	))
 	
 	if biome == current_biome: return

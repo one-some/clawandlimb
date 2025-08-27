@@ -38,7 +38,7 @@ func finalize() -> void:
 	
 	var affected_chunks = []
 	
-	State.chunk_manager.delete_area(AABB(start, size))
+	State.chunk_manager.delete_area(AABB(start, size), true)
 	
 	#for chunk_pos in affected_chunks.duplicate():
 		#for dx in [-1, 0, 1]:
