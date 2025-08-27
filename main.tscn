@@ -564,6 +564,9 @@ script = ExtResource("4_074og")
 [node name="ThirdPersonPole" type="Marker3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.302361, 0)
 
+[node name="Foot" type="Marker3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.828208, 0)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
 shape = SubResource("CapsuleShape3D_2cqfq")
 

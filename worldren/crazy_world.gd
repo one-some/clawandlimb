@@ -85,7 +85,7 @@ func load_tiles() -> void:
 		if file_name in file_names: continue
 		if not file_name.ends_with(".png"): continue
 		file_names.append(file_name)
-		
+	
 	file_names.sort()
 	print(file_names)
 	

@@ -4,6 +4,7 @@ extends CharacterBody3D
 @onready var first_person_cam: Camera3D = $FirstPersonCamera
 @onready var naru_freaking_toe: Sprite3D = $Naruto
 @onready var naruto_width_scalar = naru_freaking_toe.pixel_size / naru_freaking_toe.texture.get_width()
+@onready var foot_marker = $Foot
 
 const ITEM_MAX_RANGE = 2.0
 
@@ -35,6 +36,9 @@ func _ready() -> void:
 
 	# Propagate stuff first
 	combat.take_damage(CombatRecipient.DamageOrigin.GOD, 0.0)
+
+func is_in_water() -> bool:
+	return foot_marker.global_position.y + 0.5 <= ChunkManager.SEA_LEVEL
 
 func change_player_skin(skin: Texture) -> void:
 	naru_freaking_toe.texture = skin
@@ -117,12 +121,24 @@ func _physics_process(delta: float) -> void:
 	
 	var move_dir = (forward * input_dir.y) + (right * input_dir.x)
 	
-	self.velocity.x = move_dir.x * 6.0
-	self.velocity.z = move_dir.z * 6.0
-	self.velocity += get_gravity() * delta
+	var speed = 6.0
+	var gravity = get_gravity() * delta
 	
-	if Input.is_action_pressed("jump") and is_on_floor():
-		self.velocity.y += 8.0
+	if is_in_water():
+		speed /= 2.0
+		gravity /= 4.0
+		
+		if Input.is_action_pressed("jump"):
+			self.velocity.y = max(3.0, self.velocity.y)
+	else:
+		if Input.is_action_pressed("jump") and is_on_floor():
+			self.velocity.y += 8.0
+	
+	self.velocity.x = move_dir.x * speed
+	self.velocity.z = move_dir.z * speed
+	self.velocity += gravity
+	
+	
 	
 	if move_dir and not first_person_cam.current:
 		self.rotation.y = lerp_angle(self.rotation.y, Vector2(move_dir.z, move_dir.x).angle(), 0.4)
