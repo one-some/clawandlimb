@@ -22,7 +22,7 @@ func _process(delta: float) -> void:
 	#pos = (pos / ChunkData.CHUNK_SIZE).ceil() * ChunkData.CHUNK_SIZE
 	mesh.position = pos
 
-func _on_click() -> void:
+func _on_use() -> void:
 	if not cast: return
 	var chunk: VoxelMesh = cast["collider"].get_parent()
 	var block_pos: Vector3 = mesh.position - VISUAL_OFFSET
@@ -32,7 +32,3 @@ func _on_click() -> void:
 		Vector3(1, 1, 1) * 1
 	), false)
 	print(chunk)
-	
-
-func _on_use() -> void:
-	pass

@@ -49,7 +49,8 @@ func swing() -> void:
 	}.get(equipped_model, "Punch")
 	
 	var speed = {
-		$WoodenAxe: 2.0
+		$WoodenAxe: 2.0,
+		$WoodenPickaxe: 2.0
 	}.get(equipped_model, 0.75)
 	
 	if animation == "Punch":
@@ -86,7 +87,7 @@ func get_combat_recipient() -> CombatRecipient:
 
 func _swing_sound():
 	if swing_state != SwingState.FORWARDS: return
-	if not get_combat_recipient(): return
+	if not get_combat_recipient() and equipped_model != $WoodenPickaxe: return
 	
 	audio_player.stream = Sounds.get(equipped_model.name, Sounds["Fist"])
 	audio_player.pitch_scale = 1.0 + ((randf() - 0.5) * 0.2)

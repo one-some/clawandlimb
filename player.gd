@@ -145,8 +145,8 @@ func _physics_process(delta: float) -> void:
 	self.move_and_slide()
 	
 	# Make sure chunk we're in is generated...
-	
 	var chunk_pos = (self.global_position / ChunkData.CHUNK_SIZE).floor()
+	
 	if chunk_pos not in ChunkManager.finished_chunks:
 		waiting_for_chunk = chunk_pos
 		frozen = true
