@@ -50,6 +50,7 @@ protected:
         ClassDB::bind_method(D_METHOD("set_seed", "seed"), &VoxelMesh::set_seed);
         ClassDB::bind_method(D_METHOD("set_sea_level", "sea_level"), &VoxelMesh::set_sea_level);
         ClassDB::bind_method(D_METHOD("get_biome", "pos"), &VoxelMesh::get_biome);
+        ClassDB::bind_method(D_METHOD("sample_noise", "pos"), &VoxelMesh::sample_noise);
 
         BIND_ENUM_CONSTANT(BIOME_GRASS);
         BIND_ENUM_CONSTANT(BIOME_DESERT);
@@ -61,6 +62,8 @@ protected:
 public:
     VoxelMesh() { }
     ~VoxelMesh() = default;
+
+    float sample_noise(const Vector3 &pos) { return noise.get_noise_3d(pos); }
 
     void set_seed(int seed) {
         noise.set_seed(seed);

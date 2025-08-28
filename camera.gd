@@ -228,7 +228,7 @@ func _input(event: InputEvent) -> void:
 			MOUSE_BUTTON_WHEEL_UP: -1,
 			MOUSE_BUTTON_WHEEL_DOWN: 1,
 		}.get(event.button_index, 0) * 0.5
-		distance_from_pole = clampf(distance_from_pole, 1.0, 40.0)
+		distance_from_pole = clampf(distance_from_pole, 1.0, 100.0)
 		
 		var player_cam_active = distance_from_pole < 1.5
 		player_cam.set_active(player_cam_active)

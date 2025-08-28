@@ -1,9 +1,10 @@
-[gd_scene load_steps=50 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=52 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
 [ext_resource type="Texture2D" uid="uid://cbe6ggfrfopgn" path="res://tex/moon.png" id="2_82xsv"]
+[ext_resource type="Script" uid="uid://ctrl38glbufm2" path="res://world_environment.gd" id="2_lswn8"]
 [ext_resource type="Texture2D" uid="uid://dsekkq0dm5eo" path="res://tex/sun.png" id="3_getpj"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
 [ext_resource type="Script" uid="uid://0jcpwcfyx785" path="res://first_person_camera.gd" id="4_074og"]
@@ -24,6 +25,7 @@
 [ext_resource type="AudioStream" uid="uid://cxlsf6rlj0caa" path="res://aud/wind.wav" id="16_yaehf"]
 [ext_resource type="Script" uid="uid://clb0isi66puot" path="res://debug_chunk_view.gd" id="17_d13ii"]
 [ext_resource type="Texture2D" uid="uid://dac4w13hg2q68" path="res://tex/tiles/8_water.png" id="19_cegan"]
+[ext_resource type="Script" uid="uid://d18qx0vkfy0m" path="res://water.gd" id="25_0odxb"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yaehf"]
 sky_top_color = Color(0.0993347, 0.412269, 0.847656, 1)
@@ -511,6 +513,7 @@ script = ExtResource("1_kek77")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_lquwl")
+script = ExtResource("2_lswn8")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="WorldEnvironment"]
 libraries = {
@@ -686,5 +689,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.077, 10, 6.361)
 [node name="Water" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0)
 mesh = SubResource("PlaneMesh_getpj")
+script = ExtResource("25_0odxb")
 
 [connection signal="timeout" from="Critters/SpawnTimer" to="Critters" method="_on_spawn_timer_timeout"]

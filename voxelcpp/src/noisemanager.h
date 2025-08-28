@@ -120,15 +120,32 @@ public:
         }
     }
 
-    inline float get_noise(FastNoiseLite &noise, const Vector2 &pos) {
-        return noise.GetNoise(pos.x, pos.y);
-    }
-
-    inline float get_noise(FastNoiseLite &noise, const Vector3 &pos) {
-        return noise.GetNoise(pos.x, pos.y, pos.z);
-    }
+    inline float get_noise(FastNoiseLite &noise, const Vector2 &pos) { return noise.GetNoise(pos.x, pos.y); }
+    inline float get_noise(FastNoiseLite &noise, const Vector3 &pos) { return noise.GetNoise(pos.x, pos.y, pos.z); }
+    inline float get_noise_norm(FastNoiseLite &noise, const Vector2 &pos) { return (get_noise(noise, pos) + 1.0) / 2.0; }
+    inline float get_noise_norm(FastNoiseLite &noise, const Vector3 &pos) { return (get_noise(noise, pos) + 1.0) / 2.0; }
 
     inline float get_noise_3d(const Vector3 &pos) {
+        const auto v2_pos = Vector2(pos.x, pos.z);
+
+        float height = get_noise(low_noise, v2_pos * 0.0002) * 300.0;
+
+        float mountain_raw = get_noise_norm(
+            mountain_noise,
+            v2_pos * 0.06
+        );
+
+        const float MOUNTAIN_THRESHOLD = 0.63f;
+        if (mountain_raw > MOUNTAIN_THRESHOLD) {
+            float normalized_mountain = (mountain_raw - MOUNTAIN_THRESHOLD) / (1.0f - MOUNTAIN_THRESHOLD);
+            height += normalized_mountain * 200.0f;
+        }
+
+
+        return height - pos.y;
+    }
+
+    inline float vava_get_noise_3d(const Vector3 &pos) {
         const auto v2_pos = Vector2(pos.x, pos.z);
 
         float continent = get_noise(low_noise, v2_pos * 0.0009) * 80.0;

@@ -5,7 +5,7 @@ const TreeRes = preload("res://tree.tscn")
 const RockRes = preload("res://rock.tscn")
 const CopperRes = preload("res://copper_rock.tscn")
 
-const SEA_LEVEL = 16.9
+const SEA_LEVEL = 12 + 0.9
 
 @export var biome_humidity: Noise
 @export var biome_temperature: Noise
@@ -167,6 +167,9 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 		WorkerThreadPool.wait_for_task_completion(task_id)
 		chunk_threads.erase(chunk)
 	
+	var chunk_center = (chunk_pos + Vector3(0.5, 0.5, 0.5)) * ChunkData.CHUNK_SIZE
+	print("Sampling at chunk center: ", chunk.sample_noise(chunk_center))
+	
 	var body: StaticBody3D
 	for child in chunk.get_children():
 		if child.name != "ChunkCollider": continue
@@ -186,16 +189,15 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 	var collision_shape: CollisionShape3D = body.get_child(0)
 	collision_shape.shape = chunk.mesh.create_trimesh_shape()
 	
-	if not first_chunk_generated:
-		var faces = chunk.mesh.get_faces()
-		if faces:
-			print("LOL Teleporting")
-			first_chunk_generated = true
-			Signals.tp_player.emit(faces[0] + Vector3(0, 40.0, 0))
-	
 	# Place things
 	if first_time:
 		for thing_pos in chunk.get_resource_position_candidates():
+			if not first_chunk_generated:
+				print("LOL Teleporting")
+				first_chunk_generated = true
+				Signals.tp_player.emit(thing_pos + Vector3(0, 10.0, 0))
+			
+			
 			var biome = chunk.get_biome(Vector2(thing_pos.x, thing_pos.z))
 			thing_pos.y -= 0.25
 			
