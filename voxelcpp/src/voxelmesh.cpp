@@ -197,30 +197,8 @@ void VoxelMesh::generate_chunk_data()
     }
 }
 
-Vector2 get_triplanar_uv(const Vector3 &pos, const Vector3& normal) {
-    Vector3 abs_normal = normal.abs();
-
-    if (abs_normal.x > abs_normal.y && abs_normal.x > abs_normal.z) {
-        // X-axis projection (side)
-        return Vector2(pos.z, pos.y);
-    } else if (abs_normal.y > abs_normal.x && abs_normal.y > abs_normal.z) {
-        // Y-axis projection (top/bottom)
-        return Vector2(pos.x, pos.z);
-    } else {
-        // Z-axis projection (front/back)
-        return Vector2(pos.x, pos.y);
-    }
-}
-
 void VoxelMesh::generate_mesh()
 {
-    // using ST = SurfaceTool;
-    // Ref<SurfaceTool> st;
-    // st.instantiate();
-    // st->begin(Mesh::PRIMITIVE_TRIANGLES);
-
-    // st->set_custom_format(0, SurfaceTool::CUSTOM_RGBA_FLOAT);
-
     PackedVector3Array vertices;
     PackedVector3Array normals;
     PackedColorArray colors_for_weights;
@@ -360,6 +338,17 @@ void VoxelMesh::generate_mesh()
                         int vertex_indices[6] = {
                             face_corner_indices[0], face_corner_indices[1], face_corner_indices[2],
                             face_corner_indices[0], face_corner_indices[2], face_corner_indices[3]};
+                        
+                        for (int i = 0; i < 6; i += 3) {
+                            Vector3 v0 = final_corners[vertex_indices[i]];
+                            Vector3 v2 = final_corners[vertex_indices[i + 2]];
+                            Vector3 v1 = final_corners[vertex_indices[i + 1]];
+
+                            Vector3 norm = (v2 - v0).cross(v1 - v0).normalized();
+                            normals.append(norm);
+                            normals.append(norm);
+                            normals.append(norm);
+                        }
 
                         for (int i = 0; i < 6; i++)
                         {
