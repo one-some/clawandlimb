@@ -47,12 +47,12 @@ func finalize() -> void:
 	var int_end_pos = vec_floor_div(Vector2i(
 		end_pos.x,
 		end_pos.z
-	), ChunkData.CHUNK_SIZE)
+	), ChunkManager.CHUNK_SIZE)
 	
 	var int_start_pos = vec_floor_div(Vector2i(
 		start_pos.x,
 		start_pos.z
-	), ChunkData.CHUNK_SIZE)
+	), ChunkManager.CHUNK_SIZE)
 	#print(int_start_pos, " - ", int_end_pos)
 	
 	for coord in Geometry2D.bresenham_line(

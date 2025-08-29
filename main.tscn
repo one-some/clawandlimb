@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://bysjxpr0tkfu1"]
+[gd_scene load_steps=49 format=3 uid="uid://bysjxpr0tkfu1"]
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
@@ -24,8 +24,8 @@
 [ext_resource type="PackedScene" uid="uid://ci6f50w1ebtfu" path="res://animal.tscn" id="16_074og"]
 [ext_resource type="AudioStream" uid="uid://cxlsf6rlj0caa" path="res://aud/wind.wav" id="16_yaehf"]
 [ext_resource type="Script" uid="uid://clb0isi66puot" path="res://debug_chunk_view.gd" id="17_d13ii"]
-[ext_resource type="Texture2D" uid="uid://dac4w13hg2q68" path="res://tex/tiles/8_water.png" id="19_cegan"]
 [ext_resource type="Script" uid="uid://d18qx0vkfy0m" path="res://water.gd" id="25_0odxb"]
+[ext_resource type="Material" uid="uid://dgqn431hs3jdf" path="res://flatwatrer.tres" id="25_lswn8"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yaehf"]
 sky_top_color = Color(0.0993347, 0.412269, 0.847656, 1)
@@ -489,23 +489,8 @@ albedo_color = Color(1, 0, 0, 0.486275)
 radius = 0.2
 height = 0.4
 
-[sub_resource type="Gradient" id="Gradient_cegan"]
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_82xsv"]
-gradient = SubResource("Gradient_cegan")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_82xsv"]
-transparency = 1
-cull_mode = 2
-albedo_color = Color(1, 1, 1, 0.952941)
-albedo_texture = ExtResource("19_cegan")
-roughness = 0.6
-refraction_texture = SubResource("GradientTexture2D_82xsv")
-uv1_scale = Vector3(1000, 1000, 1000)
-texture_filter = 0
-
 [sub_resource type="PlaneMesh" id="PlaneMesh_getpj"]
-material = SubResource("StandardMaterial3D_82xsv")
+material = ExtResource("25_lswn8")
 size = Vector2(1000, 1000)
 
 [node name="Main" type="Node3D"]

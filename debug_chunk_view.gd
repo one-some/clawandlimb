@@ -13,7 +13,7 @@ func _process(delta: float) -> void:
 	if not self.visible: return
 	
 	var cam = get_viewport().get_camera_3d()
-	var chunk_pos = (cam.global_position / ChunkData.CHUNK_SIZE).floor()
+	var chunk_pos = ChunkManager.pos_to_chunk_pos(cam.global_position)
 	
 	if chunk_pos == camera_chunk: return
 	
@@ -32,6 +32,6 @@ func roll_it_back(chunk_pos: Vector3) -> void:
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			mi.mesh = BoxMesh.new()
 			mi.mesh.size = Vector3(0.05, 1000.0, 0.05)
-			mi.position = (chunk_pos + Vector3(x, 0, z)) * ChunkData.CHUNK_SIZE
+			mi.position = (chunk_pos + Vector3(x, 0, z)) * ChunkManager.CHUNK_SIZE
 			mi.mesh.material = chunk_border_material
 			self.add_child(mi)

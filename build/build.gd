@@ -25,6 +25,8 @@ func to_json() -> Array:
 	return out
 
 func from_json(data: Array) -> void:
+	await get_tree().process_frame
+	
 	for construction_data in data:
 		print("DDD", construction_data)
 		if not construction_data: continue

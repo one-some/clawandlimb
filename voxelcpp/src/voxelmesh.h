@@ -10,8 +10,8 @@
 
 namespace godot {
 
-constexpr size_t CHUNK_SIZE = 16;
-constexpr size_t PADDED_SIZE = CHUNK_SIZE + 1;
+constexpr int CHUNK_SIZE = 16;
+constexpr int PADDED_SIZE = CHUNK_SIZE + 1;
 
 class VoxelMesh : public MeshInstance3D {
 	GDCLASS(VoxelMesh, MeshInstance3D)
@@ -55,6 +55,8 @@ protected:
         ClassDB::bind_static_method(get_class_static(), D_METHOD("sample_noise", "pos"), &VoxelMesh::sample_noise);
         ClassDB::bind_static_method(get_class_static(), D_METHOD("find_a_good_place_to_spawn_that_player_guy"), &VoxelMesh::find_a_good_place_to_spawn_that_player_guy);
 
+        ClassDB::bind_static_method(get_class_static(), D_METHOD("get_chunk_size"), &VoxelMesh::get_chunk_size);
+
         BIND_ENUM_CONSTANT(BIOME_GRASS);
         BIND_ENUM_CONSTANT(BIOME_DESERT);
         BIND_ENUM_CONSTANT(BIOME_TUNDRA);
@@ -73,6 +75,8 @@ public:
 
     VoxelMesh() { }
     ~VoxelMesh() = default;
+
+    static int get_chunk_size() { return CHUNK_SIZE; }
 
     static float sample_noise(const Vector3 &pos) { return noise->get_terrain_noise(pos); }
     static VoxelMesh::Biome get_biome(const Vector2 &pos);

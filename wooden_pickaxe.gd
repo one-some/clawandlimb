@@ -28,7 +28,7 @@ func _on_use() -> void:
 	var block_pos: Vector3 = mesh.position - VISUAL_OFFSET
 	
 	chunk.delete_area(AABB(
-		block_pos.posmod(ChunkData.CHUNK_SIZE),
+		block_pos.posmod(ChunkManager.CHUNK_SIZE),
 		Vector3(1, 1, 1) * 1
 	), false)
 	print(chunk)

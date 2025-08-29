@@ -211,30 +211,37 @@ func process_mouse_move(event: InputEventMouseMotion) -> void:
 	if delta < 25.0:
 		_on_right_click()
 
+func alter_zoom(delta: float) -> void:
+	distance_from_pole = clampf(distance_from_pole + delta, 1.0, 100.0)
+	
+	var player_cam_active = distance_from_pole < 1.5
+	player_cam.set_active(player_cam_active)
+	
+	if not player_cam_active:
+		self.current = true
+
 func _input(event: InputEvent) -> void:
 	if State.active_ui: return
 	
 	if event is InputEventKey and event.pressed:
-		if Input.is_action_just_pressed("build_y_up"):
+		if event.is_action("build_y_up"):
 			set_threed_cursor_pos(threed_cursor.position + Vector3(0, 1, 0))
-		elif Input.is_action_just_pressed("build_y_down"):
+		elif event.is_action("build_y_down"):
 			set_threed_cursor_pos(threed_cursor.position + Vector3(0, -1, 0))
+		elif event.is_action("zoom_out"):
+			alter_zoom(1.5)
+		elif event.is_action("zoom_in"):
+			alter_zoom(-1.5)
 	
 	if event is InputEventMouseMotion:
 		process_mouse_move(event)
 
 	elif event is InputEventMouseButton:
-		distance_from_pole += {
+		var delta = {
 			MOUSE_BUTTON_WHEEL_UP: -1,
 			MOUSE_BUTTON_WHEEL_DOWN: 1,
 		}.get(event.button_index, 0) * 0.5
-		distance_from_pole = clampf(distance_from_pole, 1.0, 100.0)
-		
-		var player_cam_active = distance_from_pole < 1.5
-		player_cam.set_active(player_cam_active)
-		
-		if not player_cam_active:
-			self.current = true
+		if delta: alter_zoom(delta)
 		
 		process_mouse_button_event_for_right_click(event)
 	else:

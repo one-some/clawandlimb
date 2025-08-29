@@ -13,6 +13,9 @@ const GROW_CHUNKS = 4
 
 @onready var nav_region = $NavigationRegion3D
 
+static var CHUNK_SIZE: int = VoxelMesh.get_chunk_size()
+static var PADDED_SIZE: int = CHUNK_SIZE + 1
+
 var seed = randi() * 09142008 * 1000
 
 var ids = []
@@ -41,8 +44,8 @@ func _process(delta: float) -> void:
 	var cam = get_viewport().get_camera_3d()
 	generate_around(cam.global_position, GROW_CHUNKS)
 
-func get_chunk_pos_from_global_pos(pos: Vector3) -> Vector3:
-	return (pos / ChunkData.CHUNK_SIZE).floor()
+static func pos_to_chunk_pos(pos: Vector3) -> Vector3:
+	return (pos / CHUNK_SIZE).floor()
 
 func clamp_vec3(v: Vector3, min_val: float, max_val: float) -> Vector3:
 	return Vector3(
@@ -57,8 +60,8 @@ func delete_area(area: AABB, soft_delete: bool) -> void:
 	var start = area.position
 	var end = start + area.size
 	
-	var start_chunk = (start / ChunkData.CHUNK_SIZE).floor()
-	var end_chunk = (end / ChunkData.CHUNK_SIZE).ceil()
+	var start_chunk = (start / CHUNK_SIZE).floor()
+	var end_chunk = (end / CHUNK_SIZE).ceil()
 	
 	for chunk_x in range(start_chunk.x, end_chunk.x + 1):
 		for chunk_y in range(start_chunk.y, end_chunk.y + 1):
@@ -70,11 +73,11 @@ func delete_area(area: AABB, soft_delete: bool) -> void:
 					continue
 				
 				var chunk = chunks[chunk_pos]
-				var chunk_origin = chunk_pos * ChunkData.CHUNK_SIZE
+				var chunk_origin = chunk_pos * CHUNK_SIZE
 				var chunk_far_bound = chunk_origin + Vector3(
-					ChunkData.CHUNK_SIZE,
-					ChunkData.CHUNK_SIZE,
-					ChunkData.CHUNK_SIZE,
+					CHUNK_SIZE,
+					CHUNK_SIZE,
+					CHUNK_SIZE,
 				)
 		
 				var intersects = (
@@ -87,8 +90,8 @@ func delete_area(area: AABB, soft_delete: bool) -> void:
 				
 				# Get the position of the start relative to the chunks global offset, and clamp it between 0 and CHUNK_SIZE
 				
-				var big_chunk_chunk_start = clamp_vec3(start - chunk_origin, 0.0, ChunkData.PADDED_SIZE)
-				var big_chunk_chunk_end = clamp_vec3(end - chunk_origin, 0.0, ChunkData.PADDED_SIZE)
+				var big_chunk_chunk_start = clamp_vec3(start - chunk_origin, 0.0, PADDED_SIZE)
+				var big_chunk_chunk_end = clamp_vec3(end - chunk_origin, 0.0, PADDED_SIZE)
 				
 				var zone_aabb = AABB(big_chunk_chunk_start, big_chunk_chunk_end - big_chunk_chunk_start)
 				chunk.delete_area(zone_aabb, soft_delete)
@@ -114,7 +117,7 @@ func load_tiles() -> void:
 	State._hack_t2d = t2d_arr
 
 func generate_around(global_origin: Vector3, extent: int = 3) -> void:
-	var chunk_origin = get_chunk_pos_from_global_pos(global_origin)
+	var chunk_origin = pos_to_chunk_pos(global_origin)
 	
 	var positions = []
 	for x in range(-extent, extent):
@@ -132,7 +135,7 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	print("Generating %s chunks :3" % chunks_left)
 	
 	if not world_aabb:
-		var first_pos = positions[0] * ChunkData.CHUNK_SIZE
+		var first_pos = pos_to_chunk_pos(positions[0])
 		world_aabb = AABB(first_pos, Vector3.ZERO)
 	
 	for pos in positions:
@@ -152,11 +155,11 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		)
 		
 		world_aabb = world_aabb.merge(AABB(
-			pos * ChunkData.CHUNK_SIZE,
+			pos * CHUNK_SIZE,
 			Vector3(
-				ChunkData.CHUNK_SIZE,
-				ChunkData.CHUNK_SIZE,
-				ChunkData.CHUNK_SIZE
+				CHUNK_SIZE,
+				CHUNK_SIZE,
+				CHUNK_SIZE
 			)
 		))
 		
@@ -173,7 +176,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 		WorkerThreadPool.wait_for_task_completion(task_id)
 		chunk_threads.erase(chunk)
 	
-	var chunk_center = (chunk_pos + Vector3(0.5, 0.5, 0.5)) * ChunkData.CHUNK_SIZE
+	var chunk_center = (chunk_pos + Vector3(0.5, 0.5, 0.5)) * CHUNK_SIZE
 	#print("Sampling at chunk center: ", VoxelMesh.sample_noise(chunk_center))
 	
 	var body: StaticBody3D
