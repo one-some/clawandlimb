@@ -3,6 +3,7 @@ extends Node
 
 signal camera_shake(strength: float, origin: Vector3)
 signal ui_blur(enable: bool)
+signal ui_changed(active_ui: State.ActiveUI)
 signal update_inventory_slot(slot_number: int)
 
 signal tooltip_set_item(item_instance: ItemInstance)

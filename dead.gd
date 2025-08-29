@@ -4,7 +4,7 @@ func _ready() -> void:
 	Signals.player_died.connect(die)
 
 func die() -> void:
-	State.active_ui = State.ActiveUI.DEAD
+	State.set_active_ui(State.ActiveUI.DEAD)
 
 	self.modulate.a = 0.0
 	self.visible = true
@@ -14,6 +14,6 @@ func die() -> void:
 
 
 func _on_button_pressed() -> void:
-	State.active_ui = State.ActiveUI.NONE
+	State.set_active_ui(State.ActiveUI.NONE)
 	Signals.player_respawn_requested.emit()
 	self.visible = false

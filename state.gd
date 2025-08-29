@@ -7,6 +7,10 @@ enum ActiveUI {
 }
 var active_ui: ActiveUI = ActiveUI.NONE
 
+func set_active_ui(ui: ActiveUI) -> void:
+	active_ui = ui
+	Signals.ui_changed.emit(active_ui)
+
 enum BuildMode {
 	NONE = 0,
 	PLACE_NOTHING,

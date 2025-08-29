@@ -15,6 +15,8 @@ var waiting_for_chunk = null
 
 func _ready() -> void:
 	Signals.tp_player.connect(func(pos):
+		third_person_cam.target_pole = pos
+		
 		frozen = false
 		spawn_point = pos
 		self.global_position = pos
@@ -137,7 +139,6 @@ func _physics_process(delta: float) -> void:
 	self.velocity.x = move_dir.x * speed
 	self.velocity.z = move_dir.z * speed
 	self.velocity += gravity
-	
 	
 	if move_dir and not first_person_cam.current:
 		self.rotation.y = lerp_angle(self.rotation.y, Vector2(move_dir.z, move_dir.x).angle(), 0.4)

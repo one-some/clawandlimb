@@ -6,6 +6,7 @@ const RockRes = preload("res://rock.tscn")
 const CopperRes = preload("res://copper_rock.tscn")
 
 const SEA_LEVEL = 12 + 0.9
+const GROW_CHUNKS = 4
 
 @export var biome_humidity: Noise
 @export var biome_temperature: Noise
@@ -21,7 +22,24 @@ var chunks_left = 0
 static var chunks = {}
 static var finished_chunks = []
 var chunk_threads = {}
-var first_chunk_generated = false
+
+func _ready() -> void:
+	# Does this suck. Let me know.
+	load_tiles()
+	State.chunk_manager = self
+	
+	$/root/Main/Water.position.y = SEA_LEVEL
+	VoxelMesh.set_sea_level(SEA_LEVEL)
+	VoxelMesh.set_seed(seed)
+	
+	var pos = VoxelMesh.find_a_good_place_to_spawn_that_player_guy()
+	Signals.tp_player.emit(pos + Vector3(0, 2.0, 0))
+	
+	generate_around(pos, GROW_CHUNKS)
+
+func _process(delta: float) -> void:
+	var cam = get_viewport().get_camera_3d()
+	generate_around(cam.global_position, GROW_CHUNKS)
 
 func get_chunk_pos_from_global_pos(pos: Vector3) -> Vector3:
 	return (pos / ChunkData.CHUNK_SIZE).floor()
@@ -126,9 +144,7 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		chunk.material_override = ChunkMaterial
 		chunk.material_override.set_shader_parameter("textures", State._hack_t2d)
 		
-		chunk.set_seed(seed)
 		chunk.set_pos(pos)
-		chunk.set_sea_level(SEA_LEVEL)
 		
 		chunks[pos] = chunk
 		chunk.finished_mesh_generation.connect(func(first_time: bool):
@@ -150,16 +166,6 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 			chunk.generate_mesh()
 		)
 		chunk_threads[chunk] = task_id
-	
-	
-func _ready() -> void:
-	# Does this suck. Let me know.
-	load_tiles()
-	State.chunk_manager = self
-	
-	$/root/Main/Water.position.y = SEA_LEVEL
-	
-	generate_around(Vector3.ZERO, 4)
 
 func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: bool) -> void:
 	if chunk in chunk_threads:
@@ -168,7 +174,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 		chunk_threads.erase(chunk)
 	
 	var chunk_center = (chunk_pos + Vector3(0.5, 0.5, 0.5)) * ChunkData.CHUNK_SIZE
-	print("Sampling at chunk center: ", chunk.sample_noise(chunk_center))
+	#print("Sampling at chunk center: ", VoxelMesh.sample_noise(chunk_center))
 	
 	var body: StaticBody3D
 	for child in chunk.get_children():
@@ -192,12 +198,6 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 	# Place things
 	if first_time:
 		for thing_pos in chunk.get_resource_position_candidates():
-			if not first_chunk_generated:
-				print("LOL Teleporting")
-				first_chunk_generated = true
-				Signals.tp_player.emit(thing_pos + Vector3(0, 10.0, 0))
-			
-			
 			var biome = chunk.get_biome(Vector2(thing_pos.x, thing_pos.z))
 			thing_pos.y -= 0.25
 			
@@ -251,11 +251,6 @@ func bake_world_nav(aabb: AABB) -> void:
 		
 	await nav_region.bake_finished
 	print("World navigation bake finished!")
-
-
-func _on_chunk_gen_timeout() -> void:
-	var cam = get_viewport().get_camera_3d()
-	generate_around(cam.global_position, 3)
 
 func update_chunk_collision(chunk_pos: Vector2) -> void:
 	print("LOL NOT ACTUALLY UPDATYING (anything)")

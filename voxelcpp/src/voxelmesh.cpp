@@ -72,11 +72,11 @@ VoxelMesh::Biome VoxelMesh::get_biome(const Vector2 &pos)
     // TODO: Get legit noises for here..
     const float POS_MULT = 0.005;
 
-    float humidity = noise.get_noise(noise.low_noise, pos * POS_MULT);
+    float humidity = noise->get_noise(noise->low_noise, pos * POS_MULT);
     humidity = Math::clamp((humidity + 1.0f) / 2.0f, 0.0f, 1.0f);
     humidity = Math::smoothstep(0.0f, 1.0f, humidity);
 
-    float temperature = noise.get_noise(noise.low_noise, (pos * POS_MULT) + Vector2(120000.0, 100000.0));
+    float temperature = noise->get_noise(noise->low_noise, (pos * POS_MULT) + Vector2(120000.0, 100000.0));
     temperature = Math::clamp((temperature + 1.0f) / 2.0f, 0.0f, 1.0f);
     temperature = Math::smoothstep(0.0f, 1.0f, temperature);
 
@@ -153,7 +153,7 @@ void VoxelMesh::generate_chunk_data()
                 Vector3 global_pos = global_base + local_pos;
                 Vector2 global_2d_pos = Vector2(global_pos.x, global_pos.z);
 
-                float density = noise.get_noise_3d(global_pos);
+                float density = noise->get_terrain_noise(global_pos);
                 Biome biome = get_biome(global_2d_pos);
 
                 size_t idx = get_index(local_pos);
@@ -197,14 +197,34 @@ void VoxelMesh::generate_chunk_data()
     }
 }
 
+Vector2 get_triplanar_uv(const Vector3 &pos, const Vector3& normal) {
+    Vector3 abs_normal = normal.abs();
+
+    if (abs_normal.x > abs_normal.y && abs_normal.x > abs_normal.z) {
+        // X-axis projection (side)
+        return Vector2(pos.z, pos.y);
+    } else if (abs_normal.y > abs_normal.x && abs_normal.y > abs_normal.z) {
+        // Y-axis projection (top/bottom)
+        return Vector2(pos.x, pos.z);
+    } else {
+        // Z-axis projection (front/back)
+        return Vector2(pos.x, pos.y);
+    }
+}
+
 void VoxelMesh::generate_mesh()
 {
-    using ST = SurfaceTool;
-    Ref<SurfaceTool> st;
-    st.instantiate();
-    st->begin(Mesh::PRIMITIVE_TRIANGLES);
+    // using ST = SurfaceTool;
+    // Ref<SurfaceTool> st;
+    // st.instantiate();
+    // st->begin(Mesh::PRIMITIVE_TRIANGLES);
 
-    st->set_custom_format(0, SurfaceTool::CUSTOM_RGBA_FLOAT);
+    // st->set_custom_format(0, SurfaceTool::CUSTOM_RGBA_FLOAT);
+
+    PackedVector3Array vertices;
+    PackedVector3Array normals;
+    PackedColorArray colors_for_weights;
+    PackedByteArray custom_for_mat_ids;
 
     for (int x = 0; x < CHUNK_SIZE; x++)
     {
@@ -346,7 +366,7 @@ void VoxelMesh::generate_mesh()
                             int corner_idx = vertex_indices[i];
                             Vector3 vertex_pos = final_corners[corner_idx];
 
-                            float mat_id;
+                            int mat_id;
                             if (corner_idx < 4)
                             {
                                 mat_id = corner_materials[corner_idx];
@@ -357,9 +377,13 @@ void VoxelMesh::generate_mesh()
                                 mat_id = (d_top > 0.0f) ? corner_materials[corner_idx] : corner_materials[corner_idx - 4];
                             }
 
-                            st->set_color(Color(1.0f, 0.0f, 0.0f, 0.0f));
-                            st->set_custom(0, Color(mat_id, 0, 0, 0));
-                            st->add_vertex(vertex_pos);
+                            vertices.append(vertex_pos);
+
+                            colors_for_weights.append(Color(1.0f, 0.0f, 0.0f, 0.0f));
+                            custom_for_mat_ids.append(mat_id);
+                            custom_for_mat_ids.append(0);
+                            custom_for_mat_ids.append(0);
+                            custom_for_mat_ids.append(0);
                         }
                     }
 
@@ -368,9 +392,15 @@ void VoxelMesh::generate_mesh()
 
                 for (int ti = 0; tri[ti] != -1; ti += 3)
                 {
+                    // NOTE: THIS FREAKING WINDING ORDER is normal for Godot!!!
                     Vector3 v0 = edge_verts[tri[ti + 0]];
                     Vector3 v1 = edge_verts[tri[ti + 2]];
                     Vector3 v2 = edge_verts[tri[ti + 1]];
+
+                    Vector3 norm = (v2 - v0).cross(v1 - v0).normalized();
+                    normals.append(norm);
+                    normals.append(norm);
+                    normals.append(norm);
 
                     Vector3 P[3] = {v0, v1, v2};
 
@@ -439,21 +469,38 @@ void VoxelMesh::generate_mesh()
                             top[3].w /= weight_sum;
                         }
 
-                        st->set_color(Color(top[0].w, top[1].w, top[2].w, top[3].w));
-                        st->set_custom(0, Color(top[0].id, top[1].id, top[2].id, top[3].id));
+                        vertices.append(p);
+                        colors_for_weights.append(Color(top[0].w, top[1].w, top[2].w, top[3].w));
 
-                        st->add_vertex(p);
+                        custom_for_mat_ids.append(top[0].id);
+                        custom_for_mat_ids.append(top[1].id);
+                        custom_for_mat_ids.append(top[2].id);
+                        custom_for_mat_ids.append(top[3].id);
                     }
                 }
             }
         }
     }
 
-    st->generate_normals();
-    st->index();
-    Ref<ArrayMesh> mesh = st->commit();
+    Array surface_array;
+    surface_array.resize(Mesh::ARRAY_MAX);
 
-    // set_mesh(mesh);
+    if (vertices.size() == 0) return;
+
+    surface_array[Mesh::ARRAY_VERTEX] = vertices;
+    surface_array[Mesh::ARRAY_NORMAL] = normals;
+    surface_array[Mesh::ARRAY_COLOR] = colors_for_weights;
+    surface_array[Mesh::ARRAY_CUSTOM0] = custom_for_mat_ids;
+
+    Ref<ArrayMesh> mesh = memnew(ArrayMesh);
+    mesh->add_surface_from_arrays(
+        Mesh::PRIMITIVE_TRIANGLES,
+        surface_array,
+        Array(),
+        Dictionary(),
+        Mesh::ARRAY_CUSTOM0 << Mesh::ARRAY_CUSTOM_RGBA8_UNORM
+    );
+
     call_deferred("set_mesh", mesh);
     call_deferred("emit_signal", "finished_mesh_generation", first_time_generated);
     first_time_generated = false;

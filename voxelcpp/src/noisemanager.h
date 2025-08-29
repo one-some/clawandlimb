@@ -99,7 +99,7 @@ public:
         low_noise.SetFractalGain(1.0);
         low_noise.SetFractalLacunarity(4.0);
 
-        high_noise.SetFractalOctaves(3);
+        // high_noise.SetFractalOctaves(3);
 
         biome_noise.SetFractalOctaves(3);
         biome_noise.SetFractalGain(0.4);
@@ -108,6 +108,7 @@ public:
     }
 
     void set_seed(int seed) {
+        int i = 0;
         for (const auto noise : {
             &low_noise,
             &high_noise,
@@ -116,7 +117,7 @@ public:
             &cave_noise,
             &rough_noise
         }) {
-            noise->SetSeed(seed);
+            noise->SetSeed(seed + i++);
         }
     }
 
@@ -125,62 +126,39 @@ public:
     inline float get_noise_norm(FastNoiseLite &noise, const Vector2 &pos) { return (get_noise(noise, pos) + 1.0) / 2.0; }
     inline float get_noise_norm(FastNoiseLite &noise, const Vector3 &pos) { return (get_noise(noise, pos) + 1.0) / 2.0; }
 
-    inline float get_noise_3d(const Vector3 &pos) {
+    inline float get_terrain_noise(const Vector3 &pos) {
         const auto v2_pos = Vector2(pos.x, pos.z);
 
         float height = get_noise(low_noise, v2_pos * 0.0002) * 300.0;
 
-        float mountain_raw = get_noise_norm(
-            mountain_noise,
-            v2_pos * 0.06
+        height += (
+            get_noise(high_noise, v2_pos * 1.0)
+            * 10.0
+            * get_noise_norm(high_noise, (v2_pos + Vector2(100000, 100000)) * 0.4) // Gate
         );
 
-        const float MOUNTAIN_THRESHOLD = 0.63f;
+        float mountain_raw = get_noise_norm(mountain_noise, v2_pos * 0.05);
+        const float MOUNTAIN_THRESHOLD = 0.6f;
         if (mountain_raw > MOUNTAIN_THRESHOLD) {
             float normalized_mountain = (mountain_raw - MOUNTAIN_THRESHOLD) / (1.0f - MOUNTAIN_THRESHOLD);
             height += normalized_mountain * 200.0f;
         }
 
 
+        float ravine_raw = get_noise_norm(cave_noise, (v2_pos + Vector2(100000, 100000)) * 0.8);
+        const float RAVINE_THRESHOLD = 0.7f;
+        if (ravine_raw > RAVINE_THRESHOLD) {
+            float normalized_ravine = (ravine_raw - RAVINE_THRESHOLD) / (1.0f - RAVINE_THRESHOLD);
+            height -= normalized_ravine * 200.0f;
+        }
+
+        float spaghetti_mult = get_noise_norm(cave_noise, (pos - Vector3(10000, 10000, 10000) * 0.05));
+        float spaghetti = get_noise_norm(cave_noise, pos * 1.0) * spaghetti_mult;
+        if (spaghetti > 0.37) {
+            height = 0.0;
+        }
+
+
         return height - pos.y;
-    }
-
-    inline float vava_get_noise_3d(const Vector3 &pos) {
-        const auto v2_pos = Vector2(pos.x, pos.z);
-
-        float continent = get_noise(low_noise, v2_pos * 0.0009) * 80.0;
-
-        float warp = fbm3d(high_noise, pos * 0.006, 3, 2.0, 0.5) * 20.0;
-        auto pos_warp = pos + Vector3(warp, warp * 0.2, -warp);
-
-        float mountain_mask = get_noise(mountain_noise, Vector2(pos_warp.x, pos_warp.z) * 0.002);
-        mountain_mask = (mountain_mask + 1.0) * 0.5;
-        mountain_mask = Math::pow(
-            Math::max(0.0f, mountain_mask),
-            2.5f
-        );
-        float mountains = mountain_mask * 120.0;
-
-        float base_height = continent + mountains;
-        base_height = terrace(base_height, 4.0, 1.0);
-
-        //float detail = fbm3d(detail_noise, pos * 0.04, 4, 2.0, 0.5) * 58.0;
-        float detail = Math::pow(smoother_step(0.0f, 1.0f, get_noise(detail_noise, v2_pos * 0.4)) * 4.0f, 3.0f);
-
-        //float cave_fbm = fbm3d(cave_noise, pos * 0.09, 4, 2.0, 0.5);
-        //cave_fbm = (cave_fbm + 1.0) * 0.5;
-
-        //const float cave_threshold = 0.62;
-        //const float cave_softness = 0.08;
-
-        //float cave_depth = smoother_step(
-        //    cave_threshold - cave_softness,
-        //    cave_threshold + cave_softness,
-        //    cave_fbm
-        //) * 18.0;
-
-        //float density = (pos.y - base_height) - detail;//- cave_depth;
-        float density = (base_height - pos.y) + detail;//- cave_depth;
-        return density;
     }
 };

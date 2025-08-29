@@ -10,14 +10,15 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey: return
+	if not event.pressed: return
 	
 	if State.active_ui and State.active_ui != State.ActiveUI.INVENTORY:
 		return
 	
-	if Input.is_action_just_pressed("inventory"):
-		State.active_ui = State.ActiveUI.INVENTORY if not State.active_ui else State.ActiveUI.NONE
-	elif Input.is_action_just_pressed("esc"):
-		State.active_ui = State.ActiveUI.NONE
+	if event.is_action("inventory"):
+		State.set_active_ui(State.ActiveUI.INVENTORY if not State.active_ui else State.ActiveUI.NONE)
+	elif event.is_action("esc"):
+		State.set_active_ui(State.ActiveUI.NONE)
 	else:
 		return
 	

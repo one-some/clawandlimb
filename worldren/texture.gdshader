@@ -12,13 +12,16 @@ void vertex() {
 	world_normal = (inverse(transpose(MODEL_MATRIX)) * vec4(NORMAL, 0.0)).xyz;
 
 	mat_weights = COLOR;
-	mat_ids = CUSTOM0;
+	mat_ids = CUSTOM0 * 255.0;
 }
 
 vec4 triplanar_sample(float id, vec3 pos, vec3 norm) {
-	vec4 x_tex = texture(textures, vec3(pos.zy, id));
-	vec4 y_tex = texture(textures, vec3(pos.xz, id));
-	vec4 z_tex = texture(textures, vec3(pos.xy, id));
+	float layer = floor(id);
+	//pos *= 5.0;
+	
+	vec4 x_tex = texture(textures, vec3(pos.zy, layer));
+	vec4 y_tex = texture(textures, vec3(pos.xz, layer));
+	vec4 z_tex = texture(textures, vec3(pos.xy, layer));
 
 	vec3 weights = abs(norm);
 	weights /= (weights.x + weights.y + weights.z);

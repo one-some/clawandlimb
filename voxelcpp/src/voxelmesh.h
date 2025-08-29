@@ -30,9 +30,10 @@ private:
         MATERIAL_WATER = 8
     };
 
-    NoiseManager noise;
+    inline static NoiseManager* noise = nullptr;
+
     Vector3 chunk_pos;
-    float sea_level = 0.0f;
+    inline static float sea_level = 0.0f;
     PackedVector3Array resource_position_candidates;
     HashSet<Vector3i> destroyed_voxels;
     bool first_time_generated = true;
@@ -47,38 +48,65 @@ protected:
         ClassDB::bind_method(D_METHOD("set_pos", "pos"), &VoxelMesh::set_pos);
         ClassDB::bind_method(D_METHOD("get_resource_position_candidates"), &VoxelMesh::get_resource_position_candidates);
         ClassDB::bind_method(D_METHOD("delete_area", "area", "soft_delete"), &VoxelMesh::delete_area);
-        ClassDB::bind_method(D_METHOD("set_seed", "seed"), &VoxelMesh::set_seed);
-        ClassDB::bind_method(D_METHOD("set_sea_level", "sea_level"), &VoxelMesh::set_sea_level);
-        ClassDB::bind_method(D_METHOD("get_biome", "pos"), &VoxelMesh::get_biome);
-        ClassDB::bind_method(D_METHOD("sample_noise", "pos"), &VoxelMesh::sample_noise);
+
+        ClassDB::bind_static_method(get_class_static(), D_METHOD("set_seed", "seed"), &VoxelMesh::set_seed);
+        ClassDB::bind_static_method(get_class_static(), D_METHOD("set_sea_level", "sea_level"), &VoxelMesh::set_sea_level);
+        ClassDB::bind_static_method(get_class_static(), D_METHOD("get_biome", "pos"), &VoxelMesh::get_biome);
+        ClassDB::bind_static_method(get_class_static(), D_METHOD("sample_noise", "pos"), &VoxelMesh::sample_noise);
+        ClassDB::bind_static_method(get_class_static(), D_METHOD("find_a_good_place_to_spawn_that_player_guy"), &VoxelMesh::find_a_good_place_to_spawn_that_player_guy);
 
         BIND_ENUM_CONSTANT(BIOME_GRASS);
         BIND_ENUM_CONSTANT(BIOME_DESERT);
         BIND_ENUM_CONSTANT(BIOME_TUNDRA);
 
         ADD_SIGNAL(MethodInfo("finished_mesh_generation"));
+
+        if (!noise) noise = memnew(NoiseManager);
     }
 
 public:
-    VoxelMesh() { }
-    ~VoxelMesh() = default;
-
-    float sample_noise(const Vector3 &pos) { return noise.get_noise_3d(pos); }
-
-    void set_seed(int seed) {
-        noise.set_seed(seed);
-    }
-
     enum Biome {
         BIOME_GRASS,
         BIOME_DESERT,
         BIOME_TUNDRA
     };
 
-    uint16_t get_material(const Vector3 &pos, float density, VoxelMesh::Biome biome);
-    VoxelMesh::Biome get_biome(const Vector2 &pos);
+    VoxelMesh() { }
+    ~VoxelMesh() = default;
 
-    void set_sea_level(float p_sea_level) { sea_level = p_sea_level; }
+    static float sample_noise(const Vector3 &pos) { return noise->get_terrain_noise(pos); }
+    static VoxelMesh::Biome get_biome(const Vector2 &pos);
+
+    static void set_sea_level(float p_sea_level) { sea_level = p_sea_level; }
+    static void set_seed(int seed) { noise->set_seed(seed); }
+
+    static Vector3 find_a_good_place_to_spawn_that_player_guy() {
+        for (int attempt = 0; attempt < 1000; attempt++) {
+            int rand_range = 1000 * (1 + (attempt / 10));
+            Vector3 point = Vector3(
+                UtilityFunctions::randf() * rand_range,
+                sea_level + 1.0f,
+                UtilityFunctions::randf() * rand_range
+            );
+
+            float density = noise->get_terrain_noise(point);
+            if (density < 0.0) continue;
+
+            UtilityFunctions::print("Took ", attempt, " attempts. Now looping...");
+
+            while (density > 0.0) {
+                point.y += 1.0f;
+                density = noise->get_terrain_noise(point);
+            }
+
+            return point;
+        }
+
+        // Sad reality
+        return Vector3(0, 0, 0);
+    }
+
+    uint16_t get_material(const Vector3 &pos, float density, VoxelMesh::Biome biome);
 
     PackedVector3Array get_resource_position_candidates() {
         return resource_position_candidates;
