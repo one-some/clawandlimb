@@ -1,0 +1,716 @@
+[gd_scene load_steps=57 format=3 uid="uid://0fc3n5w2os8h"]
+
+[ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
+[ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
+[ext_resource type="Script" uid="uid://dfxrlbxic7li6" path="res://water_overlay.gd" id="1_vkygq"]
+[ext_resource type="FontFile" uid="uid://dq2o1ux1rufks" path="res://Cavalhatriz.ttf" id="2_27fn8"]
+[ext_resource type="Script" uid="uid://6aonnes4dn4s" path="res://biome_overlay.gd" id="2_sosvr"]
+[ext_resource type="Script" uid="uid://vthan8fooxnk" path="res://inventory_ui.gd" id="3_27fn8"]
+[ext_resource type="Script" uid="uid://dnqn4e4idg1ce" path="res://waila.gd" id="3_gs482"]
+[ext_resource type="Script" uid="uid://brfvtt5176dfw" path="res://ouch_overlay.gd" id="3_ndy3v"]
+[ext_resource type="Script" uid="uid://de8mgutmep43g" path="res://inventory_ui_screen.gd" id="4_n5rqp"]
+[ext_resource type="Script" uid="uid://blnanm6qmbjfj" path="res://item_tooltip.gd" id="5_ibotj"]
+[ext_resource type="Script" uid="uid://cx1wf8ou6qr5d" path="res://literally_oblivion.gd" id="5_x2s2p"]
+[ext_resource type="PackedScene" uid="uid://tbx2gvjwcyyv" path="res://crafting_entry.tscn" id="6_n5rqp"]
+[ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="6_y4yjw"]
+[ext_resource type="Script" uid="uid://cm6pxahfidr0c" path="res://player_preview.gd" id="7_b2p7n"]
+[ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="7_os5c7"]
+[ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="7_waa4j"]
+[ext_resource type="Script" uid="uid://q7g2r04wynfy" path="res://crafting.gd" id="8_7rqds"]
+[ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
+[ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/7_plank.png" id="9_etlur"]
+[ext_resource type="Script" uid="uid://dxhdvcip00ldd" path="res://item_cursor_follow.gd" id="9_ok7cu"]
+[ext_resource type="Script" uid="uid://g0ryx1l6hew4" path="res://map.gd" id="10_v8jk5"]
+[ext_resource type="LabelSettings" uid="uid://d1gp74yg17uxo" path="res://generic_labelsettings_20px.tres" id="11_nvb2n"]
+[ext_resource type="Script" uid="uid://dsmi4iviuvgnt" path="res://dead.gd" id="14_cxd00"]
+[ext_resource type="StyleBox" uid="uid://c3rj870jxqmdi" path="res://deadly_box_who_wants_it.tres" id="15_etlur"]
+
+[sub_resource type="Gradient" id="Gradient_ndy3v"]
+offsets = PackedFloat32Array(0.679487, 1)
+colors = PackedColorArray(1, 1, 1, 0.258824, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_x2s2p"]
+gradient = SubResource("Gradient_ndy3v")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_sosvr"]
+offsets = PackedFloat32Array(0.379487, 1)
+colors = PackedColorArray(1, 0, 0, 0.101961, 0.764706, 0.109804, 0.109804, 0.552941)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ndy3v"]
+gradient = SubResource("Gradient_sosvr")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.2)
+
+[sub_resource type="LabelSettings" id="LabelSettings_b2p7n"]
+font = ExtResource("7_waa4j")
+font_size = 10
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_ndy3v"]
+font = ExtResource("7_waa4j")
+font_size = 20
+font_color = Color(0.888021, 0.846395, 0, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xb563"]
+bg_color = Color(0.171875, 0.171875, 0.171875, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fyqef"]
+bg_color = Color(0.714844, 0.122864, 0.122864, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.8, 0.8, 0.8, 0)
+anti_aliasing = false
+
+[sub_resource type="LabelSettings" id="LabelSettings_gs482"]
+font = ExtResource("7_waa4j")
+font_size = 30
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n5rqp"]
+bg_color = Color(0.172549, 0.172549, 0.172549, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_n5rqp"]
+font = ExtResource("7_waa4j")
+font_size = 20
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 2
+shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gs482"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cxd00"]
+bg_color = Color(0.408854, 0.408854, 0.408854, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nltto"]
+bg_color = Color(0, 0, 0, 0.776471)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_etlur"]
+bg_color = Color(0.0980392, 0.0980392, 0.0980392, 0.917647)
+
+[sub_resource type="LabelSettings" id="LabelSettings_7rqds"]
+font = ExtResource("7_waa4j")
+font_size = 28
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_nvb2n"]
+font = ExtResource("7_waa4j")
+font_size = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_os5c7"]
+font = ExtResource("7_waa4j")
+font_size = 20
+font_color = Color(0.585938, 0.585938, 0.585938, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7rqds"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_os5c7"]
+content_margin_left = 4.0
+content_margin_top = 8.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.393229, 0.314379, 0.314379, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rqds"]
+content_margin_left = 4.0
+content_margin_top = 8.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.206739, 0.327594, 0.208697, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nvb2n"]
+content_margin_left = 4.0
+content_margin_top = 8.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.154077, 0.25164, 0.155701, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vkygq"]
+content_margin_left = 4.0
+content_margin_top = 8.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.252936, 0.393229, 0.255129, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y4yjw"]
+bg_color = Color(0, 0, 0, 0.772549)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.722656, 0.722656, 0.722656, 1)
+anti_aliasing = false
+
+[sub_resource type="LabelSettings" id="LabelSettings_ibotj"]
+font = ExtResource("6_y4yjw")
+font_size = 30
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_ok7cu"]
+font = ExtResource("7_waa4j")
+font_size = 20
+font_color = Color(1, 1, 1, 0.364706)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ok7cu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gs482"]
+bg_color = Color(0.820312, 0, 0, 0.839216)
+
+[sub_resource type="LabelSettings" id="LabelSettings_cxd00"]
+font = ExtResource("6_y4yjw")
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_etlur"]
+font = ExtResource("7_waa4j")
+font_size = 30
+
+[sub_resource type="InputEventAction" id="InputEventAction_nvb2n"]
+action = &"continue"
+pressed = true
+
+[sub_resource type="Shortcut" id="Shortcut_os5c7"]
+events = [SubResource("InputEventAction_nvb2n")]
+
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WaterOverlay" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0.14902, 0.501961, 0.431373)
+script = ExtResource("1_vkygq")
+
+[node name="BiomeOverlay" type="TextureRect" parent="."]
+visible = false
+modulate = Color(0.996078, 0.647059, 0.392157, 0.215686)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_x2s2p")
+script = ExtResource("2_sosvr")
+
+[node name="CheckBiome" type="Timer" parent="BiomeOverlay"]
+autostart = true
+
+[node name="OuchOverlay" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_ndy3v")
+script = ExtResource("3_ndy3v")
+
+[node name="BuildControls" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -342.0
+offset_top = -43.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "WASD - Move
+Left Click - Punch / Use
+Right Click (Hold) / Arrows - Rotate Camera
+Right Click (Tap) - Interact (with door)
+Scroll - Zoom Camera
+E - Inventory
+Tilde - Surprise
+=== Build Mode ===
+ESC - Force Exit Build Mode
+R - Rotate Object
+PgUp / Pg Down - Raise and Lower
+Shift (Hold) - Fly Faster"
+label_settings = SubResource("LabelSettings_b2p7n")
+horizontal_alignment = 2
+
+[node name="LiterallyOblivion" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -266.0
+offset_top = 25.0
+offset_right = 266.0
+offset_bottom = 48.0
+grow_horizontal = 2
+text = "Please wait for the chunk you entered to generate ^_^"
+label_settings = SubResource("LabelSettings_ndy3v")
+script = ExtResource("5_x2s2p")
+
+[node name="UIStats" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -4.0
+offset_top = 608.0
+offset_right = -1156.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m6e0p")
+
+[node name="HP" type="ProgressBar" parent="UIStats"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -56.0
+offset_right = 320.0
+offset_bottom = -16.0
+grow_vertical = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_27fn8")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/background = SubResource("StyleBoxFlat_xb563")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fyqef")
+value = 11.0
+rounded = true
+
+[node name="EquippedLabel" type="Label" parent="UIStats"]
+layout_mode = 0
+offset_left = 332.0
+offset_top = -50.0
+offset_right = 522.0
+offset_bottom = -20.0
+text = "Wooden Axe"
+label_settings = SubResource("LabelSettings_gs482")
+
+[node name="WAILA" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -52.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_n5rqp")
+script = ExtResource("3_gs482")
+
+[node name="Label" type="Label" parent="WAILA"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -23.0
+offset_top = 5.0
+offset_right = 23.0
+offset_bottom = 28.0
+grow_horizontal = 2
+text = "Tree"
+label_settings = SubResource("LabelSettings_n5rqp")
+
+[node name="ProgressBar" type="ProgressBar" parent="WAILA"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 10
+theme_override_styles/background = SubResource("StyleBoxEmpty_gs482")
+theme_override_styles/fill = SubResource("StyleBoxFlat_cxd00")
+value = 40.0
+
+[node name="BackBlur" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_nltto")
+script = ExtResource("1_nltto")
+
+[node name="MapContainer" type="Control" parent="."]
+clip_contents = true
+anchors_preset = 0
+offset_right = 128.0
+offset_bottom = 128.0
+
+[node name="Map" type="Control" parent="MapContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("10_v8jk5")
+
+[node name="PlayerIcon" type="ColorRect" parent="MapContainer"]
+z_index = 1337
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0, 0, 1)
+
+[node name="InventoryUIScreen" type="MarginContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+script = ExtResource("4_n5rqp")
+
+[node name="Cont" type="HBoxContainer" parent="InventoryUIScreen"]
+layout_mode = 2
+
+[node name="Inv" type="VBoxContainer" parent="InventoryUIScreen/Cont"]
+layout_mode = 2
+size_flags_horizontal = 0
+alignment = 2
+
+[node name="PlayerPreview" type="Control" parent="InventoryUIScreen/Cont/Inv"]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("7_b2p7n")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InventoryUIScreen/Cont/Inv/PlayerPreview"]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SkinPreview" type="TextureRect" parent="InventoryUIScreen/Cont/Inv/PlayerPreview/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("7_os5c7")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="MenuButton" type="MenuButton" parent="InventoryUIScreen/Cont/Inv/PlayerPreview/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 20
+text = "Change Character"
+
+[node name="Inventory" type="GridContainer" parent="InventoryUIScreen/Cont/Inv"]
+custom_minimum_size = Vector2(432, 0)
+layout_mode = 2
+columns = 9
+script = ExtResource("3_27fn8")
+
+[node name="Crafting" type="HBoxContainer" parent="InventoryUIScreen/Cont"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("8_7rqds")
+
+[node name="ItemTabs" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Buttons" type="HBoxContainer" parent="InventoryUIScreen/Cont/Crafting/ItemTabs"]
+visible = false
+layout_mode = 2
+
+[node name="Button" type="Button" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/Buttons"]
+layout_mode = 2
+text = "Weapons"
+
+[node name="Button2" type="Button" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/Buttons"]
+layout_mode = 2
+text = "Tools"
+
+[node name="Button3" type="Button" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/Buttons"]
+layout_mode = 2
+text = "Materials"
+
+[node name="ItemsCont" type="Panel" parent="InventoryUIScreen/Cont/Crafting/ItemTabs"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_etlur")
+
+[node name="Items" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="CraftingEntry" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+flat = false
+
+[node name="CraftingEntry2" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+
+[node name="CraftingEntry3" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+
+[node name="CraftingEntry4" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+
+[node name="CraftingEntry5" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+
+[node name="CraftingEntry6" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+
+[node name="CraftingEntry7" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+
+[node name="CraftingEntry8" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+
+[node name="CraftingEntry9" parent="InventoryUIScreen/Cont/Crafting/ItemTabs/ItemsCont/Items" instance=ExtResource("6_n5rqp")]
+layout_mode = 2
+
+[node name="Details" type="Panel" parent="InventoryUIScreen/Cont/Crafting"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_etlur")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting/Details"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Result" type="HBoxContainer" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TextureRect" type="TextureRect" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/Result"]
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("9_etlur")
+expand_mode = 3
+
+[node name="Label" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/Result"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Wooden Planks"
+label_settings = SubResource("LabelSettings_7rqds")
+
+[node name="Description" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 2
+text = "Hello its wooden p;anks"
+label_settings = SubResource("LabelSettings_nvb2n")
+autowrap_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer"]
+layout_mode = 2
+
+[node name="IngLabel" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Ingredients for x4:"
+label_settings = SubResource("LabelSettings_os5c7")
+
+[node name="Ingredients" type="VBoxContainer" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer/Ingredients"]
+layout_mode = 2
+text = "(x1) Log"
+label_settings = ExtResource("11_nvb2n")
+
+[node name="Label2" type="Label" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer/Ingredients"]
+layout_mode = 2
+text = "(x1) Evil Thing"
+label_settings = ExtResource("11_nvb2n")
+
+[node name="CraftButton" type="Button" parent="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.778259, 0.960938, 0.79824, 1)
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7rqds")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_os5c7")
+theme_override_styles/hover = SubResource("StyleBoxFlat_7rqds")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nvb2n")
+theme_override_styles/normal = SubResource("StyleBoxFlat_vkygq")
+text = "Craft"
+
+[node name="ItemTooltip" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_right = 210.0
+offset_bottom = 78.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_y4yjw")
+script = ExtResource("5_ibotj")
+
+[node name="MarginContainer" type="MarginContainer" parent="ItemTooltip"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ItemTooltip/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Name" type="Label" parent="ItemTooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Dirt Block"
+label_settings = SubResource("LabelSettings_ibotj")
+
+[node name="Description" type="Label" parent="ItemTooltip/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "It's just a dirt block."
+label_settings = SubResource("LabelSettings_ok7cu")
+
+[node name="ItemCursorFollow" parent="." instance=ExtResource("8_waa4j")]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_ok7cu")
+script = ExtResource("9_ok7cu")
+
+[node name="Dead" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gs482")
+script = ExtResource("14_cxd00")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Dead"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -273.0
+offset_top = -129.0
+offset_right = 273.0
+offset_bottom = 129.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 65
+
+[node name="YouDiedSister" type="Label" parent="Dead/VBoxContainer"]
+layout_mode = 2
+text = "R.I.P.... U have died"
+label_settings = SubResource("LabelSettings_cxd00")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="YouDiedSister2" type="Label" parent="Dead/VBoxContainer"]
+layout_mode = 2
+text = "You can respawn or close the game"
+label_settings = SubResource("LabelSettings_etlur")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Dead/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_constants/outline_size = 18
+theme_override_fonts/font = ExtResource("6_y4yjw")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/focus = ExtResource("15_etlur")
+theme_override_styles/hover = ExtResource("15_etlur")
+theme_override_styles/pressed = ExtResource("15_etlur")
+theme_override_styles/normal = ExtResource("15_etlur")
+shortcut = SubResource("Shortcut_os5c7")
+text = "RESPAWN"
+
+[connection signal="timeout" from="BiomeOverlay/CheckBiome" to="BiomeOverlay" method="_on_check_biome_timeout"]
+[connection signal="pressed" from="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer/CraftButton" to="InventoryUIScreen/Cont/Crafting" method="_on_craft_button_pressed"]
+[connection signal="pressed" from="Dead/VBoxContainer/Button" to="Dead" method="_on_button_pressed"]
+
+[editable path="ItemCursorFollow"]

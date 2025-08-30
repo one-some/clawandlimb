@@ -220,10 +220,10 @@ func alter_zoom(delta: float) -> void:
 	if not player_cam_active:
 		self.current = true
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if State.active_ui: return
 	
-	if event is InputEventKey and event.pressed:
+	if event is InputEventKey and event.is_pressed():
 		if event.is_action("build_y_up"):
 			set_threed_cursor_pos(threed_cursor.position + Vector3(0, 1, 0))
 		elif event.is_action("build_y_down"):
@@ -232,11 +232,9 @@ func _input(event: InputEvent) -> void:
 			alter_zoom(1.5)
 		elif event.is_action("zoom_in"):
 			alter_zoom(-1.5)
-	
-	if event is InputEventMouseMotion:
+	elif event is InputEventMouseMotion:
 		process_mouse_move(event)
-
-	elif event is InputEventMouseButton:
+	elif event is InputEventMouseButton and event.is_pressed():
 		var delta = {
 			MOUSE_BUTTON_WHEEL_UP: -1,
 			MOUSE_BUTTON_WHEEL_DOWN: 1,

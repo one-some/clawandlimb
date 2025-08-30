@@ -15,7 +15,7 @@ func _on_check_biome_timeout() -> void:
 	var cam = get_viewport().get_camera_3d()
 	
 	# Yeah its ugly whatever
-	var biome = (ChunkManager.chunks.values()[0] as VoxelMesh).get_biome(Vector2(
+	var biome = VoxelMesh.get_biome(Vector2(
 		cam.global_position.x,
 		cam.global_position.z,
 	))

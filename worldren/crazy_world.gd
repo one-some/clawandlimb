@@ -201,7 +201,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 	# Place things
 	if first_time:
 		for thing_pos in chunk.get_resource_position_candidates():
-			var biome = chunk.get_biome(Vector2(thing_pos.x, thing_pos.z))
+			var biome = VoxelMesh.get_biome(Vector2(thing_pos.x, thing_pos.z))
 			thing_pos.y -= 0.25
 			
 			if thing_pos.y + chunk.global_position.y < SEA_LEVEL + 0.75: continue

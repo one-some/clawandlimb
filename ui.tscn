@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=58 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
@@ -18,8 +18,10 @@
 [ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="7_waa4j"]
 [ext_resource type="Script" uid="uid://q7g2r04wynfy" path="res://crafting.gd" id="8_7rqds"]
 [ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
+[ext_resource type="Script" uid="uid://br54ccfeev44w" path="res://map_container.gd" id="9_cka8k"]
 [ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/7_plank.png" id="9_etlur"]
 [ext_resource type="Script" uid="uid://dxhdvcip00ldd" path="res://item_cursor_follow.gd" id="9_ok7cu"]
+[ext_resource type="Script" uid="uid://g0ryx1l6hew4" path="res://map.gd" id="10_v8jk5"]
 [ext_resource type="LabelSettings" uid="uid://d1gp74yg17uxo" path="res://generic_labelsettings_20px.tres" id="11_nvb2n"]
 [ext_resource type="Script" uid="uid://dsmi4iviuvgnt" path="res://dead.gd" id="14_cxd00"]
 [ext_resource type="StyleBox" uid="uid://c3rj870jxqmdi" path="res://deadly_box_who_wants_it.tres" id="15_etlur"]
@@ -210,6 +212,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="WaterOverlay" type="ColorRect" parent="."]
 visible = false
@@ -232,6 +235,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = SubResource("GradientTexture2D_x2s2p")
 script = ExtResource("2_sosvr")
 
@@ -246,6 +250,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = SubResource("GradientTexture2D_ndy3v")
 script = ExtResource("3_ndy3v")
 
@@ -375,6 +380,42 @@ theme_override_styles/background = SubResource("StyleBoxEmpty_gs482")
 theme_override_styles/fill = SubResource("StyleBoxFlat_cxd00")
 value = 40.0
 
+[node name="MapContainer" type="Control" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -128.0
+offset_bottom = 128.0
+grow_horizontal = 0
+script = ExtResource("9_cka8k")
+
+[node name="Map" type="Control" parent="MapContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("10_v8jk5")
+
+[node name="PlayerIcon" type="ColorRect" parent="MapContainer"]
+z_index = 1337
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0, 0, 1)
+
 [node name="BackBlur" type="Panel" parent="."]
 visible = false
 layout_mode = 1
@@ -387,13 +428,13 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_nltto")
 script = ExtResource("1_nltto")
 
 [node name="InventoryUIScreen" type="MarginContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
@@ -402,10 +443,12 @@ script = ExtResource("4_n5rqp")
 
 [node name="Cont" type="HBoxContainer" parent="InventoryUIScreen"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Inv" type="VBoxContainer" parent="InventoryUIScreen/Cont"]
 layout_mode = 2
 size_flags_horizontal = 0
+mouse_filter = 2
 alignment = 2
 
 [node name="PlayerPreview" type="Control" parent="InventoryUIScreen/Cont/Inv"]

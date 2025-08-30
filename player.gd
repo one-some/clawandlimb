@@ -14,6 +14,8 @@ var spawn_point = Vector3.ZERO
 var waiting_for_chunk = null
 
 func _ready() -> void:
+	State.player = self
+
 	Signals.tp_player.connect(func(pos):
 		third_person_cam.target_pole = pos
 		
@@ -59,7 +61,7 @@ func die() -> void:
 	tween.tween_property(self, "rotation_degrees:z", 90.0, 1.0)
 	tween.play()
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if event is not InputEventKey: return
 	if State.build_mode: return
 	if not Input.is_action_just_pressed("drop"): return
@@ -148,7 +150,7 @@ func _physics_process(delta: float) -> void:
 	# Make sure chunk we're in is generated...
 	var chunk_pos = ChunkManager.pos_to_chunk_pos(self.global_position)
 	
-	if chunk_pos not in ChunkManager.finished_chunks:
-		waiting_for_chunk = chunk_pos
-		frozen = true
-		Signals.change_player_in_loading_chunk.emit(true)
+	#if chunk_pos not in ChunkManager.finished_chunks:
+		#waiting_for_chunk = chunk_pos
+		#frozen = true
+		#Signals.change_player_in_loading_chunk.emit(true)
