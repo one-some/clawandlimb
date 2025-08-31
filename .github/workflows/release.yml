@@ -26,11 +26,23 @@ jobs:
         with:
           lfs: true
 
-      - name: Get short commit SHA
-        id: get_sha
-        run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-      - name: Setup
+      - name: Setup SCons
+        run: pip install scons
+
+      - name: Setup MSVC
+        uses: microsoft/setup-msvc@v1.1
+
+      - name: Build VoxelMesh
+        run: |
+          cd voxelcpp
+          scons platform=windows dev_build=yes
+
+      - name: Setup Godot
         run: |
           mkdir -v -p build/windows ~/.local/share/godot/export_templates
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
@@ -40,7 +52,7 @@ jobs:
       - name: Zip Artifacts
         run: |
           cd build/windows
-          zip -r ../build-windows-${{ steps.get_sha.outputs.SHA }}.zip .
+          zip -r ../build-windows-${{ GITHUB.SHA_SHORT }}.zip .
 
       - name: Update Nightly Release
         uses: ncipollo/release-action@v1
@@ -48,5 +60,5 @@ jobs:
           tag: nightly
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "build/build-windows-${{ steps.get_sha.outputs.SHA }}.zip"
+          artifacts: "build/build-windows-${{ GITHUB.SHA_SHORT }}.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
