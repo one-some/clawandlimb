@@ -10,15 +10,12 @@ env:
   EXPORT_NAME: ClawAndLimb
 
 jobs:
-  export-builds:
-    name: Export and Release
+  export-windows:
+    name: Windows Export
     runs-on: ubuntu-22.04
 
-    strategy:
-      matrix:
-        include:
-          - platform: windows
-            export_preset: "Windows Desktop"
+    container:
+      image: docker://barichello/godot-ci:4.4.1
 
     steps:
       - name: Checkout
@@ -30,21 +27,17 @@ jobs:
         id: get_sha
         run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Set up Godot
-        uses: abarichello/godot-ci@v4
-        with:
-          godot-version: ${{ env.GODOT_VERSION }}
-          mono: false
-
-      - name: Build Project
+      - name: Setup
         run: |
-          mkdir -p build/${{ matrix.platform }}
-          godot --headless --verbose --export-release "${{ matrix.export_preset }}" "build/${{ matrix.platform }}/${{ env.EXPORT_NAME }}.exe"
+          mkdir -v -p build/linux build/windows build/mac build/web ~/.local/share/godot/templates
+          mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/templates/${GODOT_VERSION}.stable
+      - name: Windows Build
+        run: godot -v --export "Windows Desktop" ./build/windows/$EXPORT_NAME.exe
 
       - name: Zip Artifacts
         run: |
           cd build/${{ matrix.platform }}
-          zip -r ../${{ env.EXPORT_NAME }}-${{ matrix.platform }}-${{ steps.get_sha.outputs.SHA }}.zip .
+          zip -r ../build-windows-${{ steps.get_sha.outputs.SHA }}.zip .
 
       - name: Update Nightly Release
         uses: ncipollo/release-action@v1
@@ -52,5 +45,5 @@ jobs:
           tag: nightly
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "build/${{ env.EXPORT_NAME }}-${{ matrix.platform }}-${{ steps.get_sha.outputs.SHA }}.zip"
+          artifacts: "build/windows-${{ steps.get_sha.outputs.SHA }}.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
