@@ -12,7 +12,7 @@ env:
 jobs:
   export-windows:
     name: Windows Export
-    runs-on: ubuntu-22.04
+    runs-on: windows-2022
 
     container:
       image: docker://barichello/godot-ci:4.4.1
@@ -33,9 +33,6 @@ jobs:
 
       - name: Setup SCons
         run: pip install scons
-
-      - name: Setup MSVC
-        uses: microsoft/setup-msvc@v1.1
 
       - name: Build VoxelMesh
         run: |
