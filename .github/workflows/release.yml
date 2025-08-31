@@ -1,0 +1,54 @@
+name: Godot Export Release
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  GODOT_VERSION: 4.4.1
+  PROJECT_NAME: ClawAndLimb
+
+jobs:
+  export-and-release:
+    name: Export and Release
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - platform: windows
+            export_preset: "Windows Desktop"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get short commit SHA
+        id: get_sha
+        run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up Godot
+        uses: abarichello/godot-ci@v1.2
+        with:
+          godot-version: ${{ env.GODOT_VERSION }}
+          mono: false
+
+      - name: Build Project
+        run: |
+          mkdir -p build/${{ matrix.platform }}
+          godot --headless --verbose --export-release "${{ matrix.export_preset }}" "build/${{ matrix.platform }}/${{ env.PROJECT_NAME }}"
+
+      - name: Zip Artifacts
+        run: |
+          cd build/${{ matrix.platform }}
+          zip -r ../${{ env.PROJECT_NAME }}-${{ matrix.platform }}-${{ steps.get_sha.outputs.SHA }}.zip .
+
+      - name: Update Nightly Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: nightly
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: "build/${{ env.PROJECT_NAME }}-${{ matrix.platform }}-${{ steps.get_sha.outputs.SHA }}.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
