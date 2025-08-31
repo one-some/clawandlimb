@@ -128,6 +128,7 @@ public:
 
     inline float get_terrain_noise(const Vector3 &pos) {
         const auto v2_pos = Vector2(pos.x, pos.z);
+        // 55
 
         float height = get_noise(low_noise, v2_pos * 0.0002) * 300.0;
 

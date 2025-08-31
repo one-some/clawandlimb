@@ -141,6 +141,7 @@ void VoxelMesh::generate_chunk_data()
 {
     const Vector3 global_base = chunk_pos * (real_t)CHUNK_SIZE;
     HashSet<Vector3> resource_cells;
+    // 333333
     resource_position_candidates.clear();
 
     for (int x = 0; x < PADDED_SIZE; x++)
@@ -164,8 +165,11 @@ void VoxelMesh::generate_chunk_data()
 
                 Vector3 voxel_above = local_pos + Vector3(0, 1, 0);
                 if (
-                    density > 0.0f && in_padded(voxel_above) && UtilityFunctions::randf() < 0.02)
-                {
+                    material != MATERIAL_STONE
+                    && density > 0.0f
+                    && in_padded(voxel_above)
+                    && UtilityFunctions::randf() < 0.02
+                ) {
                     size_t above_idx = get_index(voxel_above);
                     float above_density = voxel_densities[above_idx];
 
@@ -190,8 +194,6 @@ void VoxelMesh::generate_chunk_data()
                         }
                     }
                 }
-
-                // TODO: TREES
             }
         }
     }

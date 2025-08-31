@@ -200,31 +200,34 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 	
 	# Place things
 	if first_time:
-		for thing_pos in chunk.get_resource_position_candidates():
-			var biome = VoxelMesh.get_biome(Vector2(thing_pos.x, thing_pos.z))
-			thing_pos.y -= 0.25
+		for local_thing_pos in chunk.get_resource_position_candidates():
+			local_thing_pos.y -= 0.25
 			
-			if thing_pos.y + chunk.global_position.y < SEA_LEVEL + 0.75: continue
+			var global_thing_pos = local_thing_pos + chunk.global_position
+			if global_thing_pos.y < SEA_LEVEL + 0.75: continue
 			
-			var thing: Node3D
+			var biome = VoxelMesh.get_biome(Vector2(global_thing_pos.x, global_thing_pos.z))
+			
+			var thing: Node3D = null
 			var rand = randf()
 			
-			if biome == VoxelMesh.BIOME_GRASS:
-				if rand < 0.1:
-					thing = CopperRes.instantiate()
-				elif rand < 0.3:
-					thing = RockRes.instantiate()
-				else:
-					thing = TreeRes.instantiate()
-			elif biome == VoxelMesh.BIOME_TUNDRA:
-				if rand < 0.3:
-					thing = RockRes.instantiate()
-				elif rand < 0.7:
-					thing = TreeRes.instantiate()
-			
+			match biome:
+				VoxelMesh.BIOME_GRASS:
+					if rand < 0.1:
+						thing = CopperRes.instantiate()
+					elif rand < 0.3:
+						thing = RockRes.instantiate()
+					else:
+						thing = TreeRes.instantiate()
+				VoxelMesh.BIOME_TUNDRA:
+					if rand < 0.4:
+						thing = TreeRes.instantiate()
+					elif rand < 0.7:
+						thing = RockRes.instantiate()
+				
 			if not thing: continue
-					
-			thing.position = thing_pos
+			
+			thing.position = local_thing_pos
 			thing.rotation.y = randf() * PI * 2
 			chunk.add_child(thing)
 	

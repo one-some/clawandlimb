@@ -18,7 +18,7 @@ void vertex() {
 vec4 triplanar_sample(float id, vec3 pos, vec3 norm) {
 	float layer = floor(id);
 	//pos *= 5.0;
-	
+
 	vec4 x_tex = texture(textures, vec3(pos.zy, layer));
 	vec4 y_tex = texture(textures, vec3(pos.xz, layer));
 	vec4 z_tex = texture(textures, vec3(pos.xy, layer));
