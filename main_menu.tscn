@@ -1,0 +1,198 @@
+[gd_scene load_steps=14 format=3 uid="uid://butf8ci7057pu"]
+
+[ext_resource type="Texture2D" uid="uid://cxsr2d8qmr12t" path="res://tex/tiles/2_stone.png" id="1_06t4h"]
+[ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="2_fu7sn"]
+[ext_resource type="FontFile" uid="uid://1a8j4ce3jyq5" path="res://PixAntiqua.ttf" id="3_jix8l"]
+[ext_resource type="FontFile" uid="uid://dq2o1ux1rufks" path="res://Cavalhatriz.ttf" id="4_jix8l"]
+[ext_resource type="Script" uid="uid://cssfc8suunm6a" path="res://world_container.gd" id="5_nlkkf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_glbon"]
+font = ExtResource("2_fu7sn")
+font_size = 21
+font_color = Color(0.378906, 0.378906, 0.378906, 1)
+outline_size = 1
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_nlkkf"]
+font = ExtResource("3_jix8l")
+font_size = 72
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 7
+shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jix8l"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fu7sn"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 1, 0.14902)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.313726)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qe12f"]
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 1, 0.0431373)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.313726)
+anti_aliasing = false
+
+[sub_resource type="LabelSettings" id="LabelSettings_jix8l"]
+font = ExtResource("2_fu7sn")
+font_size = 10
+font_color = Color(1, 1, 1, 0.443137)
+
+[sub_resource type="LabelSettings" id="LabelSettings_qe12f"]
+font = ExtResource("4_jix8l")
+font_size = 32
+font_color = Color(0.989746, 0.8125, 1, 1)
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BG" type="TextureRect" parent="."]
+modulate = Color(0.464844, 0.464844, 0.464844, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -864.0
+offset_bottom = -486.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(4, 4)
+texture = ExtResource("1_06t4h")
+stretch_mode = 1
+
+[node name="Main" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Main"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -234.0
+offset_top = -178.0
+offset_right = 234.0
+offset_bottom = 178.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="S" type="Label" parent="Main/VBoxContainer"]
+layout_mode = 2
+text = "What I'm currently calling"
+label_settings = SubResource("LabelSettings_glbon")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Big" type="Label" parent="Main/VBoxContainer"]
+layout_mode = 2
+text = "Claw and Limb"
+label_settings = SubResource("LabelSettings_nlkkf")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="S2" type="Label" parent="Main/VBoxContainer"]
+layout_mode = 2
+text = "But it needs a better name. Lmk"
+label_settings = SubResource("LabelSettings_glbon")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Main/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_jix8l")
+
+[node name="Worlds" type="Button" parent="Main/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_fu7sn")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qe12f")
+theme_override_styles/normal = SubResource("StyleBoxFlat_qe12f")
+text = "Worlds"
+
+[node name="Quit" type="Button" parent="Main/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_fu7sn")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qe12f")
+theme_override_styles/normal = SubResource("StyleBoxFlat_qe12f")
+text = "Quit"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Main"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = -197.0
+offset_right = 317.0
+offset_bottom = -3.0
+grow_vertical = 0
+alignment = 2
+
+[node name="Label2" type="Label" parent="Main/VBoxContainer2"]
+layout_mode = 2
+text = "Version: ROLLING BABY"
+label_settings = SubResource("LabelSettings_jix8l")
+
+[node name="Label" type="Label" parent="Main/VBoxContainer2"]
+layout_mode = 2
+text = "Discovered by Claire"
+label_settings = SubResource("LabelSettings_qe12f")
+vertical_alignment = 1
+
+[node name="Worlds" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Worlds"]
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="WorldContainer" type="VBoxContainer" parent="Worlds/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("5_nlkkf")

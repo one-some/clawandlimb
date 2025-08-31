@@ -1,0 +1,63 @@
+[gd_scene load_steps=6 format=3 uid="uid://832v3uu1l2m1"]
+
+[ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="1_kvwv7"]
+[ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="2_aheua"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nlkkf"]
+bg_color = Color(1, 1, 1, 0.0235294)
+
+[sub_resource type="LabelSettings" id="LabelSettings_8qtwp"]
+font = ExtResource("1_kvwv7")
+font_size = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_dy7ct"]
+font = ExtResource("2_aheua")
+font_size = 20
+font_color = Color(1, 1, 1, 0.34902)
+
+[node name="World" type="Panel"]
+custom_minimum_size = Vector2(0, 128)
+theme_override_styles/panel = SubResource("StyleBoxFlat_nlkkf")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="WorldName" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "My World (3)"
+label_settings = SubResource("LabelSettings_8qtwp")
+
+[node name="WorldSize" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "30.21 MiB"
+label_settings = SubResource("LabelSettings_dy7ct")
+
+[node name="Constructables" type="Label" parent="MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 0
+text = "2,934 Constructables"
+label_settings = SubResource("LabelSettings_dy7ct")
+
+[node name="LastPlayed" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+text = "8/31/2025 - 2:35 AM"
+label_settings = SubResource("LabelSettings_dy7ct")

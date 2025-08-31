@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ClawAndLimb"
-run/main_scene="uid://bysjxpr0tkfu1"
+run/main_scene="uid://butf8ci7057pu"
 config/features=PackedStringArray("4.4", "Forward Plus")
 run/max_fps=60
 config/icon="res://icon.svg"

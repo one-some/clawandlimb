@@ -3,10 +3,10 @@ extends Node
 const SAVE_PATH = "user://save.json"
 var handlers = {}
 
-func _ready() -> void:
+func _zzzzzzzzzzzz_ready() -> void:
 	await get_viewport().ready
 	await get_tree().process_frame
-	load_save()
+	#load_save()
 
 func vec_to_array(vec) -> Variant:
 	if not vec: return null
@@ -37,6 +37,7 @@ func save() -> void:
 func load_save() -> void:
 	if not FileAccess.file_exists(SAVE_PATH):
 		print("No file")
+		breakpoint
 		return
 
 	var save_file = FileAccess.open(SAVE_PATH, FileAccess.READ)
@@ -47,7 +48,33 @@ func load_save() -> void:
 		var parse_result = json.parse(line)
 		if parse_result != OK:
 			print("JSON Parse Error: ", json.get_error_message(), " in ", line, " at line ", json.get_error_line())
+			breakpoint
 			continue
 
 		var data = json.data
 		handlers[data["handler"]]["from_json"].call(data["data"])
+
+
+
+
+
+
+
+
+
+
+
+const STOCK_WORLDS_PATH = "res://data/importworlds"
+const USER_WORLDS_PATH = "user://worlds/"
+
+func _ready() -> void:
+	DirAccess.make_dir_absolute(USER_WORLDS_PATH)
+
+func _dirs_in_dir_absolute(path: String) -> Array:
+	return Array(DirAccess.get_directories_at(path)).map(path.path_join)
+
+func get_saves() -> Array:
+	return (
+		_dirs_in_dir_absolute(STOCK_WORLDS_PATH)
+		+ _dirs_in_dir_absolute(USER_WORLDS_PATH)
+	).map(WorldSave.new)
