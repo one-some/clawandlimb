@@ -3,33 +3,36 @@ name: Godot Export Release
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   GODOT_VERSION: 4.4.1
-  PROJECT_NAME: ClawAndLimb
+  EXPORT_NAME: ClawAndLimb
 
 jobs:
-  export-and-release:
+  export-builds:
     name: Export and Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     strategy:
       matrix:
         include:
           - platform: windows
             export_preset: "Windows Desktop"
+            output: "build/windows/${{ env.EXPORT_NAME }}.exe"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Get short commit SHA
         id: get_sha
         run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Set up Godot
-        uses: abarichello/godot-ci@v1.2
+        uses: abarichello/godot-ci@v4
         with:
           godot-version: ${{ env.GODOT_VERSION }}
           mono: false
@@ -37,12 +40,12 @@ jobs:
       - name: Build Project
         run: |
           mkdir -p build/${{ matrix.platform }}
-          godot --headless --verbose --export-release "${{ matrix.export_preset }}" "build/${{ matrix.platform }}/${{ env.PROJECT_NAME }}"
+          godot --headless --verbose --export-release "${{ matrix.export_preset }}" "${{ matrix.output }}"
 
       - name: Zip Artifacts
         run: |
           cd build/${{ matrix.platform }}
-          zip -r ../${{ env.PROJECT_NAME }}-${{ matrix.platform }}-${{ steps.get_sha.outputs.SHA }}.zip .
+          zip -r ../${{ env.EXPORT_NAME }}-${{ matrix.platform }}-${{ steps.get_sha.outputs.SHA }}.zip .
 
       - name: Update Nightly Release
         uses: ncipollo/release-action@v1
@@ -50,5 +53,5 @@ jobs:
           tag: nightly
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "build/${{ env.PROJECT_NAME }}-${{ matrix.platform }}-${{ steps.get_sha.outputs.SHA }}.zip"
+          artifacts: "build/${{ env.EXPORT_NAME }}-${{ matrix.platform }}-${{ steps.get_sha.outputs.SHA }}.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
