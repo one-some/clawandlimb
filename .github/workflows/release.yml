@@ -17,6 +17,9 @@ jobs:
     container:
       image: docker://barichello/godot-ci:4.4.1
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
