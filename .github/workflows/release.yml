@@ -19,7 +19,6 @@ jobs:
         include:
           - platform: windows
             export_preset: "Windows Desktop"
-            output: "build/windows/${{ env.EXPORT_NAME }}.exe"
 
     steps:
       - name: Checkout
@@ -40,7 +39,7 @@ jobs:
       - name: Build Project
         run: |
           mkdir -p build/${{ matrix.platform }}
-          godot --headless --verbose --export-release "${{ matrix.export_preset }}" "${{ matrix.output }}"
+          godot --headless --verbose --export-release "${{ matrix.export_preset }}" "build/${{ matrix.platform }}/${{ env.EXPORT_NAME }}.exe"
 
       - name: Zip Artifacts
         run: |
