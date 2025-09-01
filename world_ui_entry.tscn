@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://832v3uu1l2m1"]
+[gd_scene load_steps=10 format=3 uid="uid://832v3uu1l2m1"]
 
+[ext_resource type="Script" uid="uid://fa7mr561myp0" path="res://world_ui_entry.gd" id="1_aheua"]
 [ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="1_kvwv7"]
 [ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="2_aheua"]
 
@@ -15,9 +16,38 @@ font = ExtResource("2_aheua")
 font_size = 20
 font_color = Color(1, 1, 1, 0.34902)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kvwv7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aheua"]
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 1, 0.14902)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.313726)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q1anh"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 1, 0.0431373)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.313726)
+anti_aliasing = false
+
 [node name="World" type="Panel"]
 custom_minimum_size = Vector2(0, 128)
+offset_right = 487.0
+offset_bottom = 128.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_nlkkf")
+script = ExtResource("1_aheua")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -61,3 +91,39 @@ layout_mode = 2
 size_flags_vertical = 0
 text = "8/31/2025 - 2:35 AM"
 label_settings = SubResource("LabelSettings_dy7ct")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Play" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+modulate = Color(0.6628, 0.855469, 0.554718, 1)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_aheua")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_kvwv7")
+theme_override_styles/hover = SubResource("StyleBoxFlat_aheua")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_q1anh")
+theme_override_styles/normal = SubResource("StyleBoxFlat_q1anh")
+text = "Play"
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Delete" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+modulate = Color(0.855469, 0.554718, 0.554718, 1)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_aheua")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_kvwv7")
+theme_override_styles/hover = SubResource("StyleBoxFlat_aheua")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_q1anh")
+theme_override_styles/normal = SubResource("StyleBoxFlat_q1anh")
+text = "Delete"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Delete" to="." method="_on_delete_pressed"]

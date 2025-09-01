@@ -154,7 +154,7 @@ void VoxelMesh::generate_chunk_data()
                 Vector3 global_pos = global_base + local_pos;
                 Vector2 global_2d_pos = Vector2(global_pos.x, global_pos.z);
 
-                float density = noise->get_terrain_noise(global_pos);
+                float density = sample_noise(global_pos);
                 Biome biome = get_biome(global_2d_pos);
 
                 size_t idx = get_index(local_pos);

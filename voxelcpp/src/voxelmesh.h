@@ -31,9 +31,9 @@ private:
     };
 
     inline static NoiseManager* noise = nullptr;
+    inline static float sea_level = 0.0f;
 
     Vector3 chunk_pos;
-    inline static float sea_level = 0.0f;
     PackedVector3Array resource_position_candidates;
     HashSet<Vector3i> destroyed_voxels;
     bool first_time_generated = true;
@@ -50,19 +50,21 @@ protected:
         ClassDB::bind_method(D_METHOD("delete_area", "area", "soft_delete"), &VoxelMesh::delete_area);
 
         ClassDB::bind_static_method(get_class_static(), D_METHOD("set_seed", "seed"), &VoxelMesh::set_seed);
+        ClassDB::bind_static_method(get_class_static(), D_METHOD("set_worldgen_algorithm", "worldgen"), &VoxelMesh::set_worldgen_algorithm);
         ClassDB::bind_static_method(get_class_static(), D_METHOD("set_sea_level", "sea_level"), &VoxelMesh::set_sea_level);
         ClassDB::bind_static_method(get_class_static(), D_METHOD("get_biome", "pos"), &VoxelMesh::get_biome);
         ClassDB::bind_static_method(get_class_static(), D_METHOD("sample_noise", "pos"), &VoxelMesh::sample_noise);
         ClassDB::bind_static_method(get_class_static(), D_METHOD("find_a_good_place_to_spawn_that_player_guy"), &VoxelMesh::find_a_good_place_to_spawn_that_player_guy);
-
         ClassDB::bind_static_method(get_class_static(), D_METHOD("get_chunk_size"), &VoxelMesh::get_chunk_size);
 
         BIND_ENUM_CONSTANT(BIOME_GRASS);
         BIND_ENUM_CONSTANT(BIOME_DESERT);
         BIND_ENUM_CONSTANT(BIOME_TUNDRA);
 
-        ADD_SIGNAL(MethodInfo("finished_mesh_generation"));
+        BIND_ENUM_CONSTANT(WORLDGEN_FLAT);
+        BIND_ENUM_CONSTANT(WORLDGEN_KITTY);
 
+        ADD_SIGNAL(MethodInfo("finished_mesh_generation"));
         if (!noise) noise = memnew(NoiseManager);
     }
 
@@ -73,16 +75,33 @@ public:
         BIOME_TUNDRA
     };
 
+    enum Worldgen {
+        WORLDGEN_KITTY,
+        WORLDGEN_FLAT,
+    };
+
+    inline static Worldgen worldgen_algorithm = WORLDGEN_KITTY;
+
     VoxelMesh() { }
     ~VoxelMesh() = default;
 
     static int get_chunk_size() { return CHUNK_SIZE; }
 
-    static float sample_noise(const Vector3 &pos) { return noise->get_terrain_noise(pos); }
+    static float sample_noise(const Vector3 &pos) {
+        switch (worldgen_algorithm) {
+            case WORLDGEN_FLAT:
+                return 50.0f - pos.y;
+            case WORLDGEN_KITTY:
+            default:
+                return noise->get_terrain_noise(pos);
+        }
+    }
+
     static VoxelMesh::Biome get_biome(const Vector2 &pos);
 
     static void set_sea_level(float p_sea_level) { sea_level = p_sea_level; }
     static void set_seed(int seed) { noise->set_seed(seed); }
+    static void set_worldgen_algorithm(Worldgen p_worldgen_algorithm) { worldgen_algorithm = p_worldgen_algorithm; }
 
     static Vector3 find_a_good_place_to_spawn_that_player_guy() {
         for (int attempt = 0; attempt < 1000; attempt++) {
@@ -93,14 +112,14 @@ public:
                 UtilityFunctions::randf() * rand_range
             );
 
-            float density = noise->get_terrain_noise(point);
+            float density = sample_noise(point);
             if (density < 0.0) continue;
 
             UtilityFunctions::print("Took ", attempt, " attempts. Now looping...");
 
             while (density > 0.0) {
                 point.y += 1.0f;
-                density = noise->get_terrain_noise(point);
+                density = sample_noise(point);
             }
 
             return point;
@@ -147,5 +166,6 @@ public:
 }
 
 VARIANT_ENUM_CAST(godot::VoxelMesh::Biome);
+VARIANT_ENUM_CAST(godot::VoxelMesh::Worldgen);
 
 #endif

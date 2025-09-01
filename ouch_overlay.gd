@@ -11,5 +11,4 @@ func _process(delta: float) -> void:
 	self.modulate.a -= 0.01
 
 func _on_change_player_health(combat: CombatRecipient, delta: float) -> void:
-	print("FREAKING YIKES")
 	self.modulate.a = clamp(-delta * 2.0 / combat.max_health, 0.0, 1.0)

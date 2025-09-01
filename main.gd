@@ -36,6 +36,9 @@ func _ready() -> void:
 	)
 	get_tree().set_auto_accept_quit(false)
 	$WorldEnvironment/AnimationPlayer.play("Cycle", -1, 0.5)
+	
+	assert(State.active_save)
+	Signals.load_save.emit(State.active_save)
 
 func _process(delta: float) -> void:
 	time_normalized += delta / DAY_LENGTH_SECONDS

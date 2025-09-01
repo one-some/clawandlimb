@@ -1,6 +1,8 @@
 @warning_ignore_start("unused_signal")
 extends Node
 
+signal load_save(save: WorldSave)
+
 signal camera_shake(strength: float, origin: Vector3)
 signal ui_blur(enable: bool)
 signal ui_changed(active_ui: State.ActiveUI)

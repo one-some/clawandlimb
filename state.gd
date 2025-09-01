@@ -1,5 +1,7 @@
 extends Node
 
+var active_save: WorldSave
+
 enum ActiveUI {
 	NONE = 0,
 	INVENTORY,

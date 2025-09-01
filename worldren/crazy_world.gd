@@ -16,8 +16,6 @@ const GROW_CHUNKS = 4
 static var CHUNK_SIZE: int = VoxelMesh.get_chunk_size()
 static var PADDED_SIZE: int = CHUNK_SIZE + 1
 
-var seed = randi() * 09142008 * 1000
-
 var ids = []
 var world_aabb = AABB()
 
@@ -33,12 +31,20 @@ func _ready() -> void:
 	
 	$/root/Main/Water.position.y = SEA_LEVEL
 	VoxelMesh.set_sea_level(SEA_LEVEL)
-	VoxelMesh.set_seed(seed)
 	
-	var pos = VoxelMesh.find_a_good_place_to_spawn_that_player_guy()
-	Signals.tp_player.emit(pos + Vector3(0, 2.0, 0))
+	Signals.load_save.connect(func(save: WorldSave):
+		VoxelMesh.set_worldgen_algorithm(save.get_worldgen_algorithm())
+		VoxelMesh.set_seed(save.get_seed_int())
+		
+		seed(save.get_seed_int())
+		var pos = VoxelMesh.find_a_good_place_to_spawn_that_player_guy()
+		
+		Signals.tp_player.emit(pos + Vector3(0, 2.0, 0))
+		generate_around(pos, GROW_CHUNKS)
+	)
 	
-	generate_around(pos, GROW_CHUNKS)
+	print("Chunk manager ready")
+
 
 func _process(delta: float) -> void:
 	var cam = get_viewport().get_camera_3d()
@@ -170,6 +176,9 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		)
 		chunk_threads[chunk] = task_id
 
+func should_place_stuff() -> bool:
+	return State.active_save.get_worldgen_algorithm() not in [VoxelMesh.WORLDGEN_FLAT]
+
 func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: bool) -> void:
 	if chunk in chunk_threads:
 		var task_id = chunk_threads[chunk]
@@ -199,7 +208,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 	collision_shape.shape = chunk.mesh.create_trimesh_shape()
 	
 	# Place things
-	if first_time:
+	if first_time and should_place_stuff():
 		for local_thing_pos in chunk.get_resource_position_candidates():
 			local_thing_pos.y -= 0.25
 			

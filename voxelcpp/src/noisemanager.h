@@ -6,69 +6,6 @@
 
 using namespace godot;
 
-inline float smoother_step(float edge0, float edge1, float x) {
-	x = Math::clamp(
-        (x - edge0) / Math::max(0.00001f, edge1 - edge0),
-        0.0f,
-        1.0f
-    );
-	return x * x * (3.0 - 2.0 * x);
-}
-
-inline float fbm2d(
-    FastNoiseLite &noise,
-    const Vector2 &pos,
-    int octaves,
-    float lacunarity,
-    float gain
-) {
-    float sum = 0.0f;
-    float amp = 1.0f;
-    float freq = 1.0f;
-
-    for (int i = 0; i < octaves; i++) {
-        auto adjusted_pos = pos * freq;
-        sum += noise.GetNoise(adjusted_pos.x, adjusted_pos.y) * amp;
-        freq *= lacunarity;
-        amp *= gain;
-    }
-
-    return sum;
-}
-
-inline float fbm3d(
-    FastNoiseLite &noise,
-    const Vector3 &pos,
-    int octaves,
-    float lacunarity,
-    float gain
-) {
-    float sum = 0.0f;
-    float amp = 1.0f;
-    float freq = 1.0f;
-
-    for (int i = 0; i < octaves; i++) {
-        auto adjusted_pos = pos * freq;
-        sum += noise.GetNoise(adjusted_pos.x, adjusted_pos.y, adjusted_pos.z) * amp;
-        freq *= lacunarity;
-        amp *= gain;
-    }
-
-    return sum;
-}
-
-inline float terrace(
-    float height,
-    float step,
-    float smoothness
-) {
-    if (step <= 0.0) return height;
-    float i = floor(height / step);
-    float frac = (height - i * step) / step;
-    float sfrac = smoothness >= 1.0 ? smoother_step(0.0, 1.0, frac) : frac;
-    return (i + sfrac) * step;
-}
-
 class NoiseManager {
 public:
     FastNoiseLite low_noise;

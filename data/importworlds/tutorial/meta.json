@@ -1,5 +1,6 @@
 {
     "name": "Tutorial",
     "worldgen": "flat_basic",
-    "last_played": 0
+    "last_played": 0,
+    "seed": "will it ever go anywhere"
 }
