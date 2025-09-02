@@ -36,11 +36,7 @@ func _ready() -> void:
 		VoxelMesh.set_worldgen_algorithm(save.get_worldgen_algorithm())
 		VoxelMesh.set_seed(save.get_seed_int())
 		
-		seed(save.get_seed_int())
-		var pos = VoxelMesh.find_a_good_place_to_spawn_that_player_guy()
-		
-		Signals.tp_player.emit(pos + Vector3(0, 2.0, 0))
-		generate_around(pos, GROW_CHUNKS)
+		Signals.world_ready.emit()
 	)
 	
 	print("Chunk manager ready")

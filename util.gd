@@ -6,6 +6,11 @@ static func read_json(path: String) -> Variant:
 	assert(out)
 	return out
 
+static func write_json(path: String, data: Variant) -> void:
+	var fa = FileAccess.open(path, FileAccess.WRITE)
+	fa.store_string(JSON.stringify(data))
+	fa.close()
+
 static func get_directory_space_usage(path: String, sum: int = 0) -> int:
 	var dir = DirAccess.open(path)
 	assert(dir)

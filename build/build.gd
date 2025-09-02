@@ -9,8 +9,7 @@ var down_click_pos = null
 var active_constructable: Constructable = null
 
 func _ready() -> void:
-	Save.register_handler("build", to_json, from_json)
-	
+	#Save.register_handler("build", to_json, from_json)
 	set_build_mode(State.build_mode, null)
 	Signals.change_active_hotbar_slot.connect(_change_active_hotbar_slot)
 	Signals.update_3d_cursor_pos.connect(_on_3d_cursor_pos_update)

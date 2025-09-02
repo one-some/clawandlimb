@@ -4,15 +4,16 @@ extends Control
 @onready var world_seed_box: LineEdit = $VBoxContainer/WorldSeed
 @onready var world_type_selector: MenuButton = $VBoxContainer/WorldType
 
-const WORLD_TYPES = {
+const WorldTypes = {
 	"Normal": VoxelMesh.WORLDGEN_KITTY,
 	"Flat": VoxelMesh.WORLDGEN_FLAT
 }
+const Main = preload("res://main.tscn")
 
-var world_type: VoxelMesh.Worldgen
+var world_type: VoxelMesh.Worldgen = WorldTypes.values()[0]
 
 func _ready() -> void:
-	for label in WORLD_TYPES:
+	for label in WorldTypes:
 		world_type_selector.get_popup().add_item(label)
 
 	world_type_selector.get_popup().id_pressed.connect(_on_world_type_selected)
@@ -25,9 +26,9 @@ func get_mad_at(who: Control) -> void:
 	tween.play()
 
 func _on_world_type_selected(id: int) -> void:
-	var label = WORLD_TYPES.keys()[id]
+	var label = WorldTypes.keys()[id]
 	world_type_selector.text = "World Type: %s" % label
-	world_type = WORLD_TYPES.values()[id]
+	world_type = WorldTypes.values()[id]
 
 
 func _on_new_world_pressed() -> void:
@@ -36,4 +37,16 @@ func _on_new_world_pressed() -> void:
 		get_mad_at(control)
 		return
 	
-	OS.alert("Ok do this later rofl")
+	if not world_name_box.text.is_valid_filename():
+		get_mad_at(world_name_box)
+		return
+	
+	var save = WorldSave.create(
+		world_name_box.text,
+		world_type,
+		world_seed_box.text
+	)
+	
+	State.active_save = save
+	get_tree().change_scene_to_packed(Main)
+	

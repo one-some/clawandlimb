@@ -2,6 +2,7 @@
 extends Node
 
 signal load_save(save: WorldSave)
+signal world_ready()
 
 signal camera_shake(strength: float, origin: Vector3)
 signal ui_blur(enable: bool)

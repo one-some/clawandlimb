@@ -1,4 +1,4 @@
-extends CharacterBody3D
+class_name Player extends CharacterBody3D
 
 @onready var third_person_cam: Camera3D = $"../Camera3D"
 @onready var first_person_cam: Camera3D = $FirstPersonCamera
@@ -8,32 +8,36 @@ extends CharacterBody3D
 
 const ITEM_MAX_RANGE = 2.0
 
+var player_name = "Claire"
+var player_save: PlayerSave = State.active_save.players[player_name]
+
 var combat = CombatRecipient.new("Claire", 100.0)
 var frozen = true
 var spawn_point = Vector3.ZERO
-var waiting_for_chunk = null
 
 func _ready() -> void:
 	State.player = self
+	player_save.register_player_body(self)
 
-	Signals.tp_player.connect(func(pos):
-		third_person_cam.target_pole = pos
-		
-		frozen = false
-		spawn_point = pos
-		self.global_position = pos
+	# Init position
+	Signals.world_ready.connect(
+		(func():
+			var pos = player_save.get_position()
+			if pos == null:
+				seed(State.active_save.get_seed_int())
+				pos = VoxelMesh.find_a_good_place_to_spawn_that_player_guy() + Vector3(0, 2, 0)
+				spawn_point = pos
+			self.global_position = pos
+			third_person_cam.target_pole = pos
+			frozen = false),
+		CONNECT_ONE_SHOT
 	)
+
+	
 	Signals.player_respawn_requested.connect(respawn)
 	Signals.change_player_skin.connect(change_player_skin)
 	combat.died.connect(die)
 	combat.took_damage.connect(func(_dmg): Signals.change_player_health.emit(combat, -_dmg))
-	
-	Signals.chunk_generated.connect(func(chunk: VoxelMesh, chunk_pos: Vector3):
-		if chunk_pos != waiting_for_chunk: return
-		frozen = false
-		waiting_for_chunk = null
-		Signals.change_player_in_loading_chunk.emit(false)
-	)
 	
 	# HACK: For some UI stuff
 	await get_tree().process_frame

@@ -194,7 +194,6 @@ label_settings = SubResource("LabelSettings_qe12f")
 vertical_alignment = 1
 
 [node name="Worlds" type="Control" parent="Menus"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -225,10 +224,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("5_nlkkf")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Menus/Worlds/VBoxContainer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Menus/Worlds/VBoxContainer/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Menus/Worlds/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 8
@@ -236,8 +232,12 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="NewWorld" type="Button" parent="Menus/Worlds/VBoxContainer/HBoxContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Menus/Worlds/VBoxContainer/MarginContainer"]
 layout_mode = 2
+
+[node name="NewWorld" type="Button" parent="Menus/Worlds/VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("2_fu7sn")
 theme_override_font_sizes/font_size = 20
@@ -247,7 +247,19 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_qe12f")
 theme_override_styles/normal = SubResource("StyleBoxFlat_qe12f")
 text = "New World"
 
+[node name="Back" type="Button" parent="Menus/Worlds/VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_fu7sn")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fu7sn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_fu7sn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qe12f")
+theme_override_styles/normal = SubResource("StyleBoxFlat_qe12f")
+text = "Back"
+
 [node name="NewWorld" type="Control" parent="Menus"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -325,5 +337,6 @@ text = "Create World"
 
 [connection signal="pressed" from="Menus/Main/VBoxContainer/Worlds" to="." method="_on_worlds_pressed"]
 [connection signal="pressed" from="Menus/Main/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="Menus/Worlds/VBoxContainer/HBoxContainer/MarginContainer/NewWorld" to="." method="_on_new_world_pressed"]
+[connection signal="pressed" from="Menus/Worlds/VBoxContainer/MarginContainer/HBoxContainer/NewWorld" to="." method="_on_new_world_pressed"]
+[connection signal="pressed" from="Menus/Worlds/VBoxContainer/MarginContainer/HBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="Menus/NewWorld/VBoxContainer/NewWorld" to="Menus/NewWorld" method="_on_new_world_pressed"]

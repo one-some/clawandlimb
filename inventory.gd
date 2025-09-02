@@ -70,8 +70,7 @@ func _ready() -> void:
 	inventory.resize(9 * 4)
 	inventory.fill(null)
 	
-	Save.register_handler("inventory", to_json, from_json)
-	
+	#Save.register_handler("inventory", to_json, from_json)
 	Signals.try_pickup_item.connect(add)
 
 func prioritized_indices() -> Array:

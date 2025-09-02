@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=63 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
@@ -25,6 +25,7 @@
 [ext_resource type="LabelSettings" uid="uid://d1gp74yg17uxo" path="res://generic_labelsettings_20px.tres" id="11_nvb2n"]
 [ext_resource type="Script" uid="uid://dsmi4iviuvgnt" path="res://dead.gd" id="14_cxd00"]
 [ext_resource type="StyleBox" uid="uid://c3rj870jxqmdi" path="res://deadly_box_who_wants_it.tres" id="15_etlur"]
+[ext_resource type="Script" uid="uid://baj1mhdesjrw0" path="res://pause_menu.gd" id="20_53buu"]
 
 [sub_resource type="Gradient" id="Gradient_ndy3v"]
 offsets = PackedFloat32Array(0.679487, 1)
@@ -164,6 +165,36 @@ content_margin_right = 4.0
 content_margin_bottom = 4.0
 bg_color = Color(0.252936, 0.393229, 0.255129, 1)
 anti_aliasing = false
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cka8k"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_53buu"]
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 1, 0.14902)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.313726)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7w61g"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 1, 0.0431373)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.313726)
+anti_aliasing = false
+
+[sub_resource type="LabelSettings" id="LabelSettings_cka8k"]
+font = ExtResource("7_waa4j")
+font_size = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y4yjw"]
 bg_color = Color(0, 0, 0, 0.772549)
@@ -417,7 +448,6 @@ grow_vertical = 2
 color = Color(1, 0, 0, 1)
 
 [node name="BackBlur" type="Panel" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -428,6 +458,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_nltto")
 script = ExtResource("1_nltto")
 
 [node name="InventoryUIScreen" type="MarginContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -626,6 +657,75 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_nvb2n")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vkygq")
 text = "Craft"
 
+[node name="PauseMenu" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("20_53buu")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Dont" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_cka8k")
+theme_override_styles/hover = SubResource("StyleBoxFlat_53buu")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7w61g")
+theme_override_styles/normal = SubResource("StyleBoxFlat_7w61g")
+text = "Resume"
+
+[node name="Blowup" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_cka8k")
+theme_override_styles/hover = SubResource("StyleBoxFlat_53buu")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7w61g")
+theme_override_styles/normal = SubResource("StyleBoxFlat_7w61g")
+text = "Blow Up"
+
+[node name="Quit" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_cka8k")
+theme_override_styles/hover = SubResource("StyleBoxFlat_53buu")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7w61g")
+theme_override_styles/normal = SubResource("StyleBoxFlat_7w61g")
+text = "Quit"
+
+[node name="SaveNotif" type="Label" parent="PauseMenu"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -20.0
+offset_right = 228.0
+grow_vertical = 0
+text = "I'm saving teh game . . ."
+label_settings = SubResource("LabelSettings_cka8k")
+horizontal_alignment = 2
+vertical_alignment = 2
+
 [node name="ItemTooltip" type="PanelContainer" parent="."]
 visible = false
 layout_mode = 0
@@ -722,6 +822,9 @@ text = "RESPAWN"
 
 [connection signal="timeout" from="BiomeOverlay/CheckBiome" to="BiomeOverlay" method="_on_check_biome_timeout"]
 [connection signal="pressed" from="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer/CraftButton" to="InventoryUIScreen/Cont/Crafting" method="_on_craft_button_pressed"]
+[connection signal="pressed" from="PauseMenu/VBoxContainer/Dont" to="PauseMenu" method="_on_dont_pressed"]
+[connection signal="pressed" from="PauseMenu/VBoxContainer/Blowup" to="PauseMenu" method="_on_blowup_pressed"]
+[connection signal="pressed" from="PauseMenu/VBoxContainer/Quit" to="PauseMenu" method="_on_quit_pressed"]
 [connection signal="pressed" from="Dead/VBoxContainer/Button" to="Dead" method="_on_button_pressed"]
 
 [editable path="ItemCursorFollow"]

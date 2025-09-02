@@ -5,7 +5,8 @@ var active_save: WorldSave
 enum ActiveUI {
 	NONE = 0,
 	INVENTORY,
-	DEAD
+	DEAD,
+	PAUSE
 }
 var active_ui: ActiveUI = ActiveUI.NONE
 

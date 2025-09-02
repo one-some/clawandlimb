@@ -17,3 +17,6 @@ func _on_quit_pressed() -> void:
 
 func _on_new_world_pressed() -> void:
 	show_menu($Menus/NewWorld)
+
+func _on_back_pressed() -> void:
+	show_menu($Menus/Main)
