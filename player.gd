@@ -132,6 +132,9 @@ func _physics_process(delta: float) -> void:
 	var speed = 6.0
 	var gravity = get_gravity() * delta
 	
+	if self.is_on_floor():
+		self.velocity.y = 0.0
+	
 	if is_in_water():
 		speed /= 2.0
 		gravity /= 4.0

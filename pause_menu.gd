@@ -1,6 +1,5 @@
 extends Control
 
-const MainMenu = preload("res://main_menu.tscn")
 @onready var save_notif = $SaveNotif
 
 func _ready() -> void:
@@ -37,4 +36,7 @@ func _on_blowup_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	save()
-	get_tree().change_scene_to_packed(MainMenu)
+	
+	# Circular dependancy.......
+	var main_menu = load("res://main_menu.tscn")
+	get_tree().change_scene_to_packed(main_menu)
