@@ -46,10 +46,18 @@ func _init(p_dir_path: String) -> void:
 	assert(typeof(meta["last_played"]) in [TYPE_INT, TYPE_FLOAT])
 	assert(meta["seed"] is String)
 	assert(typeof(meta["save_version"]) in [TYPE_INT, TYPE_FLOAT])
-	
-	for player in DirAccess.get_directories_at(dir_path.path_join("players")):
-		players[player] = PlayerSave.new(self, player)
-		print("Loaded player '%s' !" % player)
+
+func load_full():
+	for player_name in DirAccess.get_directories_at(dir_path.path_join("players")):
+		if player_name in players: continue
+		players[player_name] = PlayerSave.new(self, player_name)
+		print("Loaded player '%s' !" % player_name)
+
+func get_or_create_player(player_name: String) -> PlayerSave:
+	if player_name not in players:
+		players[player_name] = PlayerSave.new(self, player_name)
+		print("Created playersave for ", player_name)
+	return players[player_name]
 
 func write() -> void:
 	Util.write_json(dir_path.path_join("meta.json"), meta)
@@ -57,8 +65,37 @@ func write() -> void:
 	for player_save in players.values():
 		player_save.write()
 
+func can_delete_save_CHANGECARE() -> bool:
+	if not dir_path.begins_with("user://"): return false
+	if not dir_path.begins_with(dir_path): return false
+	
+	var global_target = ProjectSettings.globalize_path(dir_path)
+	var global_user = ProjectSettings.globalize_path("user://")
+	if not global_target.begins_with(global_user): return false
+	
+	return true
+
+func _delete_subdir(directory: String) -> void:
+	# Please, please, please, please, please do not rm -rf
+	if not can_delete_save_CHANGECARE():
+		assert(false)
+		return
+	
+	for dir_name in DirAccess.get_directories_at(directory):
+		_delete_subdir(directory.path_join(dir_name))
+		
+	for file_name in DirAccess.get_files_at(directory):
+		DirAccess.remove_absolute(directory.path_join(file_name))
+
+	DirAccess.remove_absolute(directory)
+
+func delete() -> void:
+	_delete_subdir(dir_path)
+
 func get_seed_int() -> int:
 	return meta["seed"].hash() + 09142008
+
+func get_name() -> String: return meta["name"]
 
 func get_worldgen_algorithm() -> VoxelMesh.Worldgen:
 	return WorldgenTypes[meta["worldgen"]]

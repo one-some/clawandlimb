@@ -1,6 +1,7 @@
 extends Node
 
 var active_save: WorldSave
+var player_name = "Claire"
 
 enum ActiveUI {
 	NONE = 0,

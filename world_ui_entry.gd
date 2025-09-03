@@ -1,5 +1,7 @@
 extends Panel
 
+signal delete_pressed
+
 const Main = preload("res://main.tscn")
 
 @onready var world_name: Label = %WorldName
@@ -18,10 +20,10 @@ func setup(save: WorldSave) -> void:
 		Time.get_datetime_string_from_unix_time(meta_data["last_played"], true)
 	)
 
-
 func _on_play_pressed() -> void:
 	State.active_save = save
+	save.load_full()
 	get_tree().change_scene_to_packed(Main)
 
 func _on_delete_pressed() -> void:
-	OS.alert("No way. Nuh uh. Won't do it.", "Claire Says:")
+	delete_pressed.emit()

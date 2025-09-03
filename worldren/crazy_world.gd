@@ -6,7 +6,7 @@ const RockRes = preload("res://rock.tscn")
 const CopperRes = preload("res://copper_rock.tscn")
 
 const SEA_LEVEL = 12 + 0.9
-const GROW_CHUNKS = 4
+const GROW_CHUNKS = 6
 
 @export var biome_humidity: Noise
 @export var biome_temperature: Noise
@@ -19,9 +19,14 @@ static var PADDED_SIZE: int = CHUNK_SIZE + 1
 var ids = []
 var world_aabb = AABB()
 
-var chunks_left = 0
-static var chunks = {}
-static var finished_chunks = []
+class ChunkJob:
+	var chunk_position: Vector3i
+	var score: float
+
+static var chunks: Dictionary[Vector3i, VoxelMesh] = {}
+static var chunk_queue: Dictionary[Vector3i, ChunkJob] = {}
+var pending_chunks = 0
+
 var chunk_threads = {}
 
 func _ready() -> void:
@@ -46,7 +51,7 @@ func _process(delta: float) -> void:
 	var cam = get_viewport().get_camera_3d()
 	generate_around(cam.global_position, GROW_CHUNKS)
 
-static func pos_to_chunk_pos(pos: Vector3) -> Vector3:
+static func pos_to_chunk_pos(pos: Vector3) -> Vector3i:
 	return (pos / CHUNK_SIZE).floor()
 
 func clamp_vec3(v: Vector3, min_val: float, max_val: float) -> Vector3:
@@ -68,9 +73,9 @@ func delete_area(area: AABB, soft_delete: bool) -> void:
 	for chunk_x in range(start_chunk.x, end_chunk.x + 1):
 		for chunk_y in range(start_chunk.y, end_chunk.y + 1):
 			for chunk_z in range(start_chunk.z, end_chunk.z + 1):
-				var chunk_pos = Vector3(chunk_x, chunk_y, chunk_z)
+				var chunk_pos = Vector3i(chunk_x, chunk_y, chunk_z)
 				
-				if chunk_pos not in finished_chunks:
+				if chunk_pos not in chunks:
 					print("TODO: Generatte")
 					continue
 				
@@ -118,29 +123,55 @@ func load_tiles() -> void:
 	))
 	State._hack_t2d = t2d_arr
 
-func generate_around(global_origin: Vector3, extent: int = 3) -> void:
+func generate_chunk(chunk_pos: Vector3) -> void:
+	pass
+
+func add_chunk_candidates_to_queue(global_origin: Vector3, extent: int) -> Array:
 	var chunk_origin = pos_to_chunk_pos(global_origin)
-	
 	var positions = []
+	
 	for x in range(-extent, extent):
 		for y in range(-extent, extent):
 			for z in range(-extent, extent):
-				positions.append(chunk_origin + Vector3(x, y, z))
+				var pos = chunk_origin + Vector3i(x, y, z)
+				
+				if pos in chunks: continue
+				if pos in chunk_queue: continue
+				
+				var job = ChunkJob.new()
+				job.score = 0.0
+				job.chunk_position = pos
+				chunk_queue[pos] = job
+				pending_chunks += 1
 	
-	positions = positions.filter(func(x): return x not in chunks)
-	if not positions: return
+	return positions
+
+
+func generate_around(global_origin: Vector3, extent: int = 3) -> void:
+	# TODO: Extent
+	add_chunk_candidates_to_queue(global_origin, extent)
 	
-	positions.sort_custom(func(a, b): return b.distance_to(chunk_origin) > a.distance_to(chunk_origin))
-	#positions = positions.slice(0, 10)
+	var chunk_jobs = chunk_queue.values()
+	chunk_queue.clear()
 	
-	chunks_left = positions.size()
-	print("Generating %s chunks :3" % chunks_left)
+	if not chunk_jobs:
+		return
+	
+	var cam = get_viewport().get_camera_3d()
+	for job in chunk_jobs:
+		var chunk_global_pos = (Vector3(job.chunk_position) * CHUNK_SIZE) + (Vector3.ONE * CHUNK_SIZE * 0.5)
+		var dist_sq = global_origin.distance_squared_to(chunk_global_pos)
+		var chunk_visible = 1.0 if cam.is_position_in_frustum(chunk_global_pos) else 0.0
+		job.score = (chunk_visible * 1000.0) + (1.0 / (dist_sq + 1.0))
+
+	chunk_jobs.sort_custom(func(a: ChunkJob, b: ChunkJob): return a.score > b.score)
+	print("Generating %s chunks :3" % len(chunk_jobs))
 	
 	if not world_aabb:
-		var first_pos = pos_to_chunk_pos(positions[0])
+		var first_pos = chunk_jobs[0].chunk_position * CHUNK_SIZE
 		world_aabb = AABB(first_pos, Vector3.ZERO)
 	
-	for pos in positions:
+	for job in chunk_jobs:
 		var chunk = VoxelMesh.new()
 		self.add_child(chunk)
 		
@@ -149,15 +180,15 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		chunk.material_override = ChunkMaterial
 		chunk.material_override.set_shader_parameter("textures", State._hack_t2d)
 		
-		chunk.set_pos(pos)
+		chunk.set_pos(job.chunk_position)
 		
-		chunks[pos] = chunk
+		chunks[job.chunk_position] = chunk
 		chunk.finished_mesh_generation.connect(func(first_time: bool):
-			_on_chunk_mesh_generated(chunk, pos, first_time)
+			_on_chunk_mesh_generated(chunk, job, first_time)
 		)
 		
 		world_aabb = world_aabb.merge(AABB(
-			pos * CHUNK_SIZE,
+			job.chunk_position * CHUNK_SIZE,
 			Vector3(
 				CHUNK_SIZE,
 				CHUNK_SIZE,
@@ -171,17 +202,20 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 			chunk.generate_mesh()
 		)
 		chunk_threads[chunk] = task_id
+	
 
 func should_place_stuff() -> bool:
 	return State.active_save.get_worldgen_algorithm() not in [VoxelMesh.WORLDGEN_FLAT]
 
-func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: bool) -> void:
-	if chunk in chunk_threads:
-		var task_id = chunk_threads[chunk]
-		WorkerThreadPool.wait_for_task_completion(task_id)
-		chunk_threads.erase(chunk)
+func _on_chunk_mesh_generated(chunk: VoxelMesh, job: ChunkJob, first_time: bool) -> void:
+	var chunk_pos = job.chunk_position
 	
-	var chunk_center = (chunk_pos + Vector3(0.5, 0.5, 0.5)) * CHUNK_SIZE
+	#if chunk in chunk_threads:
+		#var task_id = chunk_threads[chunk]
+		#WorkerThreadPool.wait_for_task_completion(task_id)
+		#chunk_threads.erase(chunk)
+	
+	var chunk_center = (Vector3(chunk_pos) + Vector3(0.5, 0.5, 0.5)) * CHUNK_SIZE
 	#print("Sampling at chunk center: ", VoxelMesh.sample_noise(chunk_center))
 	
 	var body: StaticBody3D
@@ -236,14 +270,13 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3, first_time: 
 			thing.rotation.y = randf() * PI * 2
 			chunk.add_child(thing)
 	
-		# TODO: How to interact with first_time???
-		chunks_left -= 1
-		#print("%s chunk5s left" % chunks_left)
+		pending_chunks -= 1
 		
-		if not chunks_left:
+		if pending_chunks == 0:
 			bake_world_nav(world_aabb.grow(1.0))
 	
-	finished_chunks.push_back(chunk_pos)
+	chunks[chunk_pos] = chunk
+	
 	Signals.chunk_generated.emit(chunk, chunk_pos)
 
 func bake_world_nav(aabb: AABB) -> void:
@@ -262,14 +295,3 @@ func bake_world_nav(aabb: AABB) -> void:
 		
 	await nav_region.bake_finished
 	print("World navigation bake finished!")
-
-func update_chunk_collision(chunk_pos: Vector2) -> void:
-	print("LOL NOT ACTUALLY UPDATYING (anything)")
-
-func _exit_tree() -> void:
-	# If something terrible happens...
-	#for task_id in chunk_threads.values():
-	#WorkerThreadPool.wait_for_task_completion(task_id)
-	# Ok actually this just freezes the game on close. I'll
-	pass
-	# on that.

@@ -72,6 +72,14 @@ func _ready() -> void:
 	
 	#Save.register_handler("inventory", to_json, from_json)
 	Signals.try_pickup_item.connect(add)
+	
+	Signals.load_save.connect(func(save: WorldSave):
+		var maybe_inv = save.get_or_create_player(State.player_name).get_inventory()
+		print("MaybeInv ", maybe_inv)
+		if maybe_inv:
+			from_json(maybe_inv)
+	)
+
 
 func prioritized_indices() -> Array:
 	# Is it hack....? Maybe..

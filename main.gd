@@ -34,7 +34,6 @@ func _ready() -> void:
 		'"I must be going," he said out loud, and he added on a note of rather cheap wit, '
 		+ '"and I\'m taking my box of cakes with me."'
 	)
-	get_tree().set_auto_accept_quit(false)
 	$WorldEnvironment/AnimationPlayer.play("Cycle", -1, 0.5)
 	
 	assert(State.active_save)
@@ -50,10 +49,3 @@ func _process(delta: float) -> void:
 		time_normalized * anim_player.get_animation("Cycle").length,
 		true
 	)
-
-func _notification(what):
-	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		print("Saving...")
-		State.active_save.write()
-		print("Done saving!")
-		get_tree().quit()

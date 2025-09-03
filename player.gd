@@ -8,8 +8,7 @@ class_name Player extends CharacterBody3D
 
 const ITEM_MAX_RANGE = 2.0
 
-var player_name = "Claire"
-var player_save: PlayerSave = State.active_save.players[player_name]
+var player_save: PlayerSave = State.active_save.get_or_create_player(State.player_name)
 
 var combat = CombatRecipient.new("Claire", 100.0)
 var frozen = true
@@ -17,7 +16,6 @@ var spawn_point = Vector3.ZERO
 
 func _ready() -> void:
 	State.player = self
-	player_save.register_player_body(self)
 
 	# Init position
 	Signals.world_ready.connect(
