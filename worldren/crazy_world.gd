@@ -80,7 +80,7 @@ func delete_area(area: AABB, soft_delete: bool) -> void:
 					continue
 				
 				var chunk = chunks[chunk_pos]
-				var chunk_origin = chunk_pos * CHUNK_SIZE
+				var chunk_origin = Vector3(chunk_pos) * CHUNK_SIZE
 				var chunk_far_bound = chunk_origin + Vector3(
 					CHUNK_SIZE,
 					CHUNK_SIZE,

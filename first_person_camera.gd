@@ -13,7 +13,7 @@ func _input(event: InputEvent) -> void:
 		player.rotation.y -= event.relative.x / 300.0
 		self.rotation.x = clampf(
 			self.rotation.x - (event.relative.y / 300.0),
-			-PI / 2.0,
+			(-PI / 2.0) + 0.001,
 			PI / 2.0
 		)
 
