@@ -239,7 +239,11 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, job: ChunkJob, first_time: bool)
 	
 	# Place things
 	if first_time and should_place_stuff():
+		var structure_rng = RandomNumberGenerator.new()
+		structure_rng.seed = hash(chunk_pos) + State.active_save.get_seed_int()
+		
 		for local_thing_pos in chunk.get_resource_position_candidates():
+			if structure_rng.randf() > 0.02: continue
 			local_thing_pos.y -= 0.25
 			
 			var global_thing_pos = local_thing_pos + chunk.global_position
@@ -248,7 +252,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, job: ChunkJob, first_time: bool)
 			var biome = VoxelMesh.get_biome(Vector2(global_thing_pos.x, global_thing_pos.z))
 			
 			var thing: Node3D = null
-			var rand = randf()
+			var rand = structure_rng.randf()
 			
 			match biome:
 				VoxelMesh.BIOME_GRASS:
@@ -267,9 +271,28 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, job: ChunkJob, first_time: bool)
 			if not thing: continue
 			
 			thing.position = local_thing_pos
-			thing.rotation.y = randf() * PI * 2
+			thing.rotation.y = structure_rng.randf() * PI * 2
 			chunk.add_child(thing)
 	
+		var structures = {
+			"courtyard": {"model": preload("res://courtyard.tscn"), "size": Vector3i(7, 1, 7)}
+		}
+		
+		# TODO: Make these chances different for different structures
+		if structure_rng.randf() < 0.05:
+			var candidate_locations = chunk.get_structure_location_candidates(structures)
+			
+			for structure_name in candidate_locations.keys():
+				for pos in candidate_locations[structure_name]:
+					pos.y -= 0.5
+					
+					var thing = structures[structure_name]["model"].instantiate()
+					thing.position = pos
+					chunk.add_child(thing)
+					break
+	
+	
+	if first_time:
 		pending_chunks -= 1
 		
 		if pending_chunks == 0:

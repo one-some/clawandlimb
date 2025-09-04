@@ -48,6 +48,7 @@ protected:
         ClassDB::bind_method(D_METHOD("set_pos", "pos"), &VoxelMesh::set_pos);
         ClassDB::bind_method(D_METHOD("get_resource_position_candidates"), &VoxelMesh::get_resource_position_candidates);
         ClassDB::bind_method(D_METHOD("delete_area", "area", "soft_delete"), &VoxelMesh::delete_area);
+        ClassDB::bind_method(D_METHOD("get_structure_location_candidates", "structures"), &VoxelMesh::get_structure_location_candidates);
 
         ClassDB::bind_static_method(get_class_static(), D_METHOD("set_seed", "seed"), &VoxelMesh::set_seed);
         ClassDB::bind_static_method(get_class_static(), D_METHOD("set_worldgen_algorithm", "worldgen"), &VoxelMesh::set_worldgen_algorithm);
@@ -161,6 +162,8 @@ public:
     void generate_mesh();
 
     void delete_area(const AABB &area, bool soft_delete = true);
+
+    Dictionary get_structure_location_candidates(Dictionary structures);
 };
 
 }

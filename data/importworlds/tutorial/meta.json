@@ -1,6 +1,1 @@
-{
-    "name": "Tutorial",
-    "worldgen": "flat_basic",
-    "last_played": 0,
-    "seed": "will it ever go anywhere"
-}
+{"last_played":0.0,"name":"Tutorial","save_version":0.0,"seed":"will it ever go anywhere","worldgen":"flat_basic"}

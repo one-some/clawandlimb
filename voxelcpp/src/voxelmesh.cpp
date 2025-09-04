@@ -168,7 +168,7 @@ void VoxelMesh::generate_chunk_data()
                     material != MATERIAL_STONE
                     && density > 0.0f
                     && in_padded(voxel_above)
-                    && UtilityFunctions::randf() < 0.02
+                    // && UtilityFunctions::randf() < 0.02
                 ) {
                     size_t above_idx = get_index(voxel_above);
                     float above_density = voxel_densities[above_idx];
@@ -495,4 +495,80 @@ void VoxelMesh::generate_mesh()
     call_deferred("set_mesh", mesh);
     call_deferred("emit_signal", "finished_mesh_generation", first_time_generated);
     first_time_generated = false;
+}
+
+Dictionary VoxelMesh::get_structure_location_candidates(Dictionary structures) {
+    Dictionary location_candidates;
+
+    // FIXME: This lowkey sux and I want float based heightmap
+    int heightmap[PADDED_SIZE][PADDED_SIZE];
+    for (int x = 0; x < PADDED_SIZE; x++) {
+        for (int z = 0; z < PADDED_SIZE; z++) {
+            heightmap[x][z] = -1;
+
+            for (int y = PADDED_SIZE - 1; y >= 0; y--) {
+                if (voxel_densities[get_index(x, y, z)] < 0.0f) continue;
+
+                heightmap[x][z] = y;
+                break;
+            }
+        }
+    }
+
+    for (int i = 0; i < structures.size(); i++) {
+        StringName name = structures.keys()[i];
+        Dictionary structure = structures.values()[i];
+        Vector3i size = structure["size"];
+
+        PackedVector3Array position_candidates;
+
+        // FIXME: Float too
+        int flatness_tolerance = 0;
+
+        for (int x = 1; x < CHUNK_SIZE - size.x; x++) {
+            for (int z = 1; z < CHUNK_SIZE - size.z; z++) {
+                int y = heightmap[x][z];
+                if (y < 0) continue;
+                if (y < sea_level) continue;
+
+                bool is_evil = false;
+                for (int sx = 0; sx < size.x; sx++) {
+                    for (int sz = 0; sz < size.z; sz++) {
+                        if (Math::abs(heightmap[x + sx][z + sz] - y) <= flatness_tolerance) continue;
+
+                        is_evil = true;
+                        break;
+                    }
+                    if (is_evil) break;
+                }
+                if (is_evil) continue;
+
+                // Ok we're flat enough now everything in the box above y=0 needs to be air...
+
+                for (int sx = 0; sx < size.x; sx++) {
+                    for (int sz = 0; sz < size.z; sz++) {
+                        for (int sy = 1; sy <= size.y; sy++) {
+                            if (
+                                y + sy < PADDED_SIZE
+                                && voxel_densities[get_index(x + sx, y + sy, z + sz)] < 0.0f
+                            ) continue;
+
+                            is_evil = true;
+                            break;
+                        }
+                        if (is_evil) break;
+                    }
+                    if (is_evil) break;
+                }
+                if (is_evil) continue;
+
+                position_candidates.append(Vector3i(x, y + 1, z));
+                z += size.z - 1;
+
+            }
+        }
+        if (!position_candidates.is_empty()) location_candidates[name] = position_candidates;
+    }
+
+    return location_candidates;
 }

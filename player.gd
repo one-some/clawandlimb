@@ -127,8 +127,11 @@ func _physics_process(delta: float) -> void:
 	
 	var move_dir = (forward * input_dir.y) + (right * input_dir.x)
 	
-	var speed = 6.0
+	var speed = 5.0
 	var gravity = get_gravity() * delta
+	
+	if Input.is_action_pressed("faster"):
+		speed += 4.0
 	
 	if self.is_on_floor():
 		self.velocity.y = 0.0
