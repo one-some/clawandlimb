@@ -1,3 +1,14 @@
 # Godot 4+ specific ignores
 .godot/
-/android/
+.nomedia
+*.import
+*.gdb
+*.pdb
+*.so
+*.dll
+*.exp
+*.ilk
+*.lib
+
+.import/
+*.tmp
