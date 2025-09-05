@@ -27,6 +27,12 @@ func _ready() -> void:
 				spawn_point = pos
 			self.global_position = pos
 			third_person_cam.target_pole = pos
+			
+			State.chunk_manager.generate_sync(ChunkManager.pos_to_chunk_pos(pos))
+			State.chunk_manager.generate_sync(ChunkManager.pos_to_chunk_pos(pos) - Vector3i(0, 1, 0))
+			
+			State.chunk_manager.do_generate = true
+			
 			frozen = false),
 		CONNECT_ONE_SHOT
 	)

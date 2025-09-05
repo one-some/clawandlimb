@@ -13,22 +13,42 @@ const GROW_CHUNKS = 6
 @export var biome_temperature: Noise
 
 @onready var nav_region = $NavigationRegion3D
+@onready var chunk_queue_mutex = Mutex.new()
 
 static var CHUNK_SIZE: int = VoxelMesh.get_chunk_size()
 static var PADDED_SIZE: int = CHUNK_SIZE + 1
 
 var ids = []
 var world_aabb = AABB()
+var do_generate = false
 
 class ChunkJob:
 	var chunk_position: Vector3i
 	var score: float
+	var heavy_lifting: Callable
+	var scored = false
 
 static var chunks: Dictionary[Vector3i, VoxelMesh] = {}
 static var chunk_queue: Dictionary[Vector3i, ChunkJob] = {}
 var pending_chunks = 0
 
-var chunk_threads = {}
+func chunk_gen_worker(n: int) -> void:
+	print(n)
+	
+	# TODO: MUTEX
+	chunk_queue_mutex.lock()
+	var potential_targets = chunk_queue.values().filter(func(job: ChunkJob): return job.scored and job.heavy_lifting)
+	chunk_queue_mutex.unlock()
+	if not potential_targets:
+		# Sleep a bit....
+		return
+	
+	potential_targets.sort_custom(func(a: ChunkJob, b: ChunkJob): return a.score > b.score)
+	var target = potential_targets[0]
+	# TODO: Release mutex
+	print(target)
+	target.heavy_lifting()
+	
 
 func _ready() -> void:
 	# Does this suck. Let me know.
@@ -49,6 +69,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if not do_generate: return
 	var cam = get_viewport().get_camera_3d()
 	generate_around(cam.global_position, GROW_CHUNKS)
 
@@ -144,19 +165,48 @@ func add_chunk_candidates_to_queue(global_origin: Vector3, extent: int) -> Array
 	
 	return positions
 
+func generate_sync(chunk_pos: Vector3i) -> void:
+	var chunk = VoxelMesh.new()
+	self.add_child(chunk)
+	
+	chunk.set_layer_mask_value(2, true)
+	
+	chunk.material_override = ChunkMaterial
+	chunk.material_override.set_shader_parameter("textures", State._hack_t2d)
+	
+	chunk.set_pos(chunk_pos)
+	
+	chunks[chunk_pos] = chunk
+	chunk.finished_mesh_generation.connect(func(first_time: bool):
+		_on_chunk_mesh_generated(chunk, chunk_pos, first_time)
+	)
+	
+	world_aabb = world_aabb.merge(AABB(
+		chunk_pos * CHUNK_SIZE,
+		Vector3(
+			CHUNK_SIZE,
+			CHUNK_SIZE,
+			CHUNK_SIZE
+		)
+	))
+	
+	chunk.generate_chunk_data()
+	chunk.generate_mesh()
 
 func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	# TODO: Extent
 	add_chunk_candidates_to_queue(global_origin, extent)
+	chunk_queue_mutex.lock()
 	
-	var chunk_jobs = chunk_queue.values()
-	chunk_queue.clear()
+	var chunk_jobs = chunk_queue.values().filter(func(x): return not x.scored)
 	
 	if not chunk_jobs:
 		return
 	
 	var cam = get_viewport().get_camera_3d()
 	for job in chunk_jobs:
+		job.scored = true
+		
 		var chunk_global_pos = (Vector3(job.chunk_position) * CHUNK_SIZE) + (Vector3.ONE * CHUNK_SIZE * 0.5)
 		var dist_sq = global_origin.distance_squared_to(chunk_global_pos)
 		var chunk_visible = 1.0 if cam.is_position_in_frustum(chunk_global_pos) else 0.0
@@ -182,7 +232,7 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		
 		chunks[job.chunk_position] = chunk
 		chunk.finished_mesh_generation.connect(func(first_time: bool):
-			_on_chunk_mesh_generated(chunk, job, first_time)
+			_on_chunk_mesh_generated(chunk, job.chunk_position, first_time)
 		)
 		
 		world_aabb = world_aabb.merge(AABB(
@@ -194,20 +244,20 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 			)
 		))
 		
-		var task_id = WorkerThreadPool.add_task(func():
+		job.heavy_lifting = (func():
 			if not chunk: return
 			chunk.generate_chunk_data()
+			if not is_instance_valid(chunk): return
 			chunk.generate_mesh()
 		)
-		chunk_threads[chunk] = task_id
-	
+
+	chunk_queue_mutex.unlock()
+	WorkerThreadPool.add_group_task(chunk_gen_worker, chunk_jobs.size())
 
 func should_place_stuff() -> bool:
 	return State.active_save.get_worldgen_algorithm() not in [VoxelMesh.WORLDGEN_FLAT]
 
-func _on_chunk_mesh_generated(chunk: VoxelMesh, job: ChunkJob, first_time: bool) -> void:
-	var chunk_pos = job.chunk_position
-	
+func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3i, first_time: bool) -> void:
 	#if chunk in chunk_threads:
 		#var task_id = chunk_threads[chunk]
 		#WorkerThreadPool.wait_for_task_completion(task_id)
