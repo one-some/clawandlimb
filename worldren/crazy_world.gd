@@ -2,6 +2,7 @@ class_name ChunkManager extends Node3D
 
 const ChunkMaterial = preload("res://worldren/chunk_material.tres")
 const TreeRes = preload("res://tree.tscn")
+const PineTreeRes = preload("res://pine_tree.tscn")
 const RockRes = preload("res://rock.tscn")
 const CopperRes = preload("res://copper_rock.tscn")
 
@@ -122,9 +123,6 @@ func load_tiles() -> void:
 		return ResourceLoader.load(path + file_name).get_image()
 	))
 	State._hack_t2d = t2d_arr
-
-func generate_chunk(chunk_pos: Vector3) -> void:
-	pass
 
 func add_chunk_candidates_to_queue(global_origin: Vector3, extent: int) -> Array:
 	var chunk_origin = pos_to_chunk_pos(global_origin)
@@ -264,7 +262,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, job: ChunkJob, first_time: bool)
 						thing = TreeRes.instantiate()
 				VoxelMesh.BIOME_TUNDRA:
 					if rand < 0.4:
-						thing = TreeRes.instantiate()
+						thing = PineTreeRes.instantiate()
 					elif rand < 0.7:
 						thing = RockRes.instantiate()
 				
