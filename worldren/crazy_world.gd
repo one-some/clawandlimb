@@ -21,6 +21,7 @@ static var PADDED_SIZE: int = CHUNK_SIZE + 1
 var ids = []
 var world_aabb = AABB()
 var do_generate = false
+var exit_threads = false
 
 class ChunkJob:
 	var chunk_position: Vector3i
@@ -32,23 +33,27 @@ static var chunks: Dictionary[Vector3i, VoxelMesh] = {}
 static var chunk_queue: Dictionary[Vector3i, ChunkJob] = {}
 var pending_chunks = 0
 
+var chunk_threads: Array[Thread] = []
+
 func chunk_gen_worker(n: int) -> void:
-	print(n)
-	
-	# TODO: MUTEX
-	chunk_queue_mutex.lock()
-	var potential_targets = chunk_queue.values().filter(func(job: ChunkJob): return job.scored and job.heavy_lifting)
-	chunk_queue_mutex.unlock()
-	if not potential_targets:
-		# Sleep a bit....
-		return
-	
-	potential_targets.sort_custom(func(a: ChunkJob, b: ChunkJob): return a.score > b.score)
-	var target = potential_targets[0]
-	# TODO: Release mutex
-	print(target)
-	target.heavy_lifting()
-	
+	while true:
+		if exit_threads:
+			print("Closing thread ", n)
+			return
+		
+		# TODO: MUTEX
+		var potential_targets = chunk_queue.values().filter(func(job: ChunkJob): return job.scored and job.heavy_lifting)
+		if not potential_targets:
+			print("Waiting...")
+			await get_tree().create_timer(0.05).timeout
+			continue
+		
+		potential_targets.sort_custom(func(a: ChunkJob, b: ChunkJob): return a.score > b.score)
+		var target = potential_targets[0]
+		# TODO: Release mutex
+		print(target)
+		target.heavy_lifting.call()
+		#target.heavy_lifting()
 
 func _ready() -> void:
 	# Does this suck. Let me know.
@@ -63,10 +68,13 @@ func _ready() -> void:
 		VoxelMesh.set_seed(save.get_seed_int())
 		
 		Signals.world_ready.emit()
+		
+		for i in range(1):
+			print("Spawning thread ", i)
+			var chunk_thread = Thread.new()
+			chunk_thread.start(chunk_gen_worker.bind(i))
+			chunk_threads.append(chunk_thread)
 	)
-	
-	print("Chunk manager ready")
-
 
 func _process(delta: float) -> void:
 	if not do_generate: return
@@ -252,7 +260,6 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 		)
 
 	chunk_queue_mutex.unlock()
-	WorkerThreadPool.add_group_task(chunk_gen_worker, chunk_jobs.size())
 
 func should_place_stuff() -> bool:
 	return State.active_save.get_worldgen_algorithm() not in [VoxelMesh.WORLDGEN_FLAT]
@@ -366,3 +373,9 @@ func bake_world_nav(aabb: AABB) -> void:
 		
 	await nav_region.bake_finished
 	print("World navigation bake finished!")
+
+func _exit_tree() -> void:
+	# TODO: Mutex
+	exit_threads = true
+	for thread in chunk_threads:
+		thread.wait_to_finish()
