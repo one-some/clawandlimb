@@ -13,7 +13,6 @@ const GROW_CHUNKS = 6
 @export var biome_temperature: Noise
 
 @onready var nav_region = $NavigationRegion3D
-@onready var chunk_queue_mutex = Mutex.new()
 
 static var CHUNK_SIZE: int = VoxelMesh.get_chunk_size()
 static var PADDED_SIZE: int = CHUNK_SIZE + 1
@@ -23,14 +22,53 @@ var world_aabb = AABB()
 var do_generate = false
 var exit_threads = false
 
+enum JobState {
+	PENDING,
+	WORKING,
+	DONE
+}
+
 class ChunkJob:
 	var chunk_position: Vector3i
-	var score: float
+	var score: float = 0.0
 	var heavy_lifting: Callable
-	var scored = false
+	var state: JobState = JobState.PENDING
+	
+	func update_score(generation_origin: Vector3, cam: Camera3D) -> void:
+		var chunk_origin = Vector3(self.chunk_position) * ChunkManager.CHUNK_SIZE
+		var half_size = ChunkManager.CHUNK_SIZE * 0.5
+		
+		var center = chunk_origin + Vector3(half_size, half_size, half_size)
+		var top_center = chunk_origin + Vector3(half_size, ChunkManager.CHUNK_SIZE, half_size)
+
+		
+		var dist_sq = generation_origin.distance_squared_to(center)
+		var base_score = 1.0 / (dist_sq + 1.0)
+
+		var visible_count = 0
+		if cam.is_position_in_frustum(center):
+			visible_count += 1
+		elif cam.is_position_in_frustum(top_center):
+			visible_count += 1
+
+		var visibility_ratio = float(visible_count) / 2.0
+		var visibility_bonus = 1.0 + (visibility_ratio * 0.4)
+
+		var dir = center - cam.global_transform.origin
+		var inv_len = 1.0 / sqrt(max(1e-6, dir.length_squared()))
+		var facing_factor = clamp(-cam.global_transform.basis.z.dot(dir) * inv_len, 0.0, 1.0)
+
+		# Apply as another multiplier
+		self.score = base_score * visibility_bonus * (1.0 + facing_factor * 0.35)
+
 
 static var chunks: Dictionary[Vector3i, VoxelMesh] = {}
+
 static var chunk_queue: Dictionary[Vector3i, ChunkJob] = {}
+@onready var queue_mutex = Mutex.new()
+@onready var queue_semaphore = Semaphore.new()
+
+
 var pending_chunks = 0
 
 var chunk_threads: Array[Thread] = []
@@ -40,20 +78,32 @@ func chunk_gen_worker(n: int) -> void:
 		if exit_threads:
 			print("Closing thread ", n)
 			return
+			
+		queue_semaphore.wait()
+		if exit_threads:
+			return
 		
-		# TODO: MUTEX
-		var potential_targets = chunk_queue.values().filter(func(job: ChunkJob): return job.scored and job.heavy_lifting)
-		if not potential_targets:
-			print("Waiting...")
-			await get_tree().create_timer(0.05).timeout
+		var job: ChunkJob = null
+		
+		queue_mutex.lock()
+		for j: ChunkJob in chunk_queue.values():
+			if not j: continue
+			if j.state != JobState.PENDING: continue
+			if not j.heavy_lifting: continue
+			
+			if not job or job.score < j.score:
+				job = j
+		if job:
+			job.state = JobState.WORKING
+		queue_mutex.unlock()
+		
+		if not job:
+			OS.delay_msec(1)
 			continue
 		
-		potential_targets.sort_custom(func(a: ChunkJob, b: ChunkJob): return a.score > b.score)
-		var target = potential_targets[0]
-		# TODO: Release mutex
-		print(target)
-		target.heavy_lifting.call()
-		#target.heavy_lifting()
+		print(job)
+		job.heavy_lifting.call()
+		job.state = JobState.DONE
 
 func _ready() -> void:
 	# Does this suck. Let me know.
@@ -69,7 +119,7 @@ func _ready() -> void:
 		
 		Signals.world_ready.emit()
 		
-		for i in range(1):
+		for i in range(2):
 			print("Spawning thread ", i)
 			var chunk_thread = Thread.new()
 			chunk_thread.start(chunk_gen_worker.bind(i))
@@ -153,26 +203,6 @@ func load_tiles() -> void:
 	))
 	State._hack_t2d = t2d_arr
 
-func add_chunk_candidates_to_queue(global_origin: Vector3, extent: int) -> Array:
-	var chunk_origin = pos_to_chunk_pos(global_origin)
-	var positions = []
-	
-	for x in range(-extent, extent):
-		for y in range(-extent, extent):
-			for z in range(-extent, extent):
-				var pos = chunk_origin + Vector3i(x, y, z)
-				
-				if pos in chunks: continue
-				if pos in chunk_queue: continue
-				
-				var job = ChunkJob.new()
-				job.score = 0.0
-				job.chunk_position = pos
-				chunk_queue[pos] = job
-				pending_chunks += 1
-	
-	return positions
-
 func generate_sync(chunk_pos: Vector3i) -> void:
 	var chunk = VoxelMesh.new()
 	self.add_child(chunk)
@@ -202,64 +232,63 @@ func generate_sync(chunk_pos: Vector3i) -> void:
 	chunk.generate_mesh()
 
 func generate_around(global_origin: Vector3, extent: int = 3) -> void:
-	# TODO: Extent
-	add_chunk_candidates_to_queue(global_origin, extent)
-	chunk_queue_mutex.lock()
-	
-	var chunk_jobs = chunk_queue.values().filter(func(x): return not x.scored)
-	
-	if not chunk_jobs:
-		return
-	
+	var chunk_origin = pos_to_chunk_pos(global_origin)
 	var cam = get_viewport().get_camera_3d()
-	for job in chunk_jobs:
-		job.scored = true
-		
-		var chunk_global_pos = (Vector3(job.chunk_position) * CHUNK_SIZE) + (Vector3.ONE * CHUNK_SIZE * 0.5)
-		var dist_sq = global_origin.distance_squared_to(chunk_global_pos)
-		var chunk_visible = 1.0 if cam.is_position_in_frustum(chunk_global_pos) else 0.0
-		job.score = (chunk_visible * 1000.0) + (1.0 / (dist_sq + 1.0))
-
-	chunk_jobs.sort_custom(func(a: ChunkJob, b: ChunkJob): return a.score > b.score)
-	print("Generating %s chunks :3" % len(chunk_jobs))
 	
-	if not world_aabb:
-		var first_pos = chunk_jobs[0].chunk_position * CHUNK_SIZE
-		world_aabb = AABB(first_pos, Vector3.ZERO)
+	queue_mutex.lock()
 	
-	for job in chunk_jobs:
-		var chunk = VoxelMesh.new()
-		self.add_child(chunk)
-		
-		chunk.set_layer_mask_value(2, true)
-		
-		chunk.material_override = ChunkMaterial
-		chunk.material_override.set_shader_parameter("textures", State._hack_t2d)
-		
-		chunk.set_pos(job.chunk_position)
-		
-		chunks[job.chunk_position] = chunk
-		chunk.finished_mesh_generation.connect(func(first_time: bool):
-			_on_chunk_mesh_generated(chunk, job.chunk_position, first_time)
-		)
-		
-		world_aabb = world_aabb.merge(AABB(
-			job.chunk_position * CHUNK_SIZE,
-			Vector3(
-				CHUNK_SIZE,
-				CHUNK_SIZE,
-				CHUNK_SIZE
-			)
-		))
-		
-		job.heavy_lifting = (func():
-			if not chunk: return
-			chunk.generate_chunk_data()
-			if not is_instance_valid(chunk): return
-			chunk.generate_mesh()
-		)
-
-	chunk_queue_mutex.unlock()
+	var jobs = chunk_queue.values()
+	for job: ChunkJob in jobs:
+		if job.state != JobState.PENDING:
+			continue
+		job.update_score(global_origin, cam)
+	
+	for x in range(-extent, extent):
+		for y in range(-extent, extent):
+			for z in range(-extent, extent):
+				var pos = chunk_origin + Vector3i(x, y, z)
+				if pos in chunks: continue
+				if pos in chunk_queue: continue
+				
+				var job = ChunkJob.new()
+				job.chunk_position = pos
+				pending_chunks += 1
+				
+				var chunk = VoxelMesh.new()
+				self.add_child(chunk)
+				
+				chunk.set_pos(pos)
+				
+				chunk.set_layer_mask_value(2, true)
+				chunk.material_override = ChunkMaterial
+				chunk.material_override.set_shader_parameter("textures", State._hack_t2d)
+				
+				chunks[pos] = chunk
+				chunk.finished_mesh_generation.connect(func(first_time: bool):
+					_on_chunk_mesh_generated(chunk, pos, first_time)
+				)
+				
+				world_aabb = world_aabb.merge(AABB(
+					pos * CHUNK_SIZE,
+					Vector3(
+						CHUNK_SIZE,
+						CHUNK_SIZE,
+						CHUNK_SIZE
+					)
+				))
+				
+				job.heavy_lifting = (func():
+					if not chunk: return
+					chunk.generate_chunk_data()
+					if not is_instance_valid(chunk): return
+					chunk.generate_mesh()
+				)
+				job.update_score(global_origin, cam)
+				
+				chunk_queue[pos] = job
+				queue_semaphore.post()
+	
+	queue_mutex.unlock()
 
 func should_place_stuff() -> bool:
 	return State.active_save.get_worldgen_algorithm() not in [VoxelMesh.WORLDGEN_FLAT]
@@ -375,6 +404,7 @@ func bake_world_nav(aabb: AABB) -> void:
 	print("World navigation bake finished!")
 
 func _exit_tree() -> void:
+	print("Waiting for all threads to exit...")
 	# TODO: Mutex
 	exit_threads = true
 	for thread in chunk_threads:
