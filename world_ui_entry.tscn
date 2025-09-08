@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://832v3uu1l2m1"]
 
 [ext_resource type="Script" uid="uid://fa7mr561myp0" path="res://world_ui_entry.gd" id="1_aheua"]
-[ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="1_kvwv7"]
-[ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="2_aheua"]
+[ext_resource type="FontFile" uid="uid://cekc67oqes1pl" path="res://Pixel Times Bold.ttf" id="1_kvwv7"]
+[ext_resource type="FontFile" uid="uid://bngku035ljbou" path="res://Pixel Times.ttf" id="2_aheua"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nlkkf"]
 bg_color = Color(1, 1, 1, 0.0235294)

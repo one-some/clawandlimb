@@ -1,10 +1,10 @@
 [gd_scene load_steps=23 format=3 uid="uid://butf8ci7057pu"]
 
-[ext_resource type="Texture2D" uid="uid://cxsr2d8qmr12t" path="res://tex/tiles/2_stone.png" id="1_06t4h"]
+[ext_resource type="Texture2D" uid="uid://dmxkpq1bjgq75" path="res://tex/tiles/2_stone.png" id="1_06t4h"]
 [ext_resource type="Script" uid="uid://c2hwrvvxqhsb" path="res://main_menu.gd" id="1_nlkkf"]
-[ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="2_fu7sn"]
-[ext_resource type="FontFile" uid="uid://1a8j4ce3jyq5" path="res://PixAntiqua.ttf" id="3_jix8l"]
-[ext_resource type="FontFile" uid="uid://dq2o1ux1rufks" path="res://Cavalhatriz.ttf" id="4_jix8l"]
+[ext_resource type="FontFile" uid="uid://bngku035ljbou" path="res://Pixel Times.ttf" id="2_fu7sn"]
+[ext_resource type="FontFile" uid="uid://devniwb8yk476" path="res://PixAntiqua.ttf" id="3_jix8l"]
+[ext_resource type="FontFile" uid="uid://cnvubjtvbhxq2" path="res://Cavalhatriz.ttf" id="4_jix8l"]
 [ext_resource type="Script" uid="uid://cssfc8suunm6a" path="res://world_container.gd" id="5_nlkkf"]
 [ext_resource type="Script" uid="uid://c1u2vepj27dny" path="res://new_world.gd" id="7_qe12f"]
 

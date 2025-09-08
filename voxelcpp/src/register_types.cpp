@@ -1,6 +1,7 @@
 #include "register_types.h"
 
 #include "voxelmesh.h"
+#include "chunkjob.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -14,6 +15,7 @@ void initialize_example_module(ModuleInitializationLevel p_level) {
 	}
 
 	GDREGISTER_RUNTIME_CLASS(VoxelMesh);
+	GDREGISTER_RUNTIME_CLASS(ChunkJob);
 }
 
 void uninitialize_example_module(ModuleInitializationLevel p_level) {
