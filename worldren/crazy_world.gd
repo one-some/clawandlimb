@@ -7,7 +7,7 @@ const RockRes = preload("res://rock.tscn")
 const CopperRes = preload("res://copper_rock.tscn")
 
 const SEA_LEVEL = 12 + 0.9
-const GROW_CHUNKS = 12
+const GROW_CHUNKS = 4
 
 @export var biome_humidity: Noise
 @export var biome_temperature: Noise
@@ -51,12 +51,12 @@ func chunk_gen_worker(n: int) -> void:
 		
 		var start = Time.get_ticks_usec()
 		queue_mutex.lock()
-		print(" - Chunk[%s] get mutex %s ms" % [n, (Time.get_ticks_usec() - start) / 1000.0])
+		#print(" - Chunk[%s] get mutex %s ms" % [n, (Time.get_ticks_usec() - start) / 1000.0])
 		start = Time.get_ticks_usec()
 		
 		var job: ChunkJob = ChunkJob.pop_best_chunk()
 		queue_mutex.unlock()
-		print(" - Chunk[%s] get job/release %s ms" % [n, (Time.get_ticks_usec() - start) / 1000.0])
+		#print(" - Chunk[%s] get job/release %s ms" % [n, (Time.get_ticks_usec() - start) / 1000.0])
 		
 		if not job:
 			OS.delay_msec(1)
@@ -198,11 +198,11 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 	
 	var start = Time.get_ticks_usec()
 	queue_mutex.lock()
-	print("Aquiring lock took %s ms" % ((Time.get_ticks_usec() - start) / 1000.0))
+	#print("Aquiring lock took %s ms" % ((Time.get_ticks_usec() - start) / 1000.0))
 	
 	start = Time.get_ticks_usec()
 	ChunkJob.update_queue_scores(global_origin, cam)
-	print("Job iteration took %s ms" % ((Time.get_ticks_usec() - start) / 1000.0))
+	#print("Job iteration took %s ms" % ((Time.get_ticks_usec() - start) / 1000.0))
 	start = Time.get_ticks_usec()
 	
 	for x in range(-extent, extent):
@@ -248,13 +248,13 @@ func generate_around(global_origin: Vector3, extent: int = 3) -> void:
 				job.add_to_queue()
 				queue_semaphore.post()
 				
-	print("Chunk instantiation took %s ms" % ((Time.get_ticks_usec() - start) / 1000.0))
+	#print("Chunk instantiation took %s ms" % ((Time.get_ticks_usec() - start) / 1000.0))
 	
 	start = Time.get_ticks_usec()
 	ChunkJob.sort_queue()
 	
 	queue_mutex.unlock()
-	print("Chunk sort/unlock took %s ms" % ((Time.get_ticks_usec() - start) / 1000.0))
+	#print("Chunk sort/unlock took %s ms" % ((Time.get_ticks_usec() - start) / 1000.0))
 
 func should_place_stuff() -> bool:
 	return State.active_save.get_worldgen_algorithm() not in [VoxelMesh.WORLDGEN_FLAT]

@@ -7,7 +7,8 @@ enum ActiveUI {
 	NONE = 0,
 	INVENTORY,
 	DEAD,
-	PAUSE
+	PAUSE,
+	CHAT
 }
 var active_ui: ActiveUI = ActiveUI.NONE
 

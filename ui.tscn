@@ -1,9 +1,9 @@
-[gd_scene load_steps=63 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=66 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://back_blur.gd" id="1_nltto"]
 [ext_resource type="Script" uid="uid://dfxrlbxic7li6" path="res://water_overlay.gd" id="1_vkygq"]
-[ext_resource type="FontFile" uid="uid://dq2o1ux1rufks" path="res://Cavalhatriz.ttf" id="2_27fn8"]
+[ext_resource type="FontFile" uid="uid://cnvubjtvbhxq2" path="res://Cavalhatriz.ttf" id="2_27fn8"]
 [ext_resource type="Script" uid="uid://6aonnes4dn4s" path="res://biome_overlay.gd" id="2_sosvr"]
 [ext_resource type="Script" uid="uid://vthan8fooxnk" path="res://inventory_ui.gd" id="3_27fn8"]
 [ext_resource type="Script" uid="uid://dnqn4e4idg1ce" path="res://waila.gd" id="3_gs482"]
@@ -12,14 +12,16 @@
 [ext_resource type="Script" uid="uid://blnanm6qmbjfj" path="res://item_tooltip.gd" id="5_ibotj"]
 [ext_resource type="Script" uid="uid://cx1wf8ou6qr5d" path="res://literally_oblivion.gd" id="5_x2s2p"]
 [ext_resource type="PackedScene" uid="uid://tbx2gvjwcyyv" path="res://crafting_entry.tscn" id="6_n5rqp"]
-[ext_resource type="FontFile" uid="uid://b6vt3hqj572hq" path="res://Pixel Times Bold.ttf" id="6_y4yjw"]
+[ext_resource type="FontFile" uid="uid://cekc67oqes1pl" path="res://Pixel Times Bold.ttf" id="6_y4yjw"]
 [ext_resource type="Script" uid="uid://cm6pxahfidr0c" path="res://player_preview.gd" id="7_b2p7n"]
-[ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="7_os5c7"]
-[ext_resource type="FontFile" uid="uid://bjsr06etnda5s" path="res://Pixel Times.ttf" id="7_waa4j"]
+[ext_resource type="Texture2D" uid="uid://eul6ncami5ue" path="res://tex/freakingnatuto.png" id="7_os5c7"]
+[ext_resource type="FontFile" uid="uid://bngku035ljbou" path="res://Pixel Times.ttf" id="7_waa4j"]
 [ext_resource type="Script" uid="uid://q7g2r04wynfy" path="res://crafting.gd" id="8_7rqds"]
+[ext_resource type="Script" uid="uid://1ylqguuf2h0e" path="res://chat.gd" id="8_7w61g"]
 [ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
+[ext_resource type="PackedScene" uid="uid://c5kqawhfp2dt2" path="res://chat_message.tscn" id="9_ccnxy"]
 [ext_resource type="Script" uid="uid://br54ccfeev44w" path="res://map_container.gd" id="9_cka8k"]
-[ext_resource type="Texture2D" uid="uid://cvpoenou1whxb" path="res://tex/tiles/7_plank.png" id="9_etlur"]
+[ext_resource type="Texture2D" uid="uid://g4gpr4bb3m6c" path="res://tex/tiles/7_plank.png" id="9_etlur"]
 [ext_resource type="Script" uid="uid://dxhdvcip00ldd" path="res://item_cursor_follow.gd" id="9_ok7cu"]
 [ext_resource type="Script" uid="uid://g0ryx1l6hew4" path="res://map.gd" id="10_v8jk5"]
 [ext_resource type="LabelSettings" uid="uid://d1gp74yg17uxo" path="res://generic_labelsettings_20px.tres" id="11_nvb2n"]
@@ -86,6 +88,13 @@ font = ExtResource("7_waa4j")
 font_size = 30
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ccnxy"]
+content_margin_left = 4.0
+content_margin_top = 5.0
+content_margin_right = 4.0
+content_margin_bottom = 3.0
+bg_color = Color(0, 0, 0, 0.705882)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n5rqp"]
 bg_color = Color(0.172549, 0.172549, 0.172549, 1)
@@ -367,6 +376,36 @@ offset_bottom = -20.0
 text = "Wooden Axe"
 label_settings = SubResource("LabelSettings_gs482")
 
+[node name="Chat" type="VBoxContainer" parent="."]
+layout_mode = 1
+offset_right = 521.0
+offset_bottom = 291.0
+theme_override_constants/separation = 0
+script = ExtResource("8_7w61g")
+
+[node name="LineEdit" type="LineEdit" parent="Chat"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("7_waa4j")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_ccnxy")
+placeholder_text = ":-) Chat! Now!"
+keep_editing_on_text_submit = true
+
+[node name="ChatMessage" parent="Chat" instance=ExtResource("9_ccnxy")]
+layout_mode = 2
+
+[node name="ChatMessage2" parent="Chat" instance=ExtResource("9_ccnxy")]
+layout_mode = 2
+
+[node name="ChatMessage3" parent="Chat" instance=ExtResource("9_ccnxy")]
+layout_mode = 2
+
+[node name="ChatMessage4" parent="Chat" instance=ExtResource("9_ccnxy")]
+layout_mode = 2
+
+[node name="ChatMessage5" parent="Chat" instance=ExtResource("9_ccnxy")]
+layout_mode = 2
+
 [node name="WAILA" type="Panel" parent="."]
 visible = false
 layout_mode = 1
@@ -448,6 +487,7 @@ grow_vertical = 2
 color = Color(1, 0, 0, 1)
 
 [node name="BackBlur" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -658,6 +698,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_vkygq")
 text = "Craft"
 
 [node name="PauseMenu" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -821,6 +862,8 @@ shortcut = SubResource("Shortcut_os5c7")
 text = "RESPAWN"
 
 [connection signal="timeout" from="BiomeOverlay/CheckBiome" to="BiomeOverlay" method="_on_check_biome_timeout"]
+[connection signal="focus_exited" from="Chat/LineEdit" to="Chat" method="_on_line_edit_focus_exited"]
+[connection signal="text_submitted" from="Chat/LineEdit" to="Chat" method="_on_line_edit_text_submitted"]
 [connection signal="pressed" from="InventoryUIScreen/Cont/Crafting/Details/VBoxContainer/VBoxContainer/CraftButton" to="InventoryUIScreen/Cont/Crafting" method="_on_craft_button_pressed"]
 [connection signal="pressed" from="PauseMenu/VBoxContainer/Dont" to="PauseMenu" method="_on_dont_pressed"]
 [connection signal="pressed" from="PauseMenu/VBoxContainer/Blowup" to="PauseMenu" method="_on_blowup_pressed"]
