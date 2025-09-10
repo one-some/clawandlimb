@@ -25,7 +25,7 @@ static func get_directory_space_usage(path: String, sum: int = 0) -> int:
 	
 	return sum
 
-static func format_bytes_1024(n: int) -> String:
+static func format_bytes_1024(n: float) -> String:
 	var labels = ["Bytes", "KiB", "MiB", "GiB (Lord Forbid)", "TiB (Lord Forbid Even More)"]
 	
 	while labels.size() > 1:

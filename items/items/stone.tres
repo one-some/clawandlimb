@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3 uid="uid://k3fdu3oga4n8"]
+
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="1_8mhr7"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="2_6qnq1"]
+[ext_resource type="Texture2D" uid="uid://dmxkpq1bjgq75" path="res://tex/tiles/2_stone.png" id="3_p3kt7"]
+
+[resource]
+script = ExtResource("2_6qnq1")
+item_name = "Stone"
+description = "Rock on!"
+texture = ExtResource("3_p3kt7")
+max_stack = 64
+recipes = Array[ExtResource("1_8mhr7")]([])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

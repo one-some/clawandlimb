@@ -19,7 +19,6 @@
 [ext_resource type="Script" uid="uid://q7g2r04wynfy" path="res://crafting.gd" id="8_7rqds"]
 [ext_resource type="Script" uid="uid://1ylqguuf2h0e" path="res://chat.gd" id="8_7w61g"]
 [ext_resource type="PackedScene" uid="uid://8y5t0y5erjog" path="res://inventory_slot.tscn" id="8_waa4j"]
-[ext_resource type="PackedScene" uid="uid://c5kqawhfp2dt2" path="res://chat_message.tscn" id="9_ccnxy"]
 [ext_resource type="Script" uid="uid://br54ccfeev44w" path="res://map_container.gd" id="9_cka8k"]
 [ext_resource type="Texture2D" uid="uid://g4gpr4bb3m6c" path="res://tex/tiles/7_plank.png" id="9_etlur"]
 [ext_resource type="Script" uid="uid://dxhdvcip00ldd" path="res://item_cursor_follow.gd" id="9_ok7cu"]
@@ -89,8 +88,10 @@ font_size = 30
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ccnxy"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ccnxy"]
-content_margin_left = 4.0
+content_margin_left = 8.0
 content_margin_top = 5.0
 content_margin_right = 4.0
 content_margin_bottom = 3.0
@@ -384,27 +385,16 @@ theme_override_constants/separation = 0
 script = ExtResource("8_7w61g")
 
 [node name="LineEdit" type="LineEdit" parent="Chat"]
+visible = false
 layout_mode = 2
+theme_override_constants/caret_width = 2
 theme_override_fonts/font = ExtResource("7_waa4j")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ccnxy")
 theme_override_styles/normal = SubResource("StyleBoxFlat_ccnxy")
-placeholder_text = ":-) Chat! Now!"
+placeholder_text = "Chat"
 keep_editing_on_text_submit = true
-
-[node name="ChatMessage" parent="Chat" instance=ExtResource("9_ccnxy")]
-layout_mode = 2
-
-[node name="ChatMessage2" parent="Chat" instance=ExtResource("9_ccnxy")]
-layout_mode = 2
-
-[node name="ChatMessage3" parent="Chat" instance=ExtResource("9_ccnxy")]
-layout_mode = 2
-
-[node name="ChatMessage4" parent="Chat" instance=ExtResource("9_ccnxy")]
-layout_mode = 2
-
-[node name="ChatMessage5" parent="Chat" instance=ExtResource("9_ccnxy")]
-layout_mode = 2
+context_menu_enabled = false
 
 [node name="WAILA" type="Panel" parent="."]
 visible = false

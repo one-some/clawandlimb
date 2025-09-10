@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://8bpcdrrs154v"]
 
 [ext_resource type="Script" uid="uid://b43t810fnks3g" path="res://build/terrain_destroyer_construction.gd" id="1_g2xcb"]
-[ext_resource type="AudioStream" uid="uid://cybfw376a55am" path="res://aud/dig.mp3" id="2_2fswd"]
+[ext_resource type="AudioStream" uid="uid://csh8ajvl6t600" path="res://aud/dig.mp3" id="2_2fswd"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g2xcb"]
 transparency = 1

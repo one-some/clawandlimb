@@ -155,7 +155,12 @@ func load_tiles() -> void:
 		if not file_name.ends_with(".png"): continue
 		file_names.append(file_name)
 	
-	file_names.sort()
+	file_names.sort_custom(func(a: String, b: String):
+		# Is it dangerous? YES!
+		var a_int = int(a.split("_")[0])
+		var b_int = int(b.split("_")[0])
+		return a_int < b_int
+	)
 	print(file_names)
 	
 	var t2d_arr = Texture2DArray.new()
@@ -265,7 +270,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3i, first_time:
 		#WorkerThreadPool.wait_for_task_completion(task_id)
 		#chunk_threads.erase(chunk)
 	
-	var chunk_center = (Vector3(chunk_pos) + Vector3(0.5, 0.5, 0.5)) * CHUNK_SIZE
+	#var chunk_center = (Vector3(chunk_pos) + Vector3(0.5, 0.5, 0.5)) * CHUNK_SIZE
 	#print("Sampling at chunk center: ", VoxelMesh.sample_noise(chunk_center))
 	
 	var body: StaticBody3D
@@ -370,6 +375,11 @@ func bake_world_nav(aabb: AABB) -> void:
 
 func _exit_tree() -> void:
 	print("Waiting for all threads to exit...")
+	queue_mutex.unlock()
 	exit_threads = true
 	for thread in chunk_threads:
+		if thread.is_alive():
+			print("Leaving alone: ", thread)
+			continue
+		print("Closing: ", thread)
 		thread.wait_to_finish()

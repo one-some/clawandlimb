@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bqha05wdb4hvk"]
 
 [ext_resource type="Script" uid="uid://dntu4avlviyif" path="res://enemy.gd" id="1_uiaus"]
-[ext_resource type="Texture2D" uid="uid://b2ghkb0an3l84" path="res://tex/zombie.png" id="2_roy8y"]
+[ext_resource type="Texture2D" uid="uid://gwtqpblb6f7k" path="res://tex/zombie.png" id="2_roy8y"]
 [ext_resource type="Script" uid="uid://rv3c6nwyo3qf" path="res://enemy_pathing.gd" id="3_jmu02"]
 [ext_resource type="PackedScene" uid="uid://ci2u3k48nih11" path="res://entity_shadow.tscn" id="4_eseir"]
 

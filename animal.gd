@@ -54,10 +54,13 @@ func think_where_to_go() -> void:
 		randf_range(0.3, 1.0) * (1 if randf() < 0.5 else -1),
 	) * 10.0
 	
-	agent.target_position = NavigationServer3D.map_get_closest_point(
-		agent.get_navigation_map(),
-		target
-	)
+	if NavigationServer3D.map_get_iteration_id(agent.get_navigation_map()):
+		agent.target_position = NavigationServer3D.map_get_closest_point(
+			agent.get_navigation_map(),
+			target
+		)
+	else:
+		agent.target_position = target
 	
 	if state != AnimalState.FLEEING:
 		wander_timer.start(randf_range(3.0, 6.0))

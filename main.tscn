@@ -3,26 +3,26 @@
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
-[ext_resource type="Texture2D" uid="uid://cbe6ggfrfopgn" path="res://tex/moon.png" id="2_82xsv"]
+[ext_resource type="Texture2D" uid="uid://1qa07pvse23r" path="res://tex/moon.png" id="2_82xsv"]
 [ext_resource type="Script" uid="uid://ctrl38glbufm2" path="res://world_environment.gd" id="2_lswn8"]
-[ext_resource type="Texture2D" uid="uid://dsekkq0dm5eo" path="res://tex/sun.png" id="3_getpj"]
+[ext_resource type="Texture2D" uid="uid://dwkpgskx6myx" path="res://tex/sun.png" id="3_getpj"]
 [ext_resource type="Script" uid="uid://upjcky65nrwn" path="res://player.gd" id="4_1bvp3"]
 [ext_resource type="Script" uid="uid://0jcpwcfyx785" path="res://first_person_camera.gd" id="4_074og"]
-[ext_resource type="Texture2D" uid="uid://bxsgub1p3jt2c" path="res://tex/freakingnatuto.png" id="5_lquwl"]
-[ext_resource type="PackedScene" uid="uid://bjkfgco15fjsp" path="res://mdl/Axe.gltf" id="6_4c57u"]
+[ext_resource type="Texture2D" uid="uid://eul6ncami5ue" path="res://tex/freakingnatuto.png" id="5_lquwl"]
+[ext_resource type="PackedScene" uid="uid://t3reeusjro3r" path="res://mdl/Axe.gltf" id="6_4c57u"]
 [ext_resource type="Script" uid="uid://b55h5ok8v2s5s" path="res://hand.gd" id="6_efxa6"]
-[ext_resource type="Texture2D" uid="uid://bi25cosltg6pl" path="res://tex/fist.png" id="8_vivmo"]
+[ext_resource type="Texture2D" uid="uid://drgcscvbhtd8c" path="res://tex/fist.png" id="8_vivmo"]
 [ext_resource type="Script" uid="uid://c7imyrbfwguwo" path="res://equipable_item.gd" id="8_w48qg"]
 [ext_resource type="PackedScene" uid="uid://ci2u3k48nih11" path="res://entity_shadow.tscn" id="9_yaehf"]
 [ext_resource type="Script" uid="uid://54a8q3ymeaoa" path="res://wooden_pickaxe.gd" id="11_ryguw"]
-[ext_resource type="PackedScene" uid="uid://dfdfn6g2y3wbt" path="res://mdl/Pickaxe.gltf" id="12_1u8w0"]
+[ext_resource type="PackedScene" uid="uid://c3j13eqdsykej" path="res://mdl/Pickaxe.gltf" id="12_1u8w0"]
 [ext_resource type="PackedScene" uid="uid://0fc3n5w2os8h" path="res://ui.tscn" id="12_dg77c"]
 [ext_resource type="Script" uid="uid://b3wmymcs1xnik" path="res://item_container.gd" id="12_ycdy4"]
 [ext_resource type="Shader" uid="uid://deusiyboy5f8r" path="res://grid.gdshader" id="14_vivmo"]
 [ext_resource type="Script" uid="uid://bx3ft4mal7bir" path="res://enemies.gd" id="15_2cqfq"]
 [ext_resource type="PackedScene" uid="uid://o55jlkit05em" path="res://worldren/crazy_world.tscn" id="16_2cqfq"]
 [ext_resource type="PackedScene" uid="uid://ci6f50w1ebtfu" path="res://animal.tscn" id="16_074og"]
-[ext_resource type="AudioStream" uid="uid://cxlsf6rlj0caa" path="res://aud/wind.wav" id="16_yaehf"]
+[ext_resource type="AudioStream" uid="uid://ypvnn5pv4vtk" path="res://aud/wind.wav" id="16_yaehf"]
 [ext_resource type="Script" uid="uid://clb0isi66puot" path="res://debug_chunk_view.gd" id="17_d13ii"]
 [ext_resource type="Script" uid="uid://d18qx0vkfy0m" path="res://water.gd" id="25_0odxb"]
 [ext_resource type="Material" uid="uid://dgqn431hs3jdf" path="res://flatwatrer.tres" id="25_lswn8"]
@@ -164,30 +164,13 @@ tracks/8/keys = {
 "update": 0,
 "values": [Color(1, 0.735474, 0.230469, 1), Color(1, 0.989258, 0.875, 1), Color(1, 0.989258, 0.875, 1), Color(0.945313, 0.313037, 0.144012, 1)]
 }
-tracks/9/type = "method"
+tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("..")
+tracks/9/path = NodePath("CelestialBodyHandle:rotation")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
-"times": PackedFloat32Array(5.5, 18.5),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [true],
-"method": &"set_day"
-}, {
-"args": [false],
-"method": &"set_day"
-}]
-}
-tracks/10/type = "value"
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/path = NodePath("CelestialBodyHandle:rotation")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/keys = {
 "times": PackedFloat32Array(0, 12, 24),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,

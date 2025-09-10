@@ -15,7 +15,7 @@ var players: Dictionary[String, PlayerSave]
 static func create(
 	name: String,
 	worldgen: VoxelMesh.Worldgen,
-	seed: String
+	world_seed: String
 ) -> WorldSave:
 	assert(name.is_valid_filename())
 	
@@ -30,7 +30,7 @@ static func create(
 		{
 			"name": name,
 			"worldgen": WorldgenTypes.find_key(worldgen),
-			"seed": seed,
+			"seed": world_seed,
 			"last_played": Time.get_unix_time_from_system(),
 			"save_version": 0.1,
 		}

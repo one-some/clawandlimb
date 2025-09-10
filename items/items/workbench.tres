@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=8 format=3 uid="uid://cvetefujfbkjx"]
+
+[ext_resource type="PackedScene" uid="uid://cl8bddj0k8pn5" path="res://build/workbench.tscn" id="1_iqex2"]
+[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_4stb8"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_8mhpy"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_4stb8"]
+[ext_resource type="Texture2D" uid="uid://bkvjp4lpj6hi0" path="res://tex/crafting.png" id="4_7k0wi"]
+
+[sub_resource type="Resource" id="Resource_7k0wi"]
+script = ExtResource("2_4stb8")
+constructable = ExtResource("1_iqex2")
+metadata/_custom_type_script = "uid://c8wvel033uhyu"
+
+[sub_resource type="Resource" id="Resource_f2qmd"]
+script = ExtResource("2_8mhpy")
+ingredients = Dictionary[String, int]({
+"log": 2,
+"planks": 4
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("3_4stb8")
+item_name = "Workbench"
+description = "Craft bro"
+texture = ExtResource("4_7k0wi")
+max_stack = 64
+recipes = Array[ExtResource("2_8mhpy")]([SubResource("Resource_f2qmd")])
+constructable = SubResource("Resource_7k0wi")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

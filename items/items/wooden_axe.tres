@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3 uid="uid://cloc3fs0nscun"]
+
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="1_slbfa"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="2_arxqq"]
+[ext_resource type="Texture2D" uid="uid://wkdbft3q5je" path="res://tex/axe.png" id="3_hglfm"]
+
+[sub_resource type="Resource" id="Resource_bvmxi"]
+script = ExtResource("1_slbfa")
+ingredients = Dictionary[String, int]({
+"planks": 3
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("2_arxqq")
+item_name = "Wooden Axe"
+description = "Chop things faster!!"
+texture = ExtResource("3_hglfm")
+max_stack = 1
+recipes = Array[ExtResource("1_slbfa")]([SubResource("Resource_bvmxi")])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

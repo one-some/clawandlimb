@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=8 format=3 uid="uid://dh4dl7i2k7pgp"]
+
+[ext_resource type="PackedScene" uid="uid://8bpcdrrs154v" path="res://build/terrain_destroyer.tscn" id="1_0len5"]
+[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_graki"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_x1ot0"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_graki"]
+[ext_resource type="Texture2D" uid="uid://dwhfreijve1cg" path="res://tex/shovel.png" id="4_acked"]
+
+[sub_resource type="Resource" id="Resource_acked"]
+script = ExtResource("2_graki")
+constructable = ExtResource("1_0len5")
+metadata/_custom_type_script = "uid://c8wvel033uhyu"
+
+[sub_resource type="Resource" id="Resource_17pv3"]
+script = ExtResource("2_x1ot0")
+ingredients = Dictionary[String, int]({
+"planks": 3
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("3_graki")
+item_name = "Wooden Shovel"
+description = "Flatten an area to build on! Erode the world around you!"
+texture = ExtResource("4_acked")
+max_stack = 1
+recipes = Array[ExtResource("2_x1ot0")]([SubResource("Resource_17pv3")])
+constructable = SubResource("Resource_acked")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

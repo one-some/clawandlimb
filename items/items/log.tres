@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=7 format=3 uid="uid://csyq7y31roh1k"]
+
+[ext_resource type="PackedScene" uid="uid://coeoip6mkmjyu" path="res://build/wall.tscn" id="1_hwn8i"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_hwn8i"]
+[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="3_qem7w"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_yhmkd"]
+[ext_resource type="Texture2D" uid="uid://cq5b51x5jyo4t" path="res://tex/tiles/6_log.png" id="4_qem7w"]
+
+[sub_resource type="Resource" id="Resource_iorhw"]
+script = ExtResource("3_qem7w")
+constructable = ExtResource("1_hwn8i")
+override_texture = ExtResource("4_qem7w")
+metadata/_custom_type_script = "uid://c8wvel033uhyu"
+
+[resource]
+script = ExtResource("3_yhmkd")
+item_name = "Log"
+description = ""
+texture = ExtResource("4_qem7w")
+max_stack = 64
+recipes = Array[ExtResource("2_hwn8i")]([])
+constructable = SubResource("Resource_iorhw")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

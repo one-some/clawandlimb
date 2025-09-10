@@ -1,10 +1,10 @@
 [gd_scene load_steps=12 format=3 uid="uid://cq63pgrkk0pj2"]
 
-[ext_resource type="PackedScene" uid="uid://blb1m1ebb25mm" path="res://mdl/Tree.gltf" id="1_brfkd"]
+[ext_resource type="PackedScene" uid="uid://ctx3xdl4kqsxw" path="res://mdl/Tree.gltf" id="1_brfkd"]
 [ext_resource type="Script" uid="uid://c4ag73a8j0y34" path="res://tree.gd" id="1_nnvrw"]
 [ext_resource type="Material" uid="uid://7m75kf52v7aa" path="res://leaves.tres" id="3_gvmkm"]
-[ext_resource type="AudioStream" uid="uid://brvxqb8cay4na" path="res://aud/tree_falling.mp3" id="4_44ud8"]
-[ext_resource type="AudioStream" uid="uid://bj15t0snxi7f7" path="res://aud/tree_thud.mp3" id="5_ind6k"]
+[ext_resource type="AudioStream" uid="uid://c8dqoq18piwt0" path="res://aud/tree_falling.mp3" id="4_44ud8"]
+[ext_resource type="AudioStream" uid="uid://cxqnnar1xvv0j" path="res://aud/tree_thud.mp3" id="5_ind6k"]
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_brfkd"]
 points = PackedVector3Array(0.4375, 4.44736, 0.3125, -0.4375, 0.140093, -0.5625, -0.4375, 0.140093, 0.294643, 0.4375, 0.0521893, 0.3125, 0.419643, 0.140093, -0.5625, -0.4375, 4.35946, -0.5625, 0.419643, 4.35946, -0.5625, -0.4375, 4.35946, 0.294643)

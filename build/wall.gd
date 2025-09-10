@@ -7,9 +7,15 @@ const WALL_HEIGHT = 3.0
 
 func _ready() -> void:
 	self.visible = false
-	combat.name = "Wall"
 	box.material = material
+	combat.name = "Wall"
 	super()
+
+func process_modifications(modified: ModifiedConstructable) -> void:
+	material = material.duplicate()
+	
+	if modified.override_texture:
+		material.albedo_texture = modified.override_texture
 
 func set_start(pos: Vector3) -> void:
 	start_pos = pos
@@ -59,8 +65,8 @@ func finalize() -> void:
 		int_start_pos,
 		int_end_pos
 	):
-		print("Updating ", coord)
-		State.chunk_manager.update_chunk_collision(coord)
+		print("NOT Updating ", coord)
+		#State.chunk_manager.update_chunk_collision(coord)
 	
 	material.albedo_color = Color.WHITE
 	material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED

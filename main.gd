@@ -5,10 +5,20 @@ extends Node3D
 const DAY_LENGTH_SECONDS = 60 * 10
 var time_normalized = 0.4
 var is_day = false
+var first_night_message_done = false
 
 func set_day(p_is_day: bool) -> void:
 	is_day = p_is_day
+	
+	print("Day: ", is_day)
 	Signals.change_daylight_landmark.emit(p_is_day)
+	
+	if is_day:
+		first_night_message_done = false
+
+func night_approaches() -> void:
+	first_night_message_done = true
+	Signals.make_chat_message.emit("The first night approaches...", Color.AQUAMARINE)
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventKey: return
@@ -41,11 +51,19 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	time_normalized += delta / DAY_LENGTH_SECONDS
-	
 	if time_normalized >= 1.0:
 		time_normalized = 0.0
+	
+	var time_hour = get_day_hour()
 	
 	anim_player.seek(
 		time_normalized * anim_player.get_animation("Cycle").length,
 		true
 	)
+	
+	var should_be_day = time_hour > 5.5 and time_hour < 18.5
+	if is_day != should_be_day:
+		set_day(should_be_day)
+	
+	if time_hour > 16.0 and not first_night_message_done:
+		night_approaches()

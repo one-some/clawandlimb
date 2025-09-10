@@ -10,8 +10,8 @@ const Main = preload("res://main.tscn")
 
 var save: WorldSave
 
-func setup(save: WorldSave) -> void:
-	self.save = save
+func setup(p_save: WorldSave) -> void:
+	self.save = p_save
 	var meta_data = save.get_meta_data()
 	
 	world_name.text = meta_data["name"]

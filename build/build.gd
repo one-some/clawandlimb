@@ -40,12 +40,12 @@ func instantiate_selected_constructable() -> Constructable:
 	if not item:
 		return null
 	
-	var constructable_scene = item.item_data.item_constructable
-	if not constructable_scene:
+	var modified_constructable: ModifiedConstructable = item.item_data.constructable
+	if not modified_constructable:
 		#print("No constructable")
 		set_build_mode(State.BuildMode.NONE, null)
 		return null
-	return constructable_scene.instantiate()
+	return modified_constructable.create()
 
 func _change_active_hotbar_slot() -> void:
 	var constructable = instantiate_selected_constructable()
@@ -99,7 +99,8 @@ func set_build_mode(build_mode: State.BuildMode, constructable: Constructable, s
 		# If u wanna continue girl.
 		active_constructable.set_start(start_pos)
 	
-	self.add_child(active_constructable)
+	if active_constructable:
+		self.add_child(active_constructable)
 	update_building()
 
 func update_building() -> void:

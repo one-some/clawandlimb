@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=8 format=3 uid="uid://b4lahyaritrdc"]
+
+[ext_resource type="PackedScene" uid="uid://vaa8tn7hfgr7" path="res://build/tile.tscn" id="1_jn852"]
+[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="1_rjy7m"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_jn852"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_jgw4d"]
+[ext_resource type="Texture2D" uid="uid://g4gpr4bb3m6c" path="res://tex/tiles/7_plank.png" id="4_jgbx0"]
+
+[sub_resource type="Resource" id="Resource_jn852"]
+script = ExtResource("1_rjy7m")
+constructable = ExtResource("1_jn852")
+metadata/_custom_type_script = "uid://c8wvel033uhyu"
+
+[sub_resource type="Resource" id="Resource_bdpfg"]
+script = ExtResource("2_jn852")
+ingredients = Dictionary[String, int]({
+"planks": 1
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("3_jgw4d")
+item_name = "Wooden Plank Floor"
+description = "Watch for splinters!"
+texture = ExtResource("4_jgbx0")
+max_stack = 64
+recipes = Array[ExtResource("2_jn852")]([SubResource("Resource_bdpfg")])
+constructable = SubResource("Resource_jn852")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

@@ -1,8 +1,8 @@
 [gd_scene load_steps=12 format=3 uid="uid://ca3tci3v8d8ug"]
 
 [ext_resource type="Script" uid="uid://cjackugu1xmwj" path="res://build/construction_model.gd" id="1_s1444"]
-[ext_resource type="PackedScene" uid="uid://dv88nuhl7t7ti" path="res://mdl/Torch.gltf" id="2_s1444"]
-[ext_resource type="Texture2D" uid="uid://ck6kk8t0lj3aj" path="res://tex/tiles/4_snow.png" id="3_w3qnr"]
+[ext_resource type="PackedScene" uid="uid://csejvy2oyck7" path="res://mdl/Torch.gltf" id="2_s1444"]
+[ext_resource type="Texture2D" uid="uid://bduc6gjdx0c5h" path="res://tex/tiles/4_snow.png" id="3_w3qnr"]
 
 [sub_resource type="Curve" id="Curve_w3qnr"]
 _data = [Vector2(0.589928, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]

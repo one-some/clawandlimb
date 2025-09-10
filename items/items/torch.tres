@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=8 format=3 uid="uid://bicae3ecr7ig7"]
+
+[ext_resource type="PackedScene" uid="uid://ca3tci3v8d8ug" path="res://torch.tscn" id="1_h6w3k"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_gxf8w"]
+[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_x3n4k"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_x3n4k"]
+[ext_resource type="Texture2D" uid="uid://1qa07pvse23r" path="res://tex/moon.png" id="4_nygcm"]
+
+[sub_resource type="Resource" id="Resource_nygcm"]
+script = ExtResource("2_x3n4k")
+constructable = ExtResource("1_h6w3k")
+metadata/_custom_type_script = "uid://c8wvel033uhyu"
+
+[sub_resource type="Resource" id="Resource_jvxqj"]
+script = ExtResource("2_gxf8w")
+ingredients = Dictionary[String, int]({
+"planks": 2
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("3_x3n4k")
+item_name = "Torch"
+description = "You light up my life."
+texture = ExtResource("4_nygcm")
+max_stack = 64
+recipes = Array[ExtResource("2_gxf8w")]([SubResource("Resource_jvxqj")])
+constructable = SubResource("Resource_nygcm")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

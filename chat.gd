@@ -4,11 +4,15 @@ const ChatMessageControl = preload("res://chat_message.tscn")
 
 @onready var line_edit: LineEdit = $LineEdit
 
+func create_message(text: String, color: Color) -> void:
+	var message_control = ChatMessageControl.instantiate()
+	message_control.modulate = color
+	self.add_child(message_control)
+	self.move_child(message_control, 1)
+	message_control.set_message(text)
+
 func _ready() -> void:
-	for message in ["hellooo", "iiiiiiiiimmmmmmmmcllllllllllaiiiiiiiiireeee"]:
-		var x = ChatMessageControl.instantiate()
-		self.add_child(x)
-		x.set_message(message)
+	Signals.make_chat_message.connect(create_message)
 
 func _input(event: InputEvent) -> void:
 	if event is not InputEventKey: return
@@ -26,13 +30,11 @@ func _input(event: InputEvent) -> void:
 
 func _on_line_edit_text_submitted(new_text: String) -> void:
 	if not new_text.strip_edges(): return
-	var message_control = ChatMessageControl.instantiate()
-	self.add_child(message_control)
-	message_control.set_message("[%s]: %s" % [State.player_name, new_text])
+	create_message("[%s]: %s" % [State.player_name, new_text], Color.WHITE)
 	line_edit.clear()
-
 
 func _on_line_edit_focus_exited() -> void:
 	print("EXITING FOCUS")
-	self.visible = false
+	line_edit.visible = false
+	line_edit.clear()
 	State.set_active_ui(State.ActiveUI.NONE)

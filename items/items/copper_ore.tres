@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3 uid="uid://dxk4qq0crr4w3"]
+
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="1_xrqjn"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="2_vprhm"]
+[ext_resource type="Texture2D" uid="uid://d1pg0gok8jvp4" path="res://tex/pig.png" id="3_act38"]
+
+[resource]
+script = ExtResource("2_vprhm")
+item_name = "Copper Ore"
+description = "Has a faint orange luster."
+texture = ExtResource("3_act38")
+max_stack = 64
+recipes = Array[ExtResource("1_xrqjn")]([])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

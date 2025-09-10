@@ -4,13 +4,12 @@ var world_save: WorldSave
 var player_name: String
 var player_meta: Dictionary
 
-func _init(world_save: WorldSave, player_name: String) -> void:
-	print("loading playersave ", player_name)
+func _init(p_world_save: WorldSave, p_player_name: String) -> void:
+	print("loading playersave ", p_player_name)
+	assert(p_player_name.is_valid_filename())
 	
-	assert(player_name.is_valid_filename())
-	
-	self.world_save = world_save
-	self.player_name = player_name
+	self.world_save = p_world_save
+	self.player_name = p_player_name
 	
 	var path = get_dir_path()
 	if not DirAccess.dir_exists_absolute(path):

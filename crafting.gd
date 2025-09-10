@@ -15,7 +15,7 @@ var shown_recipe: ItemRecipe = null
 var shown_recipe_result: ItemData = null
 
 func _ready() -> void:
-	for item: ItemData in ItemRegistry.item_db.items.values():
+	for item: ItemData in ItemRegistry.items.values():
 		recipes[item] = item.recipes
 	
 	update_shown_recipes()

@@ -43,6 +43,9 @@ func _ready() -> void:
 	assert(build_mode)
 	combat.died.connect(func(): self.queue_free())
 
+func process_modifications(modified: ModifiedConstructable) -> void:
+	pass
+
 func set_start(pos: Vector3) -> void:
 	start_pos = pos
 

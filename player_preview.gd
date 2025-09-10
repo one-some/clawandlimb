@@ -19,11 +19,10 @@ func _ready() -> void:
 		var image_ratio = float(image_size.x) / float(image_size.y)
 		
 		image.decompress()
-		print(int(64 * image_ratio))
 		image.resize(int(64 * image_ratio), 64, Image.INTERPOLATE_NEAREST)
 		
-		var resized = ImageTexture.create_from_image(image)
-		menu_button.get_popup().add_icon_item(resized, "    " + key)
+		var thumbnail = ImageTexture.create_from_image(image)
+		menu_button.get_popup().add_icon_item(thumbnail, "    " + key)
 	
 	menu_button.get_popup().id_pressed.connect(func(id):
 		var texture = CharacterTextures.values()[id]

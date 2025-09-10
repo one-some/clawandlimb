@@ -6,7 +6,7 @@ func _input(event: InputEvent) -> void:
 	if not event.is_action("debug_profile"): return
 	
 	#perf record -F 99 -p $(pidof godot) --call-graph dwarf sleep 10
-	var code = OS.create_process(
+	OS.create_process(
 		"perf",
 		[
 			"record",

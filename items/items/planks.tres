@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3 uid="uid://bhtufqwtq8ofe"]
+
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="1_fjf1w"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="2_182ga"]
+[ext_resource type="Texture2D" uid="uid://g4gpr4bb3m6c" path="res://tex/tiles/7_plank.png" id="3_sl61v"]
+
+[sub_resource type="Resource" id="Resource_iky56"]
+script = ExtResource("1_fjf1w")
+ingredients = Dictionary[String, int]({
+"log": 1
+})
+output_count = 2
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("2_182ga")
+item_name = "Planks"
+description = "A common material."
+texture = ExtResource("3_sl61v")
+max_stack = 64
+recipes = Array[ExtResource("1_fjf1w")]([SubResource("Resource_iky56")])
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"
