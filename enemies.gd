@@ -16,6 +16,7 @@ enum SpawnType {
 }
 
 func _on_spawn_timer_timeout() -> void:
+	print("Trying spawn...")
 	timer.wait_time = randf_range(5.0, 16.0)
 	try_spawn(SpawnType.NICE if root.is_day else SpawnType.EVIL)
 
@@ -43,7 +44,7 @@ func random_horde_origin_position() -> Vector3:
 	var r = randf_range(16.0, 32.0)
 	
 	var pos = player.global_position
-	pos.y = 3.0
+	pos.y += 3.0
 	pos.x += r * cos(theta)
 	pos.z += r * sin(theta)
 	return pos

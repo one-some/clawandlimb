@@ -1,6 +1,6 @@
 [gd_resource type="StandardMaterial3D" load_steps=4 format=3 uid="uid://dgqn431hs3jdf"]
 
-[ext_resource type="Texture2D" uid="uid://c1rom6t7wq5g5" path="res://tex/tiles/8_water.png" id="1_7rsvr"]
+[ext_resource type="Texture2D" uid="uid://dac4w13hg2q68" path="res://tex/tiles/8_water.png" id="1_7rsvr"]
 
 [sub_resource type="Gradient" id="Gradient_cegan"]
 

@@ -2,7 +2,7 @@ extends Node3D
 
 @onready var anim_player: AnimationPlayer = $WorldEnvironment/AnimationPlayer
 
-const DAY_LENGTH_SECONDS = 60 * 10
+const DAY_LENGTH_SECONDS = 60 * 10 / 3.0
 var time_normalized = 0.4
 var is_day = false
 var first_night_message_done = false
