@@ -15,6 +15,7 @@ func _init(p_world_save: WorldSave, p_player_name: String) -> void:
 	if not DirAccess.dir_exists_absolute(path):
 		player_meta = {
 			"position": null,
+			"spawn_position": null
 		}
 	else:
 		player_meta = Util.read_json(path.path_join("player.json"))
@@ -53,6 +54,9 @@ func write() -> void:
 	
 	var pos = player_body.global_position
 	player_meta["position"] = [pos.x, pos.y, pos.z]
+	
+	var spawn_pos = player_body.spawn_point
+	player_meta["spawn_pos"] = [spawn_pos.x, spawn_pos.y, spawn_pos.z]
 	
 	Util.write_json(path.path_join("player.json"), player_meta)
 	

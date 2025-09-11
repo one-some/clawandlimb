@@ -71,7 +71,7 @@ func die() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is not InputEventKey: return
-	if State.build_mode: return
+	if State.freecam: return
 	if not Input.is_action_just_pressed("drop"): return
 	
 	var item = Inventory.inventory[Inventory.active_hotbar_index]
@@ -117,7 +117,7 @@ func _physics_process(delta: float) -> void:
 		combat.die()
 	
 	if State.active_ui: return
-	if State.build_mode and third_person_cam.current: return
+	if State.freecam: return
 	
 	var input_dir = Input.get_vector("move_left", "move_right", "move_backwards", "move_forwards")
 	

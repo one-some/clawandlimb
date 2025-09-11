@@ -16,6 +16,8 @@ func set_active_ui(ui: ActiveUI) -> void:
 	active_ui = ui
 	Signals.ui_changed.emit(active_ui)
 
+var freecam = false
+
 enum BuildMode {
 	NONE = 0,
 	PLACE_NOTHING,

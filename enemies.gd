@@ -7,8 +7,8 @@ extends Node3D
 const Zombie = preload("res://zombie.tscn")
 const Pig = preload("res://animal.tscn")
 
-const MAX_ENEMIES = 12
-const MAX_ANIMALS = 12
+const MAX_ENEMIES = 32
+const MAX_ANIMALS = 32
 
 enum SpawnType {
 	EVIL,

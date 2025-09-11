@@ -40,7 +40,7 @@ func update_camera() -> void:
 	spring_cast.position = target_pole
 	spring_cast.target_position = dream_pos - spring_cast.position
 	
-	if not State.build_mode and spring_cast.is_colliding():
+	if not State.freecam and spring_cast.is_colliding():
 		# HACK?
 		self.position = spring_cast.get_collision_point() + (spring_cast.get_collision_normal() / 10.0)
 	else:
@@ -52,6 +52,9 @@ func _physics_process(delta: float) -> void:
 	if State.active_ui: return
 	
 	if State.build_mode:
+		try_move_threed_cursor()
+	
+	if State.freecam:
 		do_freecam_process(delta)
 	else:
 		do_player_cam_process(delta)
@@ -129,8 +132,6 @@ func do_freecam_process(delta: float):
 		var speed_multiplier = 3.0 if Input.is_action_pressed("faster") else 1.0
 		var move_dir = (forward * input_dir.y) + (right * input_dir.x)
 		target_pole += move_dir * delta * distance_from_pole * speed_multiplier
-	
-	try_move_threed_cursor()
 
 func visually_mark_interactable_recursive(interactable: Node3D, add: bool) -> void:
 	if interactable is MeshInstance3D:
@@ -178,7 +179,6 @@ func _on_right_click() -> void:
 
 func process_mouse_button_event_for_right_click(event: InputEventMouseButton) -> void:
 	if event.button_index != MOUSE_BUTTON_RIGHT: return
-	
 	
 	var mouse_pos = DisplayServer.mouse_get_position()
 	
@@ -232,13 +232,16 @@ func _unhandled_input(event: InputEvent) -> void:
 			alter_zoom(1.5)
 		elif event.is_action("zoom_in"):
 			alter_zoom(-1.5)
+		elif event.is_action("toggle_freecam"):
+			State.freecam = not State.freecam
 	elif event is InputEventMouseMotion:
 		process_mouse_move(event)
-	elif event is InputEventMouseButton and event.is_pressed():
+	elif event is InputEventMouseButton:
 		var delta = {
 			MOUSE_BUTTON_WHEEL_UP: -1,
 			MOUSE_BUTTON_WHEEL_DOWN: 1,
 		}.get(event.button_index, 0) * 0.5
+		if not event.is_pressed(): delta = 0.0
 		if delta: alter_zoom(delta)
 		
 		process_mouse_button_event_for_right_click(event)

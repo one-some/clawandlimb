@@ -6,6 +6,7 @@ var opening = false
 var og_transform = null
 
 func _interact() -> void:
+	print("Ok")
 	if opening: return
 	opening = true
 	
