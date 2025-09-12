@@ -42,7 +42,7 @@ func get_position() -> Variant:
 	return Util.vector3_from_array(array)
 
 func get_spawn_point() -> Variant:
-	var array = player_meta["spawn_position"]
+	var array = player_meta.get("spawn_position")
 	if array == null: return null
 	return Util.vector3_from_array(array)
 
