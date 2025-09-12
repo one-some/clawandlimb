@@ -5,6 +5,7 @@ class_name Player extends CharacterBody3D
 @onready var naru_freaking_toe: Sprite3D = $Naruto
 @onready var naruto_width_scalar = naru_freaking_toe.pixel_size / naru_freaking_toe.texture.get_width()
 @onready var foot_marker = $Foot
+@onready var drown_timer: Timer = $DrownTimer
 
 const ITEM_MAX_RANGE = 2.0
 
@@ -13,20 +14,30 @@ var player_save: PlayerSave = State.active_save.get_or_create_player(State.playe
 var combat = CombatRecipient.new("Claire", 100.0)
 var frozen = true
 var spawn_point = Vector3.ZERO
+var time_underwater = 0.0
+var last_on_ground_pos = null
 
 func _ready() -> void:
 	State.player = self
 
 	# Init position
-	Signals.world_ready.connect(
+	Signals.world_ready.connect( 
 		(func():
 			var pos = player_save.get_position()
 			if pos == null:
 				seed(State.active_save.get_seed_int())
 				pos = VoxelMesh.find_a_good_place_to_spawn_that_player_guy() + Vector3(0, 2, 0)
 				spawn_point = pos
+			
 			self.global_position = pos
+			last_on_ground_pos = pos
 			third_person_cam.target_pole = pos
+			
+			spawn_point = player_save.get_spawn_point()
+			if spawn_point == null:
+				spawn_point = pos
+			
+			combat.set_health(player_save.get_health())
 			
 			State.chunk_manager.generate_sync(ChunkManager.pos_to_chunk_pos(pos))
 			State.chunk_manager.generate_sync(ChunkManager.pos_to_chunk_pos(pos) - Vector3i(0, 1, 0))
@@ -52,6 +63,9 @@ func _ready() -> void:
 func is_in_water() -> bool:
 	return foot_marker.global_position.y + 0.5 <= ChunkManager.SEA_LEVEL
 
+func is_head_in_water() -> bool:
+	return first_person_cam.global_position.y <= ChunkManager.SEA_LEVEL
+
 func change_player_skin(skin: Texture) -> void:
 	naru_freaking_toe.texture = skin
 	# This didn't work ROFL
@@ -63,6 +77,7 @@ func respawn() -> void:
 	self.global_position = spawn_point
 
 func die() -> void:
+	drown_timer.stop()
 	Signals.player_died.emit()
 	
 	var tween = create_tween()
@@ -109,6 +124,16 @@ func attract_items() -> void:
 		item3d.linear_velocity.x = new_vel.x
 		item3d.linear_velocity.z = new_vel.z
 
+func _process(delta: float) -> void:
+	if is_head_in_water():
+		time_underwater += delta
+		
+		if time_underwater > 7.0 and drown_timer.is_stopped():
+			drown_timer.start()
+	else:
+		time_underwater = 0.0
+		drown_timer.stop()
+
 func _physics_process(delta: float) -> void:
 	if frozen: return
 	attract_items()
@@ -140,6 +165,13 @@ func _physics_process(delta: float) -> void:
 		speed += 4.0
 	
 	if self.is_on_floor():
+		var fall_delta = last_on_ground_pos.y - self.global_position.y
+		last_on_ground_pos = self.global_position
+		
+		fall_delta -= 4.0  # Starting
+		if fall_delta > 0.0:
+			combat.take_damage(CombatRecipient.DamageOrigin.GOD, fall_delta * 8.0)
+		
 		self.velocity.y = 0.0
 	
 	if is_in_water():
@@ -168,3 +200,7 @@ func _physics_process(delta: float) -> void:
 		#waiting_for_chunk = chunk_pos
 		#frozen = true
 		#Signals.change_player_in_loading_chunk.emit(true)
+
+
+func _on_drown_timer_timeout() -> void:
+	combat.take_damage(CombatRecipient.DamageOrigin.GOD, 8.0)

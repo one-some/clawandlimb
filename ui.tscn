@@ -838,7 +838,7 @@ label_settings = SubResource("LabelSettings_etlur")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button" type="Button" parent="Dead/VBoxContainer"]
+[node name="Respawn" type="Button" parent="Dead/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_colors/font_color = Color(1, 0, 0, 1)
@@ -859,6 +859,6 @@ text = "RESPAWN"
 [connection signal="pressed" from="PauseMenu/VBoxContainer/Dont" to="PauseMenu" method="_on_dont_pressed"]
 [connection signal="pressed" from="PauseMenu/VBoxContainer/Blowup" to="PauseMenu" method="_on_blowup_pressed"]
 [connection signal="pressed" from="PauseMenu/VBoxContainer/Quit" to="PauseMenu" method="_on_quit_pressed"]
-[connection signal="pressed" from="Dead/VBoxContainer/Button" to="Dead" method="_on_button_pressed"]
+[connection signal="pressed" from="Dead/VBoxContainer/Respawn" to="Dead" method="_on_button_pressed"]
 
 [editable path="ItemCursorFollow"]

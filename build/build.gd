@@ -31,6 +31,7 @@ func to_json() -> Array:
 
 func from_json(data: Array) -> void:
 	await get_tree().process_frame
+
 	
 	var build_queue: Array = []
 	

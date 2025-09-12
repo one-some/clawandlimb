@@ -610,6 +610,8 @@ max_db = -2.0
 
 [node name="EntityShadow" parent="Player" instance=ExtResource("9_yaehf")]
 
+[node name="DrownTimer" type="Timer" parent="Player"]
+
 [node name="World" type="Node3D" parent="."]
 
 [node name="Build" type="Node3D" parent="World"]
@@ -663,4 +665,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, 0)
 mesh = SubResource("PlaneMesh_getpj")
 script = ExtResource("25_0odxb")
 
+[connection signal="timeout" from="Player/DrownTimer" to="Player" method="_on_drown_timer_timeout"]
 [connection signal="timeout" from="Critters/SpawnTimer" to="Critters" method="_on_spawn_timer_timeout"]

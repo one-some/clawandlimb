@@ -12,7 +12,10 @@ func set_end(pos: Vector3) -> void:
 	self.global_position = pos
 	
 func finalize() -> void:
-	print("Hello bro.")
+	# I dont know I dont know anything its just needed
+	await get_tree().physics_frame
+	cast.force_shapecast_update()
+	
 	for i in range(cast.get_collision_count()):
 		var collider = cast.get_collider(i)
 		print("Collider ", i, " - ", collider)
@@ -24,6 +27,8 @@ func finalize() -> void:
 		#csg.visible = false
 		csg.reparent(collider)
 		break
+	
+	cast.queue_free()
 	
 	if csg.get_parent() == holder:
 		csg.queue_free()

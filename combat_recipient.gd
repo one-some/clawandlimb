@@ -26,6 +26,10 @@ func reset() -> void:
 	took_damage.emit(0.0)
 	Signals.change_entity_health.emit(self, DamageOrigin.GOD, 0.0)
 
+func set_health(health: float) -> void:
+	health = health
+	take_damage(DamageOrigin.GOD, 0.0)
+
 func take_damage(origin: DamageOrigin, damage: float) -> void:
 	if dead: return
 	

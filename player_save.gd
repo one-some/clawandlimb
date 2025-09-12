@@ -15,7 +15,8 @@ func _init(p_world_save: WorldSave, p_player_name: String) -> void:
 	if not DirAccess.dir_exists_absolute(path):
 		player_meta = {
 			"position": null,
-			"spawn_position": null
+			"spawn_position": null,
+			"health": 100.0,
 		}
 	else:
 		player_meta = Util.read_json(path.path_join("player.json"))
@@ -38,7 +39,15 @@ func get_player_body() -> Player:
 func get_position() -> Variant:
 	var array = player_meta["position"]
 	if array == null: return null
-	return Vector3(array[0], array[1], array[2])
+	return Util.vector3_from_array(array)
+
+func get_spawn_point() -> Variant:
+	var array = player_meta["spawn_position"]
+	if array == null: return null
+	return Util.vector3_from_array(array)
+
+func get_health() -> float:
+	return player_meta.get_or_add("health", 100.0)
 
 func get_dir_path() -> String:
 	return world_save.dir_path.path_join("players").path_join(player_name)
@@ -57,6 +66,8 @@ func write() -> void:
 	
 	var spawn_pos = player_body.spawn_point
 	player_meta["spawn_pos"] = [spawn_pos.x, spawn_pos.y, spawn_pos.z]
+	
+	player_meta["health"] = player_body.combat.health
 	
 	Util.write_json(path.path_join("player.json"), player_meta)
 	
