@@ -1,16 +1,9 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=8 format=3 uid="uid://dq67e02jois4n"]
+[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3 uid="uid://dq67e02jois4n"]
 
-[ext_resource type="PackedScene" uid="uid://coeoip6mkmjyu" path="res://build/wall.tscn" id="1_6nhc8"]
 [ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="1_cfu7u"]
+[ext_resource type="Resource" uid="uid://bt4pnar1asc6p" path="res://build/modified_constructables/copper_brick_wall.tres" id="1_gna1d"]
 [ext_resource type="Texture2D" uid="uid://bhy0hwgd7fhf" path="res://tex/tiles/10_copper_brick.png" id="2_kfpba"]
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="2_qyuep"]
-[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="3_tkyhu"]
-
-[sub_resource type="Resource" id="Resource_ql2ss"]
-script = ExtResource("3_tkyhu")
-constructable = ExtResource("1_6nhc8")
-override_texture = ExtResource("2_kfpba")
-metadata/_custom_type_script = "uid://c8wvel033uhyu"
 
 [sub_resource type="Resource" id="Resource_c6fjr"]
 script = ExtResource("1_cfu7u")
@@ -25,5 +18,5 @@ description = "Shinier than the rest!"
 texture = ExtResource("2_kfpba")
 max_stack = 64
 recipes = Array[ExtResource("1_cfu7u")]([SubResource("Resource_c6fjr")])
-constructable = SubResource("Resource_ql2ss")
+constructable = ExtResource("1_gna1d")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

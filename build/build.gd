@@ -1,4 +1,4 @@
-extends Node3D
+class_name BuildManager extends Node3D
 
 @onready var cam: Camera3D = %Camera3D
 @onready var threed_cursor: MeshInstance3D = %"3DCursor"
@@ -9,15 +9,21 @@ var down_click_pos = null
 var active_constructable: Constructable = null
 
 func _ready() -> void:
+	State.build_manager = self
 	#Save.register_handler("build", to_json, from_json)
 	set_build_mode(State.build_mode, null)
 	Signals.change_active_hotbar_slot.connect(_change_active_hotbar_slot)
 	Signals.update_3d_cursor_pos.connect(_on_3d_cursor_pos_update)
+	
+	Signals.load_save.connect(func(save: WorldSave):
+		from_json(save.get_buildings())
+	)
 
 func to_json() -> Array:
 	var out = []
 	
 	for constructable: Constructable in self.get_children():
+		if not constructable.is_finalized: continue
 		assert(constructable.scene_file_path)
 		out.append(constructable.to_json())
 	
@@ -26,14 +32,26 @@ func to_json() -> Array:
 func from_json(data: Array) -> void:
 	await get_tree().process_frame
 	
+	var build_queue: Array = []
+	
 	for construction_data in data:
-		print("DDD", construction_data)
+		#print("DDD", construction_data)
 		if not construction_data: continue
-		var instance: Node3D = load(construction_data["scene_path"]).instantiate()
-		self.add_child(instance)
-		#await instance.ready
-		print("Ready")
-		instance.from_json(construction_data)
+		var instance = Constructable.from_json(construction_data)
+		build_queue.append(instance)
+	
+	build_queue.sort_custom(func(a, b):
+		return (
+			(a["constructable"] as Constructable).load_priority
+			<
+			(b["constructable"] as Constructable).load_priority
+		)
+	)
+	
+	for stuff in build_queue:
+		var constructable = stuff["constructable"]
+		print(constructable)
+		stuff["instantiate"].call(self)
 
 func instantiate_selected_constructable() -> Constructable:
 	var item = Inventory.active_item()
@@ -130,7 +148,7 @@ func on_left_down() -> void:
 
 func on_left_up() -> void:
 	if active_constructable.is_one_and_done():
-		active_constructable.finalize()
+		active_constructable._finalize()
 		active_constructable = null
 		_change_active_hotbar_slot()
 		return
@@ -147,7 +165,7 @@ func on_left_up() -> void:
 		if active_constructable.end_pos == null:
 			active_constructable.set_end(threed_cursor.position)
 		
-		active_constructable.finalize()
+		active_constructable._finalize()
 		active_constructable = null
 		
 		var new_constructable = instantiate_selected_constructable()

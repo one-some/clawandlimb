@@ -1,6 +1,7 @@
 extends NavigationAgent3D
 
 @onready var body: CharacterBody3D = self.get_parent()
+var speed = 4.0 + (randf() * 0.5)
 
 func _ready() -> void:
 	$PathTimer.timeout.connect(repath)
@@ -23,7 +24,7 @@ func _physics_process(delta: float) -> void:
 			repath()
 	else:
 		var next_pos = vec3_to_xz(path_pos)
-		xz_vel = vec3_to_xz(body.global_position).direction_to(next_pos) * 4.0
+		xz_vel = vec3_to_xz(body.global_position).direction_to(next_pos) * speed
 		
 	self.velocity = Vector3(xz_vel.x, 0.0, xz_vel.y)
 

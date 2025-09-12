@@ -1,15 +1,9 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=8 format=3 uid="uid://d1s7mepa4of2u"]
+[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3 uid="uid://d1s7mepa4of2u"]
 
-[ext_resource type="PackedScene" uid="uid://c0k6d144n3ion" path="res://build/post.tscn" id="1_sy2fe"]
-[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_68jl0"]
+[ext_resource type="Resource" uid="uid://c0q4xmoog0d1h" path="res://build/modified_constructables/wooden_post.tres" id="1_spsuu"]
 [ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_sy2fe"]
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_68jl0"]
 [ext_resource type="Texture2D" uid="uid://cq5b51x5jyo4t" path="res://tex/tiles/6_log.png" id="4_s83dg"]
-
-[sub_resource type="Resource" id="Resource_s83dg"]
-script = ExtResource("2_68jl0")
-constructable = ExtResource("1_sy2fe")
-metadata/_custom_type_script = "uid://c8wvel033uhyu"
 
 [sub_resource type="Resource" id="Resource_kw43t"]
 script = ExtResource("2_sy2fe")
@@ -26,5 +20,5 @@ description = "Check out my new post"
 texture = ExtResource("4_s83dg")
 max_stack = 64
 recipes = Array[ExtResource("2_sy2fe")]([SubResource("Resource_kw43t")])
-constructable = SubResource("Resource_s83dg")
+constructable = ExtResource("1_spsuu")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

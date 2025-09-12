@@ -48,7 +48,8 @@ func vec_floor_div(v: Vector2i, div: int) -> Vector2i:
 	)
 
 func finalize() -> void:
-	if start_pos == null: return
+	assert(start_pos != null)
+	assert(end_pos != null)
 	
 	var int_end_pos = vec_floor_div(Vector2i(
 		end_pos.x,

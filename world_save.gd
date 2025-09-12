@@ -35,6 +35,7 @@ static func create(
 			"save_version": 0.1,
 		}
 	)
+	Util.write_json(path.path_join("buildings.json"), [])
 	return WorldSave.new(path)
 
 func _init(p_dir_path: String) -> void:
@@ -47,7 +48,10 @@ func _init(p_dir_path: String) -> void:
 	assert(meta["seed"] is String)
 	assert(typeof(meta["save_version"]) in [TYPE_INT, TYPE_FLOAT])
 
-func load_full():
+func get_buildings() -> Array:
+	return Util.read_json(dir_path.path_join("buildings.json"), [])
+
+func load_full() -> void:
 	for player_name in DirAccess.get_directories_at(dir_path.path_join("players")):
 		if player_name in players: continue
 		players[player_name] = PlayerSave.new(self, player_name)
@@ -64,6 +68,8 @@ func write() -> void:
 	
 	for player_save in players.values():
 		player_save.write()
+	
+	Util.write_json(dir_path.path_join("buildings.json"), State.build_manager.to_json())
 
 func can_delete_save_CHANGECARE() -> bool:
 	if not dir_path.begins_with("user://"): return false

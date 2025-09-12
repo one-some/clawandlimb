@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ModifiedConstructable" load_steps=3 format=3 uid="uid://bnr2j58j4b52f"]
+
+[ext_resource type="PackedScene" uid="uid://b560fl14oimxg" path="res://build/door.tscn" id="1_8p4sl"]
+[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_287au"]
+
+[resource]
+script = ExtResource("2_287au")
+constructable = ExtResource("1_8p4sl")
+metadata/_custom_type_script = "uid://c8wvel033uhyu"

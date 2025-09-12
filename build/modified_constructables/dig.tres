@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ModifiedConstructable" load_steps=3 format=3 uid="uid://vb4q8g3tbt1p"]
+
+[ext_resource type="PackedScene" uid="uid://8bpcdrrs154v" path="res://build/terrain_destroyer.tscn" id="1_4wb1v"]
+[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_s26yp"]
+
+[resource]
+script = ExtResource("2_s26yp")
+constructable = ExtResource("1_4wb1v")
+metadata/_custom_type_script = "uid://c8wvel033uhyu"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ModifiedConstructable" load_steps=4 format=3 uid="uid://dvmmcc2w5uefe"]
+
+[ext_resource type="PackedScene" uid="uid://coeoip6mkmjyu" path="res://build/wall.tscn" id="1_mthx3"]
+[ext_resource type="Texture2D" uid="uid://occ4edf1hs3l" path="res://tex/tiles/11_stone_brick.png" id="2_vudrx"]
+[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="3_iitqk"]
+
+[resource]
+script = ExtResource("3_iitqk")
+constructable = ExtResource("1_mthx3")
+override_texture = ExtResource("2_vudrx")
+metadata/_custom_type_script = "uid://c8wvel033uhyu"

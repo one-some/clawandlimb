@@ -1,9 +1,14 @@
 class_name Util extends RefCounted
 
-static func read_json(path: String) -> Variant:
+static func read_json(path: String, default: Variant = null) -> Variant:
 	var text = FileAccess.get_file_as_string(path)
 	var out = JSON.parse_string(text)
-	assert(out)
+	
+	if out == null and default != null:
+		print("Defaulting json")
+		return default
+	
+	assert(out != null)
 	return out
 
 static func write_json(path: String, data: Variant) -> void:
@@ -37,3 +42,10 @@ static func format_bytes_1024(n: float) -> String:
 	
 	var n_out = snapped(n, 0.01) if n != round(n) else n
 	return "%s %s" % [n_out, labels[0]]
+
+static func vector3_to_array(v: Vector3) -> Array[float]:
+	return [v.x, v.y, v.z]
+
+static func vector3_from_array(a: Array) -> Vector3:
+	assert(a.size() == 3)
+	return Vector3(a[0], a[1], a[2])

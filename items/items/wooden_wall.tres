@@ -1,15 +1,9 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=8 format=3 uid="uid://dh3owokt838es"]
+[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3 uid="uid://dh3owokt838es"]
 
-[ext_resource type="PackedScene" uid="uid://coeoip6mkmjyu" path="res://build/wall.tscn" id="1_15wk2"]
-[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_m51hm"]
+[ext_resource type="Resource" uid="uid://bkxy0o8vulwbc" path="res://build/modified_constructables/wooden_wall.tres" id="1_15wk2"]
 [ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_vuv40"]
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_m51hm"]
 [ext_resource type="Texture2D" uid="uid://g4gpr4bb3m6c" path="res://tex/tiles/7_plank.png" id="4_fe8uj"]
-
-[sub_resource type="Resource" id="Resource_fe8uj"]
-script = ExtResource("2_m51hm")
-constructable = ExtResource("1_15wk2")
-metadata/_custom_type_script = "uid://c8wvel033uhyu"
 
 [sub_resource type="Resource" id="Resource_u6jay"]
 script = ExtResource("2_vuv40")
@@ -26,5 +20,5 @@ description = "Use this to defend yourself from monsters!"
 texture = ExtResource("4_fe8uj")
 max_stack = 64
 recipes = Array[ExtResource("2_vuv40")]([SubResource("Resource_u6jay")])
-constructable = SubResource("Resource_fe8uj")
+constructable = ExtResource("1_15wk2")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

@@ -1,15 +1,9 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=8 format=3 uid="uid://c1t3ur2tq6ms2"]
+[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3 uid="uid://c1t3ur2tq6ms2"]
 
-[ext_resource type="PackedScene" uid="uid://b560fl14oimxg" path="res://build/door.tscn" id="1_diu0r"]
-[ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_3tqad"]
+[ext_resource type="Resource" uid="uid://bnr2j58j4b52f" path="res://build/modified_constructables/wooden_door.tres" id="1_diu0r"]
 [ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_732y5"]
 [ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_3tqad"]
 [ext_resource type="Texture2D" uid="uid://bhv73c8guy7uw" path="res://tex/door.png" id="4_wdmr6"]
-
-[sub_resource type="Resource" id="Resource_wdmr6"]
-script = ExtResource("2_3tqad")
-constructable = ExtResource("1_diu0r")
-metadata/_custom_type_script = "uid://c8wvel033uhyu"
 
 [sub_resource type="Resource" id="Resource_uuhee"]
 script = ExtResource("2_732y5")
@@ -26,5 +20,5 @@ description = "A critical component of any enterable and or exitable home."
 texture = ExtResource("4_wdmr6")
 max_stack = 64
 recipes = Array[ExtResource("2_732y5")]([SubResource("Resource_uuhee")])
-constructable = SubResource("Resource_wdmr6")
+constructable = ExtResource("1_diu0r")
 metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

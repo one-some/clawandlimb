@@ -348,7 +348,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3i, first_time:
 	
 	if first_time:
 		pending_chunks -= 1
-		print("PendingChunks ", pending_chunks)
+		#print("PendingChunks ", pending_chunks)
 		
 		if pending_chunks % 25 == 0:
 			bake_world_nav(world_aabb.grow(1.0))

@@ -12,8 +12,10 @@ func set_end(pos: Vector3) -> void:
 	self.global_position = pos
 	
 func finalize() -> void:
+	print("Hello bro.")
 	for i in range(cast.get_collision_count()):
 		var collider = cast.get_collider(i)
+		print("Collider ", i, " - ", collider)
 		if not collider: return
 		if collider is not CSGCombiner3D: return
 		var wall_node = collider.get_parent()
