@@ -18,11 +18,15 @@ var time_underwater = 0.0
 var last_on_ground_pos = null
 
 func _ready() -> void:
+	State.set_active_ui(State.ActiveUI.NONE)
+	
 	State.player = self
 
 	# Init position
 	Signals.world_ready.connect( 
 		(func():
+			print("WORLDREADY!!!!!!!!")
+			
 			var pos = player_save.get_position()
 			if pos == null:
 				seed(State.active_save.get_seed_int())

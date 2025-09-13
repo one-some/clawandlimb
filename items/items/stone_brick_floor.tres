@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3 uid="uid://bt65xwl11mkaf"]
+
+[ext_resource type="Resource" uid="uid://cgpoul448hlpw" path="res://build/modified_constructables/stone_brick_floor.tres" id="1_8jiwc"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_0y17f"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_ienbo"]
+[ext_resource type="Texture2D" uid="uid://he53xe3qygjp" path="res://tex/tiles/11_stone_brick.png" id="4_0y17f"]
+
+[sub_resource type="Resource" id="Resource_bdpfg"]
+script = ExtResource("2_0y17f")
+ingredients = Dictionary[String, int]({
+"planks": 1
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("3_ienbo")
+item_name = "Stone Brick Floor"
+description = "Cold.... So cold...."
+texture = ExtResource("4_0y17f")
+max_stack = 64
+recipes = Array[ExtResource("2_0y17f")]([SubResource("Resource_bdpfg")])
+constructable = ExtResource("1_8jiwc")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

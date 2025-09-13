@@ -31,3 +31,5 @@ signal change_player_in_loading_chunk(in_there: bool)
 signal update_3d_cursor_pos(pos: Vector3)
 signal tp_player(pos: Vector3)
 signal change_player_skin(skin: Texture)
+
+signal update_loading_status(what: String)
