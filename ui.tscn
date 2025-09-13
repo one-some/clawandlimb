@@ -470,7 +470,7 @@ grow_vertical = 2
 script = ExtResource("10_v8jk5")
 
 [node name="PlayerIcon" type="ColorRect" parent="MapContainer"]
-z_index = 1337
+z_index = 22
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -862,6 +862,7 @@ text = "RESPAWN"
 
 [node name="Loading" type="Panel" parent="."]
 visible = false
+z_index = 33
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
