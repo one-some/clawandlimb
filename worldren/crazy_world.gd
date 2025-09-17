@@ -1,10 +1,10 @@
 class_name ChunkManager extends Node3D
 
 const ChunkMaterial = preload("res://worldren/chunk_material.tres")
-const TreeRes = preload("res://tree.tscn")
-const PineTreeRes = preload("res://pine_tree.tscn")
-const RockRes = preload("res://rock.tscn")
-const CopperRes = preload("res://copper_rock.tscn")
+const TreeRes = preload("res://structures/resources/tree.tscn")
+const PineTreeRes = preload("res://structures/resources/pine_tree.tscn")
+const RockRes = preload("res://structures/resources/rock.tscn")
+const CopperRes = preload("res://structures/resources/copper_rock.tscn")
 
 const SEA_LEVEL = 12 + 0.9
 const GROW_CHUNKS = 4
@@ -330,7 +330,7 @@ func _on_chunk_mesh_generated(chunk: VoxelMesh, chunk_pos: Vector3i, first_time:
 			chunk.add_child(thing)
 	
 		var structures = {
-			"courtyard": {"model": preload("res://courtyard.tscn"), "size": Vector3i(7, 1, 7)}
+			"courtyard": {"model": preload("res://structures/courtyard.tscn"), "size": Vector3i(7, 1, 7)}
 		}
 		
 		# TODO: Make these chances different for different structures

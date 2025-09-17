@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=3 uid="uid://c5kqawhfp2dt2"]
+
+[ext_resource type="Script" uid="uid://dej85dyoj0ojv" path="res://ui/chat_message.gd" id="1_nkygh"]
+[ext_resource type="FontFile" uid="uid://bngku035ljbou" path="res://res/Pixel Times.ttf" id="1_x63xj"]
+
+[sub_resource type="Gradient" id="Gradient_53buu"]
+offsets = PackedFloat32Array(0.352273, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.352941)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_7w61g"]
+gradient = SubResource("Gradient_53buu")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ccnxy"]
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 3.0
+content_margin_bottom = 2.0
+texture = SubResource("GradientTexture2D_7w61g")
+
+[sub_resource type="LabelSettings" id="LabelSettings_r2460"]
+font = ExtResource("1_x63xj")
+font_size = 20
+
+[node name="ChatMessage" type="Label"]
+offset_right = 10.0
+offset_bottom = 26.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_ccnxy")
+text = "Wa"
+label_settings = SubResource("LabelSettings_r2460")
+autowrap_mode = 3
+script = ExtResource("1_nkygh")

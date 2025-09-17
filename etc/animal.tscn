@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://ci6f50w1ebtfu"]
+
+[ext_resource type="Script" uid="uid://chq2o6do0paxh" path="res://etc/animal.gd" id="1_stvu6"]
+[ext_resource type="Texture2D" uid="uid://d1pg0gok8jvp4" path="res://tex/pig.png" id="2_23vr7"]
+[ext_resource type="PackedScene" uid="uid://ci2u3k48nih11" path="res://etc/entity_shadow.tscn" id="3_ifcgm"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_23vr7"]
+size = Vector3(1, 0.793701, 1)
+
+[node name="Animal" type="CharacterBody3D" groups=["Animal"]]
+collision_layer = 2
+collision_mask = 17
+script = ExtResource("1_stvu6")
+
+[node name="BABE" type="Sprite3D" parent="."]
+pixel_size = 0.005
+billboard = 2
+shaded = true
+texture = ExtResource("2_23vr7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0245361, 0)
+shape = SubResource("BoxShape3D_23vr7")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="WanderTimer" type="Timer" parent="."]
+
+[node name="HurtTimer" type="Timer" parent="."]
+wait_time = 5.0
+
+[node name="EntityShadow" parent="." instance=ExtResource("3_ifcgm")]

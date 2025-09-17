@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ModifiedConstructable" load_steps=3 format=3 uid="uid://o6471idapx4m"]
 
-[ext_resource type="PackedScene" uid="uid://ca3tci3v8d8ug" path="res://torch.tscn" id="1_uondy"]
+[ext_resource type="PackedScene" uid="uid://ca3tci3v8d8ug" path="res://etc/torch.tscn" id="1_uondy"]
 [ext_resource type="Script" uid="uid://c8wvel033uhyu" path="res://build/modified_constructable.gd" id="2_o54lh"]
 
 [resource]
