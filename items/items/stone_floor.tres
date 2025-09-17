@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3 uid="uid://cspem2m6w5u6p"]
+
+[ext_resource type="Resource" uid="uid://beod7ovyl70wl" path="res://build/modified_constructables/stone_floor.tres" id="1_2i511"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_2hean"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_otniw"]
+[ext_resource type="Texture2D" uid="uid://cxsr2d8qmr12t" path="res://tex/tiles/2_stone.png" id="4_2hean"]
+
+[sub_resource type="Resource" id="Resource_bdpfg"]
+script = ExtResource("2_2hean")
+ingredients = Dictionary[String, int]({
+"stone": 1
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("3_otniw")
+item_name = "Stone Floor"
+description = "Feels homey! Like a cave"
+texture = ExtResource("4_2hean")
+max_stack = 64
+recipes = Array[ExtResource("2_2hean")]([SubResource("Resource_bdpfg")])
+constructable = ExtResource("1_2i511")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

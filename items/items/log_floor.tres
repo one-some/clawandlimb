@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3 uid="uid://b4qg1qbg7q0wd"]
+
+[ext_resource type="Resource" uid="uid://g1brcui81c5a" path="res://build/modified_constructables/log_floor.tres" id="1_oh4q1"]
+[ext_resource type="Script" uid="uid://8mocn31chcqv" path="res://items/item_recipe.gd" id="2_xhsrg"]
+[ext_resource type="Script" uid="uid://c5d7hwuae8rpa" path="res://items/item_data.gd" id="3_dxwop"]
+[ext_resource type="Texture2D" uid="uid://dyrry2pibnelp" path="res://tex/tiles/6_log.png" id="4_xhsrg"]
+
+[sub_resource type="Resource" id="Resource_bdpfg"]
+script = ExtResource("2_xhsrg")
+ingredients = Dictionary[String, int]({
+"log": 1
+})
+output_count = 1
+metadata/_custom_type_script = "uid://8mocn31chcqv"
+
+[resource]
+script = ExtResource("3_dxwop")
+item_name = "Log Floor"
+description = "The people in my class are arguing over how to make a pie."
+texture = ExtResource("4_xhsrg")
+max_stack = 64
+recipes = Array[ExtResource("2_xhsrg")]([SubResource("Resource_bdpfg")])
+constructable = ExtResource("1_oh4q1")
+metadata/_custom_type_script = "uid://c5d7hwuae8rpa"

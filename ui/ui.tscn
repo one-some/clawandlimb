@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=3 uid="uid://0fc3n5w2os8h"]
+[gd_scene load_steps=69 format=3 uid="uid://0fc3n5w2os8h"]
 
 [ext_resource type="Script" uid="uid://y7hj8awt7sut" path="res://ui/ui_stats.gd" id="1_m6e0p"]
 [ext_resource type="Script" uid="uid://cngmcxp2y376h" path="res://ui/back_blur.gd" id="1_nltto"]
@@ -246,6 +246,13 @@ pressed = true
 [sub_resource type="Shortcut" id="Shortcut_os5c7"]
 events = [SubResource("InputEventAction_nvb2n")]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r2460"]
+bg_color = Color(0.0755208, 0.0755208, 0.0755208, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_7w61g"]
+font = ExtResource("7_waa4j")
+font_size = 30
+
 [node name="UI" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -462,7 +469,7 @@ grow_vertical = 2
 script = ExtResource("10_v8jk5")
 
 [node name="PlayerIcon" type="ColorRect" parent="MapContainer"]
-z_index = 1337
+z_index = 22
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -851,6 +858,32 @@ theme_override_styles/pressed = ExtResource("15_etlur")
 theme_override_styles/normal = ExtResource("15_etlur")
 shortcut = SubResource("Shortcut_os5c7")
 text = "RESPAWN"
+
+[node name="Loading" type="Panel" parent="."]
+visible = false
+z_index = 33
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_r2460")
+script = ExtResource("28_ccnxy")
+
+[node name="Label" type="Label" parent="Loading"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -15.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Loading "
+label_settings = SubResource("LabelSettings_7w61g")
+horizontal_alignment = 1
 
 [connection signal="timeout" from="BiomeOverlay/CheckBiome" to="BiomeOverlay" method="_on_check_biome_timeout"]
 [connection signal="focus_exited" from="Chat/LineEdit" to="Chat" method="_on_line_edit_focus_exited"]

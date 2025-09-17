@@ -1,11 +1,19 @@
 extends Constructable
 
 @onready var box: CSGBox3D = $CSGBox3D
+@export var material = StandardMaterial3D.new()
 
 func _ready() -> void:
 	self.allow_freehand = true
+	box.material = material
 	combat.name = "Tile"
 	super()
+
+func process_modifications(modified: ModifiedConstructable) -> void:
+	material = material.duplicate()
+	
+	if modified.override_texture:
+		material.albedo_texture = modified.override_texture
 
 func set_end(pos: Vector3) -> void:
 	if not start_pos:
