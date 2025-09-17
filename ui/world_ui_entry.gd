@@ -2,7 +2,7 @@ extends Panel
 
 signal delete_pressed
 
-const Main = preload("res://etc/main.tscn")
+const Main = preload("res://main.tscn")
 
 @onready var world_name: Label = %WorldName
 @onready var world_size: Label = %WorldSize

@@ -8,7 +8,7 @@ const WorldTypes = {
 	"Normal": VoxelMesh.WORLDGEN_KITTY,
 	"Flat": VoxelMesh.WORLDGEN_FLAT
 }
-const Main = preload("res://etc/main.tscn")
+const Main = preload("res://main.tscn")
 
 var world_type: VoxelMesh.Worldgen = WorldTypes.values()[0]
 

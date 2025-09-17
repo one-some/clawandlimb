@@ -38,5 +38,5 @@ func _on_quit_pressed() -> void:
 	save()
 	
 	# Circular dependancy.......
-	var main_menu = load("res://main_menu.tscn")
+	var main_menu = load("res://ui/main_menu.tscn")
 	get_tree().change_scene_to_packed(main_menu)

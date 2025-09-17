@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cwhm2cwafg7eo" path="res://etc/camera.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bcjfwo7l0utc2" path="res://build/build.gd" id="1_ig7tw"]
-[ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://etc/main.gd" id="1_kek77"]
+[ext_resource type="Script" uid="uid://cxshea2chitxj" path="res://main.gd" id="1_kek77"]
 [ext_resource type="Texture2D" uid="uid://1qa07pvse23r" path="res://tex/moon.png" id="2_82xsv"]
 [ext_resource type="Script" uid="uid://ctrl38glbufm2" path="res://etc/world_environment.gd" id="2_lswn8"]
 [ext_resource type="Texture2D" uid="uid://dwkpgskx6myx" path="res://tex/sun.png" id="3_getpj"]

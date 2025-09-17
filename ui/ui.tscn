@@ -27,6 +27,7 @@
 [ext_resource type="Script" uid="uid://dsmi4iviuvgnt" path="res://ui/dead.gd" id="14_cxd00"]
 [ext_resource type="StyleBox" uid="uid://c3rj870jxqmdi" path="res://res/deadly_box_who_wants_it.tres" id="15_etlur"]
 [ext_resource type="Script" uid="uid://baj1mhdesjrw0" path="res://ui/pause_menu.gd" id="20_53buu"]
+[ext_resource type="Script" uid="uid://drdtviu242vcy" path="res://ui/loading.gd" id="28_ccnxy"]
 
 [sub_resource type="Gradient" id="Gradient_ndy3v"]
 offsets = PackedFloat32Array(0.679487, 1)
