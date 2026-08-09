@@ -1,6 +1,6 @@
 ## ClawAndLimb
 
-A sandbox game with destructable terrain and Sims-like building.
+A sandbox game with destructable terrain and Sims-like building. [See it on YouTube here!](https://www.youtube.com/watch?v=aN1Ovj-7HcA)
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/one-some/clawandlimb/refs/heads/master/screenshots/daytime_peaceful_ahhh.png" alt="Day" width="600">
